@@ -1,0 +1,17 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP01   EXEC PGM=IEFBR14                                             00020000
+//DD1      DD DSN=TECN013.MYDATA.ICT01.PS3,DISP=(MOD,DELETE,DELETE),    00030000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00040000
+//STEP02   EXEC PGM=IEFBR14                                             00050000
+//DD2      DD DSN=TECN013.MYDATA.ICT01.PS3,DISP=(NEW,CATLG,CATLG),      00060000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00070000
+//            DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)              00080000
+//STEP03   EXEC PGM=SORT                                                00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//SYSOUT   DD SYSOUT=*                                                  00110000
+//SORTIN   DD DSN=TECN013.MYDATA.ICT01.PS1,DISP=SHR                     00111000
+//SORTOUT  DD DSN=TECN013.MYDATA.ICT01.PS3,DISP=SHR                     00112000
+//SYSIN    DD *                                                         00120000
+  SORT FIELDS=(1,5,CH,A),SKIPREC(2)                                     00130000
+/*                                                                      00140000
+

@@ -1,0 +1,13 @@
+  DELETE TECN013.JCL.ASSMT04.INVNT.KSDS                                 00012012
+  DEFINE CLUSTER( -                                                     00013012
+  NAME(TECN013.JCL.ASSMT04.INVNT.KSDS) -                                00020009
+  TRACK(1,1) -                                                          00030011
+  VOLUME(ZAPRD4) -                                                      00040001
+  RECORDSIZE(80,80) -                                                   00050001
+  CISZ(512) -                                                           00060007
+  KEYS(20,0) -                                                          00070009
+  FREESPACE(10,10) -                                                    00080001
+  INDEXED) -                                                            00080113
+  DATA(NAME(TECN013.JCL.ASSMT04.INVNT.KSDS.DATA)) -                     00081012
+  INDEX(NAME(TECN013.JCL.ASSMT04.INVNT.KSDS.INDEX))                     00082014
+

@@ -1,0 +1,7 @@
+//DSCOPY PROC                                      
+//STEP1   EXEC PGM=IEBCOPY                         
+//SYSPRINT DD  SYSOUT=*                            
+//DD1     DD   DSN=&INP,DISP=OLD                   
+//DD2     DD   DSN=&OUT,DISP=OLD                   
+//SYSIN DD *                                   
+//                

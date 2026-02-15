@@ -1,0 +1,16 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00001000
+//STEP002  EXEC PGM=IDCAMS                                              00010000
+//SYSPRINT DD SYSOUT=*                                                  00020000
+//SYSIN    DD *                                                         00030000
+  DELETE TECN013.SETHU.PROJECT.OUT.KSDS                                 00040000
+  DEFINE CLUSTER(                      -                                00050001
+  NAME(TECN013.SETHU.PROJECT.OUT.KSDS) -                                00060000
+  TRACKS(10,10)                        -                                00070002
+  VOLUME(ZAPRD4)                       -                                00080000
+  KEYS(20,0)                           -                                00090000
+  CISZ(4096)                           -                                00100002
+  RECORDSIZE(80,80)                    -                                00110000
+  FREESPACE(10,10)                     -                                00120000
+  INDEXED)                                                              00130000
+/*                                                                      00140000
+

@@ -1,0 +1,165 @@
+        IDENTIFICATION DIVISION.                                        
+        PROGRAM-ID. CASE01C.                                            
+        DATA DIVISION.                                                  
+        WORKING-STORAGE SECTION.                                        
+        01 WSS-ERR-MSG.                                                 
+            05 WS-ERR-MSG.                                              
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE +720.          
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          
+              10 WS-ERR-LRECL        PIC  S9(9) COMP VALUE +72.         
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    
+            88 WS-EOT              VALUE  +100.                         
+            88 WS-SUCCESS          VALUE  +000.                         
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            
+            EXEC SQL INCLUDE CUSTADCL END-EXEC.                         
+            EXEC SQL INCLUDE CUSTDCL END-EXEC.                          
+            EXEC SQL INCLUDE CUSTYDCL END-EXEC.                         
+            EXEC SQL INCLUDE BANKDCL END-EXEC.                          
+            EXEC SQL                                                    
+            DECLARE CS-TB-BANK CURSOR FOR                               
+            SELECT A.CUST_ID,A.CUST_ACC_TYPE,B.CUST_NAME,B.CUST_TYPE,   
+            C.CUST_TYPE_NAME                                            
+            FROM CUSTACCT A, CUSTDET B, CUSTYPE C                       
+            WHERE A.CUST_ID = B.CUST_ID AND                             
+            B.CUST_TYPE = C.CUST_TYPE_INF                               
+            END-EXEC.                                                   
+        PROCEDURE DIVISION.                                             
+        0000-MAIN-PARA.                                                 
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  
+                 1000-INITIALIZATION-PARA-EXIT                          
+                 PERFORM 2000-PROCESS-PARA THRU                         
+                 2000-PROCESS-PARA-EXIT                                 
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT.                            
+        0000-MAIN-PARA-EXIT.                                            
+                 EXIT.                                                  
+        1000-INITIALIZATION-PARA.                                       
+        1000-INITIALIZATION-PARA-EXIT.                                  
+                 EXIT.                                                  
+        2000-PROCESS-PARA.                                              
+                 PERFORM 2100-OPEN-PARA THRU                            
+                 2100-OPEN-PARA-EXIT                                    
+                 PERFORM 2200-FETCH-PARA THRU                           
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      
+                 PERFORM 3000-CLOSE-PARA THRU                           
+                 3000-CLOSE-PARA-EXIT.                                  
+        2000-PROCESS-PARA-EXIT.                                         
+                 EXIT.                                                  
+        2100-OPEN-PARA.                                                 
+                 EXEC SQL OPEN CS-TB-BANK END-EXEC.                     
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN WS-EOT                                            
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT OPENED'                            
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+        2100-OPEN-PARA-EXIT.                                            
+                 EXIT.                                                  
+        2200-FETCH-PARA.                                                
+                 EXEC SQL FETCH CS-TB-BANK INTO :ACUST-ID,              
+                 :ACUST-ACC-TYPE,                                       
+                 :BCUST-NAME,                                           
+                 :BCUST-TYPE:NULL-IND,                                  
+                 :CCUST-TYPE-NAME                                       
+                 END-EXEC.                                              
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 PERFORM 2300-MOVE-PARA THRU                            
+                 2300-MOVE-PARA-EXIT                                    
+                 WHEN WS-EOT                                            
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT FETCHED'                           
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+         2200-FETCH-PARA-EXIT.                                          
+                 EXIT.                                                  
+         3000-CLOSE-PARA.                                               
+                 EXEC SQL CLOSE CS-TB-BANK END-EXEC.                    
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'CURSOR NOT CLOSED'                            
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG                                     
+                 PERFORM 9000-TERMINATION-PARA THRU                     
+                 9000-TERMINATION-PARA-EXIT                             
+                 END-EVALUATE.                                          
+         3000-CLOSE-PARA-EXIT.                                          
+                 EXIT.                                                  
+         2300-MOVE-PARA.                                                
+                 IF (NULL-IND = -1)                                     
+                 CONTINUE                                               
+                 ELSE                                                   
+                 DISPLAY ACUST-ID                                       
+                 MOVE ACUST-ID TO CUST-ID                               
+                 MOVE 15 TO CUST-NAME-LEN                               
+                 MOVE BCUST-NAME-TEXT TO CUST-NAME-TEXT                 
+                 MOVE BCUST-TYPE TO CUST-TYPE                           
+                 MOVE 10 TO CUST-TYPE-NAME-LEN                          
+                 MOVE CCUST-TYPE-NAME-TEXT TO CUST-TYPE-NAME-TEXT       
+                 MOVE ACUST-ACC-TYPE TO CUST-ACC-TYPE                   
+                 IF ACUST-ACC-TYPE = 'S'                                
+                 MOVE 5000 TO MIN-BALANCE                               
+                 END-IF                                                 
+                 IF ACUST-ACC-TYPE = 'C'                                
+                 MOVE 1000 TO MIN-BALANCE                               
+                 END-IF                                                 
+                 IF ACUST-ACC-TYPE = 'CC'                               
+                 MOVE 10000 TO MIN-BALANCE                              
+                 END-IF                                                 
+                 MOVE SPACES TO BCUST-NAME                              
+                 MOVE SPACES TO BCUST-TYPE                              
+                 MOVE SPACES TO CCUST-TYPE-NAME                         
+                 MOVE SPACES TO ACUST-ACC-TYPE                          
+                 END-IF                                                 
+                 DISPLAY 'MOVE PARA'                                    
+                 PERFORM 2400-INSERT-PARA THRU                          
+                 2400-INSERT-PARA-EXIT.                                 
+         2300-MOVE-PARA-EXIT.                                           
+                 EXIT.                                                  
+         2400-INSERT-PARA.                                              
+                 DISPLAY CUST-ID CUST-ACC-TYPE MIN-BALANCE              
+                 EXEC SQL                                               
+                 INSERT INTO MYBANK VALUES (                            
+                 :CUST-ID,                                              
+                 :CUST-ACC-TYPE,                                        
+                 :CUST-NAME,                                            
+                 :CUST-TYPE,                                            
+                 :CUST-TYPE-NAME,                                       
+                 :MIN-BALANCE )                                         
+                 END-EXEC.                                              
+                 MOVE SQLCODE TO WSS-SQLCODE                            
+                 EVALUATE TRUE                                          
+                 WHEN WS-SUCCESS                                        
+                 CONTINUE                                               
+                 WHEN OTHER                                             
+                 DISPLAY 'INSERT FAILED'                                
+                 DISPLAY 'ERROR STATUS' SQLCODE                         
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    
+                 DISPLAY WS-ERR-MSG.                                    
+         2400-INSERT-PARA-EXIT.                                         
+                 EXIT.                                                  
+         9000-TERMINATION-PARA.                                         
+                 STOP RUN.                                              
+         9000-TERMINATION-PARA-EXIT.                                    
+                 EXIT.                                                  
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   
+                 EXIT.                                                  

@@ -1,0 +1,78 @@
+//TECN013A JOB NOTIFY=&SYSUID,PRTY=1                                    00010004
+//DSCRT    PROC                                                         00030000
+//STEP001  EXEC PGM=IEFBR14                                             00040000
+//DD1      DD DSN=&DSNAME..PS2,DISP=(MOD,DELETE,DELETE),                00050000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00060000
+//DD2      DD DSN=&DSNAME..PS3,DISP=(MOD,DELETE,DELETE),                00070000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00080000
+//DD3      DD DSN=&DSNAME..PS4,DISP=(MOD,DELETE,DELETE),                00090000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00100000
+//DD4      DD DSN=&DSNAME..PS5,DISP=(MOD,DELETE,DELETE),                00110000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00120000
+//DD5      DD DSN=&DSNAME..PS6,DISP=(MOD,DELETE,DELETE),                00130000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00140000
+//STEP002  EXEC PGM=IEFBR14                                             00150000
+//DD6      DD DSN=&DSNAME..PS2,DISP=(NEW,CATLG,DELETE),                 00160000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00170000
+//DD7      DD DSN=&DSNAME..PS3,DISP=(NEW,CATLG,DELETE),                 00180000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00190000
+//DD8      DD DSN=&DSNAME..PS4,DISP=(NEW,CATLG,DELETE),                 00200000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00210000
+//DD9      DD DSN=&DSNAME..PS5,DISP=(NEW,CATLG,DELETE),                 00220000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1)),                      00230013
+//            DCB=(LRECL=80,BLKSIZE=800,RECFM=FB)                       00231013
+//DD10     DD DSN=&DSNAME..PS6,DISP=(NEW,CATLG,DELETE),                 00240000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(1,1))                       00250000
+//DSCRT    PEND                                                         00260000
+//STEP003  EXEC PROC=DSCRT,DSNAME=TECN013.JCL.ASSMT04.INVNT             00270000
+//STEP010  EXEC PGM=SORT                                                00280000
+//SYSPRINT DD SYSOUT=*                                                  00290000
+//SYSOUT   DD SYSOUT=*                                                  00300000
+//SORTIN   DD DSN=TECN013.JCL.ASSMT04.INVNT.PS1,DISP=SHR                00301000
+//SORTOUT  DD DSN=TECN013.JCL.ASSMT04.INVNT.PS2,DISP=SHR                00302000
+//SYSIN    DD *                                                         00310000
+  SORT FIELDS=(1,20,CH,A,29,1,ZD,D),SKIPREC(1)                          00320000
+  OMIT COND=(48,1,CH,EQ,C' ')                                           00330000
+/*                                                                      00340000
+//STEP020  EXEC PGM=SORT                                                00350000
+//SYSPRINT DD SYSOUT=*                                                  00360000
+//SYSOUT   DD SYSOUT=*                                                  00370000
+//SORTIN   DD DSN=TECN013.JCL.ASSMT04.INVNT.PS2,DISP=SHR                00380000
+//SORTOUT  DD DSN=TECN013.JCL.ASSMT04.INVNT.PS3,DISP=SHR                00390000
+//SYSIN    DD *                                                         00400000
+  SORT FIELDS=COPY                                                      00410000
+  INCLUDE COND=(29,2,ZD,GT,50)                                          00420000
+/*                                                                      00430000
+//STEP030  EXEC PGM=SORT                                                00440000
+//SYSPRINT DD SYSOUT=*                                                  00450000
+//SYSOUT   DD SYSOUT=*                                                  00460000
+//SORTIN   DD DSN=TECN013.JCL.ASSMT04.INVNT.PS2,DISP=SHR                00470000
+//SORTOUT  DD DSN=TECN013.JCL.ASSMT04.INVNT.PS4,DISP=SHR                00480000
+//SYSIN    DD *                                                         00490000
+  SORT FIELDS=COPY                                                      00500007
+  INCLUDE COND=(32,5,CH,EQ,C'JAPAN',OR,32,11,CH,EQ,C'PHILIPPINES',OR,   00510008
+               32,7,CH,EQ,C'MOROCCO',OR,32,8,CH,EQ,C'MALAYSIA')         00511008
+  INREC BUILD=(1:48,21,1X,23:32,15,1X,29,2,ZD,MUL,70,2,ZD,              00512008
+              EDIT=(TTTT),LENGTH=4)                                     00513008
+/*                                                                      00520002
+//STEP040  EXEC PGM=SORT                                                00530010
+//SYSPRINT DD SYSOUT=*                                                  00540009
+//SYSOUT   DD SYSOUT=*                                                  00550010
+//SORTIN   DD DSN=TECN013.JCL.ASSMT04.INVNT.PS2,DISP=SHR                00560014
+//SORTOUT  DD DSN=TECN013.JCL.ASSMT04.INVNT.PS5,DISP=SHR                00570014
+//SYSIN    DD *                                                         00580010
+  SORT FIELDS=COPY                                                      00590014
+  OUTFIL REMOVECC,                                                      00600014
+  HEADER1=(11X,C'***INVNT DETAILS***'),                                 00610014
+  TRAILER1=(C' TOTAL NUMBER OF ITEM_QTYS: ',TOT=(29,2,ZD,LENGTH=4))     00620014
+/*                                                                      00630010
+//STEP050  EXEC PGM=SORT                                                00640015
+//SYSPRINT DD SYSOUT=*                                                  00650015
+//SYSOUT   DD SYSOUT=*                                                  00660015
+//SORTIN   DD DSN=TECN013.JCL.ASSMT04.INVNT.PS2,DISP=SHR                00670015
+//SORTOUT  DD DSN=TECN013.JCL.ASSMT04.INVNT.PS6,DISP=SHR                00680015
+//SYSIN    DD *                                                         00690015
+  SORT FIELDS=COPY                                                      00700016
+  INREC FINDREP=(IN=C'HOS',OUT=C'INV',STARTPOS=22,ENDPOS=25)            00710017
+/*                                                                      00720017
+

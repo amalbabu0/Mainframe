@@ -1,0 +1,33 @@
+      ******************************************************************
+      * DCLGEN TABLE(LOCATION)                                         *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(LOCDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(B)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE LOCATION TABLE
+           ( LOCATION_CODE                  CHAR(3) NOT NULL,
+             LOCATION_NAME                  VARCHAR(15) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE LOCATION                           *
+      ******************************************************************
+       01  DCLLOCATION.
+      *    *************************************************************
+      *                       LOCATION_CODE
+           10 BLOCATION-CODE       PIC X(3).
+      *    *************************************************************
+           10 BLOCATION-NAME.
+      *                       LOCATION_NAME LENGTH
+              49 BLOCATION-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       LOCATION_NAME
+              49 BLOCATION-NAME-TEXT
+                 PIC X(15).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************

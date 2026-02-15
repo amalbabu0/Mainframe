@@ -1,0 +1,27 @@
+       IDENTIFICATION DIVISION.                                         00001001
+       PROGRAM-ID. COBCS01S.                                            00002001
+       AUTHOR.  TEKMFDEV.                                               00003001
+       DATA DIVISION.                                                   00004001
+       WORKING-STORAGE SECTION.                                         00005001
+       77 WS-REF PIC X(6) VALUE 'IREFNO'.                               00006001
+       77 WS-NUM PIC 9(4) VALUE 0000.                                   00006101
+       LINKAGE SECTION.                                                 00007001
+       77 LS-CREDIT-SCORE PIC 9(1).                                     00008001
+       77 LS-CREDIT-REPORT PIC X(10).                                   00009001
+       77 LS-REF-NUMBER PIC X(10).                                      00009101
+       PROCEDURE DIVISION USING LS-CREDIT-SCORE LS-CREDIT-REPORT        00009201
+                              LS-REF-NUMBER.                            00009301
+       0000-MAIN-PARA.                                                  00009401
+            IF LS-CREDIT-SCORE > 8                                      00009501
+             MOVE 'GOOD' TO  LS-CREDIT-REPORT                           00009601
+             ELSE IF LS-CREDIT-SCORE >= 5 AND LS-CREDIT-SCORE <=8       00009701
+              MOVE 'AVERAGE' TO LS-CREDIT-REPORT                        00009801
+              ELSE IF LS-CREDIT-SCORE < 5                               00009901
+               MOVE 'LOW' TO LS-CREDIT-REPORT                           00010001
+            END-IF.                                                     00010101
+            ADD 1 TO WS-NUM.                                            00010201
+            STRING WS-REF WS-NUM DELIMITED BY SIZE INTO LS-REF-NUMBER.  00010304
+            GOBACK.                                                     00010501
+       0000-MAIN-PARA-EXIT.                                             00010601
+             EXIT.                                                      00010701
+

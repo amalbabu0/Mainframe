@@ -1,0 +1,179 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. CASE03C.                                            00020032
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WSS-ERR-MSG.                                                 00050000
+            05 WS-ERR-MSG.                                              00060000
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.           00070000
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          00080000
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.            00090000
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00100000
+            88 WS-EOT              VALUE  +100.                         00110000
+            88 WS-SUCCESS          VALUE  +000.                         00120000
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00130000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00190000
+            EXEC SQL INCLUDE CUSTMDCL END-EXEC.                         00201047
+            EXEC SQL INCLUDE POLDCL END-EXEC.                           00202031
+            EXEC SQL INCLUDE STATDCL END-EXEC.                          00203031
+            EXEC SQL INCLUDE PDETDCL END-EXEC.                          00204035
+            EXEC SQL                                                    00210000
+            DECLARE CS-TB-POLICY CURSOR FOR                             00220033
+            SELECT A.CUST_ID,A.POL_NO,A.CUST_NAME,A.CUST_GENDER,        00230032
+            A.CUST_ANNUAL_INCOME,B.CUST_STATE,C.STATE_NAME,             00240033
+            B.POLICY_TERM,B.POLICY_PREMIEUM,                            00250034
+            B.POLICY_PREMIEUM_PAID                                      00251034
+            FROM                                                        00260032
+            CUSTM A,POLICY B,STATE C                                    00261039
+            WHERE                                                       00262032
+            A.POL_NO = B.POL_ID_DETAIL AND                              00263032
+            B.CUST_STATE = C.STATE_ID                                   00270033
+            END-EXEC.                                                   00271036
+        PROCEDURE DIVISION.                                             00280000
+        0000-MAIN-PARA.                                                 00290000
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  00300000
+                 1000-INITIALIZATION-PARA-EXIT                          00310000
+                 PERFORM 2000-PROCESS-PARA THRU                         00320000
+                 2000-PROCESS-PARA-EXIT                                 00330000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00340000
+                 9000-TERMINATION-PARA-EXIT.                            00350000
+        0000-MAIN-PARA-EXIT.                                            00360000
+                 EXIT.                                                  00370000
+        1000-INITIALIZATION-PARA.                                       00380000
+        1000-INITIALIZATION-PARA-EXIT.                                  00390000
+                 EXIT.                                                  00400000
+        2000-PROCESS-PARA.                                              00410000
+                 PERFORM 2100-OPEN-PARA THRU                            00420000
+                 2100-OPEN-PARA-EXIT                                    00430000
+                 PERFORM 2200-FETCH-PARA THRU                           00440000
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00450000
+                 PERFORM 3000-CLOSE-PARA THRU                           00460000
+                 3000-CLOSE-PARA-EXIT.                                  00470000
+        2000-PROCESS-PARA-EXIT.                                         00480000
+                 EXIT.                                                  00490000
+        2100-OPEN-PARA.                                                 00500000
+                 EXEC SQL OPEN CS-TB-POLICY END-EXEC.                   00510033
+                 MOVE SQLCODE TO WSS-SQLCODE                            00520000
+                 EVALUATE TRUE                                          00530000
+                 WHEN WS-SUCCESS                                        00540000
+                 CONTINUE                                               00550000
+                 WHEN WS-EOT                                            00560000
+                 CONTINUE                                               00570000
+                 WHEN OTHER                                             00580000
+                 DISPLAY 'CURSOR NOT OPENED'                            00590000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00600000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00610000
+                 DISPLAY WS-ERR-MSG                                     00620000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00630000
+                 9000-TERMINATION-PARA-EXIT                             00640000
+                 END-EVALUATE.                                          00650000
+        2100-OPEN-PARA-EXIT.                                            00660000
+                 EXIT.                                                  00670000
+        2200-FETCH-PARA.                                                00680000
+                 EXEC SQL FETCH CS-TB-POLICY INTO :ACUST-ID,            00690033
+                 :APOL-NO,:ACUST-NAME,:ACUST-GENDER,                    00700033
+                 :ACUST-ANNUAL-INCOME,:BCUST-STATE:NULL-IND,            00700134
+                 :CSTATE-NAME,                                          00700233
+                 :BPOLICY-TERM,:BPOLICY-PREMIEUM,                       00701034
+                 :BPOLICY-PREMIEUM-PAID                                 00702034
+                 END-EXEC.                                              00720000
+                 MOVE SQLCODE TO WSS-SQLCODE                            00730000
+                 EVALUATE TRUE                                          00740000
+                 WHEN WS-SUCCESS                                        00750000
+                 PERFORM 2300-MOVE-PARA THRU                            00760000
+                 2300-MOVE-PARA-EXIT                                    00770000
+                 WHEN WS-EOT                                            00780000
+                 CONTINUE                                               00790000
+                 WHEN OTHER                                             00800000
+                 DISPLAY 'CURSOR NOT FETCHED'                           00810000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00820000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00830000
+                 DISPLAY WS-ERR-MSG                                     00840000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00850000
+                 9000-TERMINATION-PARA-EXIT                             00860000
+                 END-EVALUATE.                                          00870000
+         2200-FETCH-PARA-EXIT.                                          00880000
+                 EXIT.                                                  00890000
+         3000-CLOSE-PARA.                                               00900000
+                 EXEC SQL CLOSE CS-TB-POLICY END-EXEC.                  00910033
+                 MOVE SQLCODE TO WSS-SQLCODE                            00920000
+                 EVALUATE TRUE                                          00930000
+                 WHEN WS-SUCCESS                                        00940000
+                 CONTINUE                                               00950000
+                 WHEN OTHER                                             00960000
+                 DISPLAY 'CURSOR NOT CLOSED'                            00970000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00980000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00990000
+                 DISPLAY WS-ERR-MSG                                     01000000
+                 PERFORM 9000-TERMINATION-PARA THRU                     01010000
+                 9000-TERMINATION-PARA-EXIT                             01020000
+                 END-EVALUATE.                                          01030000
+         3000-CLOSE-PARA-EXIT.                                          01040000
+                 EXIT.                                                  01050000
+         2300-MOVE-PARA.                                                01060000
+                 IF (NULL-IND = -1)                                     01070000
+                 CONTINUE                                               01080000
+                 ELSE                                                   01090000
+                 MOVE ACUST-ID TO CUST-ID                               01140016
+                 MOVE APOL-NO TO POL-NO                                 01140134
+                 MOVE 15 TO CUST-NAME-LEN                               01141028
+                 MOVE ACUST-NAME-TEXT TO CUST-NAME-TEXT                 01150034
+                 MOVE ACUST-GENDER TO CUST-GENDER                       01160034
+                 MOVE ACUST-ANNUAL-INCOME TO CUST-ANNUAL-INCOME         01161034
+                 MOVE 15 TO CUST-STATE-NAME-LEN                         01171034
+                 MOVE CSTATE-NAME TO CUST-STATE-NAME                    01171134
+                 MOVE BPOLICY-TERM TO POLICY-TERM                       01171234
+                 MOVE BPOLICY-PREMIEUM-PAID TO POLICY-PREMIEUM-PAID     01171334
+                 MOVE BPOLICY-PREMIEUM TO POLICY-PREMIEUM               01171434
+                 IF ACUST-ANNUAL-INCOME > 0                             01171538
+                 PERFORM 2400-CALC-PARA THRU                            01171634
+                   2400-CALC-PARA-EXIT                                  01171734
+                 END-IF                                                 01172044
+                 MOVE SPACES TO ACUST-NAME                              01173045
+                 MOVE SPACES TO CSTATE-NAME.                            01174046
+         2300-MOVE-PARA-EXIT.                                           01182120
+                 EXIT.                                                  01182220
+         2400-CALC-PARA.                                                01182334
+                 IF  BPOLICY-TERM = '05'                                01182434
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (45/100))          01182542
+                 END-IF                                                 01182634
+                 IF  BPOLICY-TERM = '10'                                01182734
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (55/100))          01182842
+                 END-IF                                                 01182934
+                 IF  BPOLICY-TERM = '15'                                01183034
+                 COMPUTE BONUS = (BPOLICY-PREMIEUM * (65/100))          01183142
+                 END-IF                                                 01183234
+                 PERFORM 2500-INSERT-PARA THRU                          01183334
+                  2500-INSERT-PARA-EXIT.                                01183434
+         2400-CALC-PARA-EXIT.                                           01183538
+                 EXIT.                                                  01183638
+         2500-INSERT-PARA.                                              01183734
+                 EXEC SQL                                               01184017
+                 INSERT INTO POLICY_DETAIL VALUES (                     01185241
+                 :CUST-ID,                                              01185319
+                 :POL-NO,                                               01185434
+                 :CUST-NAME,                                            01185519
+                 :CUST-GENDER,                                          01185634
+                 :CUST-ANNUAL-INCOME,                                   01185734
+                 :CUST-STATE-NAME,                                      01185934
+                 :POLICY-TERM,                                          01186034
+                 :POLICY-PREMIEUM,                                      01186134
+                 :POLICY-PREMIEUM-PAID,                                 01186234
+                 :BONUS )                                               01186334
+                 END-EXEC.                                              01186417
+                 MOVE SQLCODE TO WSS-SQLCODE                            01186718
+                 EVALUATE TRUE                                          01187018
+                 WHEN WS-SUCCESS                                        01188018
+                 CONTINUE                                               01189318
+                 WHEN OTHER                                             01189418
+                 DISPLAY 'INSERT FAILED'                                01189518
+                 DISPLAY 'ERROR STATUS' SQLCODE                         01189618
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01189718
+                 DISPLAY WS-ERR-MSG.                                    01189820
+         2500-INSERT-PARA-EXIT.                                         01189934
+                 EXIT.                                                  01190020
+         9000-TERMINATION-PARA.                                         01210000
+                 STOP RUN.                                              01220000
+         9000-TERMINATION-PARA-EXIT.                                    01230000
+                 EXIT.                                                  01240000
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   01250000
+                 EXIT.                                                  01260000

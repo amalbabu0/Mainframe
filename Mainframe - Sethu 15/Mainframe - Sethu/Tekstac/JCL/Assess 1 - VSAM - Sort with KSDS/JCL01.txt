@@ -1,0 +1,34 @@
+//TECN013A JOB (ACCT),'VSAM JOB',CLASS=A,MSGCLASS=X,NOTIFY=&SYSUID      00010000
+//  JCLLIB ORDER=TECN013.VSAM.CC01.PDS                                  00020002
+//STEP010 EXEC KSDSCRT                                                  00030000
+//STEP020 EXEC PGM=SORT                                                 00040001
+//SYSOUT DD SYSOUT=*                                                    00041002
+//SORTIN DD DSN=TECN013.VSAM.CC01.PS1,DISP=SHR                          00080001
+//* DUMMY                                                               00081002
+//* DUMMY                                                               00082002
+//SORTOUT DD DSN=TECN013.VSAM.CC01.PS1SORT,                             00090002
+//           DISP=(NEW,CATLG,DELETE),                                   00100002
+//           SPACE=(TRK,(5,5)),                                         00101002
+//           DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                        00110002
+//SYSIN DD *                                                            00120002
+  SORT FIELDS=(1,5,CH,A)                                                00121002
+/*                                                                      00122002
+//STEP030 EXEC PGM=IDCAMS                                               00130001
+//SYSPRINT DD SYSOUT=*                                                  00140001
+//SYSIN DD *                                                            00150001
+  REPRO INFILE(IN1) OUTFILE(OUT1)                                       00160001
+/*                                                                      00161001
+//IN1 DD DSN=TECN013.VSSAM.CC01.PS1SORT,DISP=SHR                        00170001
+//OUT1 DD DSN=TECN013.VSAM.CC01.KSDS,DISP=SHR                           00180001
+//STEP040 EXEC PGM=IDCAMS                                               00190001
+//SYSPRINT DD SYSOUT=*                                                  00200001
+//SYSIN DD *                                                            00210001
+  REPRO INFILE(INKSDS) OUTFILE(OUTPS2) -                                00220001
+  FROMKEY(33333) TOKEY(44444)                                           00230001
+/*                                                                      00240001
+//INKSDS DD DSN=TECN013.VSAM.CC01.KSDS,DISP=SHR                         00250001
+//OUTPS2 DD DSN=TECN013.VSAM.CC01.PS2,                                  00260002
+//          DISP=(NEW,CATLG,DELETE),                                    00261002
+//          SPACE=(TRK,(5,5)),                                          00270002
+//          DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                         00280002
+

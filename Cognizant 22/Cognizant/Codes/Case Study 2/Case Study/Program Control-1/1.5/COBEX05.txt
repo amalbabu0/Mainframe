@@ -1,0 +1,42 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX05.                                             00020000
+      *INPUT VARIABLES                                                  00021000
+       DATA DIVISION.                                                   00030000
+       WORKING-STORAGE SECTION.                                         00040000
+       01 WS-PASSENGER-DETAILS.                                         00050000
+           05 WS-PASSENGER-NAME            PIC  A(20).                  00060000
+           05 WS-AADHAR-NUMBER             PIC  X(12).                  00070000
+           05 WS-DOB                       PIC  9(08).                  00080000
+           05 WS-TRAIN-FARE                PIC  9(5)V9(2).              00090013
+      *OUTPUT VARIABLES                                                 00100000
+       01 WS-PASSENGER-DETAILS-PRINT.                                   00110000
+           05 WS-PASSENGER-NAME-PRINT      PIC  A(20).                  00120000
+           05 WS-AGE-PRINT                 PIC  9(02).                  00130000
+           05 WS-TRAIN-FARE-PRINT          PIC  ZZ99.                   00150000
+           05 WS-DOB-PRINT                 PIC  99/99/9999.             00160011
+           05 WS-TRAIN-FARE-DOLLARS-PRINT  PIC  $9(3).                  00170000
+           05 WS-AADHAR-NUMBER-PRINT       PIC  9999/9999/9999.         00170126
+       01 WS-DATE1  PIC 9(04).                                          00171006
+       01 WS-DATE2  PIC 9(04).                                          00172007
+       PROCEDURE DIVISION.                                              00180000
+       000-MAIN-PARA.                                                   00190000
+           INITIALIZE WS-PASSENGER-DETAILS-PRINT.                       00200018
+           MOVE 'RAHUL KANNAN' TO WS-PASSENGER-NAME.                    00210018
+           MOVE '750012342345' TO WS-AADHAR-NUMBER.                     00220018
+           MOVE 20101990 TO WS-DOB.                                     00230018
+           MOVE 0780 TO WS-TRAIN-FARE.                                  00240018
+       000-MOVE-PARA.                                                   00241018
+           MOVE 'K.RAHUL' TO WS-PASSENGER-NAME-PRINT.                   00250018
+           MOVE FUNCTION CURRENT-DATE(1:4) TO WS-DATE1.                 00251018
+           MOVE WS-DOB(5:4) TO WS-DATE2.                                00253018
+           COMPUTE WS-AGE-PRINT = WS-DATE1 - WS-DATE2.                  00260018
+           MOVE WS-DOB TO WS-DOB-PRINT.                                 00271018
+           COMPUTE WS-TRAIN-FARE-DOLLARS-PRINT = WS-TRAIN-FARE / 76     00273018
+           MOVE WS-AADHAR-NUMBER TO WS-AADHAR-NUMBER-PRINT.             00274021
+       000-DISP-PARA.                                                   00278018
+           DISPLAY "PASSENGER NAME : " WS-PASSENGER-NAME-PRINT.         00279018
+           DISPLAY "PASSENGER AGE  : " WS-AGE-PRINT.                    00279118
+           DISPLAY "PASSENGER DOB  : " WS-DOB-PRINT.                    00279218
+           DISPLAY "PASSENGER AADHAR NUMBER : " WS-AADHAR-NUMBER-PRINT. 00279318
+           DISPLAY "TRAIN FARE     : " WS-TRAIN-FARE-DOLLARS-PRINT.     00279418
+           STOP RUN.                                                    00280018

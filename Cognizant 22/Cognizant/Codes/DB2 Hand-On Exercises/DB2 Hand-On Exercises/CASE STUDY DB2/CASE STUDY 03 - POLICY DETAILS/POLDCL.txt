@@ -1,0 +1,41 @@
+      ******************************************************************
+      * DCLGEN TABLE(POLICY)                                           *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(POLDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(B)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE POLICY TABLE
+           ( POL_ID_DETAIL                  INTEGER NOT NULL,
+             CUST_STATE                     CHAR(3),
+             POLICY_TERM                    CHAR(2),
+             POLICY_PREMIEUM                DECIMAL(6, 2) NOT NULL,
+             POLICY_PREMIEUM_PAID           CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE POLICY                             *
+      ******************************************************************
+       01  DCLPOLICY.
+      *    *************************************************************
+      *                       POL_ID_DETAIL
+           10 BPOL-ID-DETAIL       PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       CUST_STATE
+           10 BCUST-STATE          PIC X(3).
+      *    *************************************************************
+      *                       POLICY_TERM
+           10 BPOLICY-TERM         PIC X(2).
+      *    *************************************************************
+      *                       POLICY_PREMIEUM
+           10 BPOLICY-PREMIEUM     PIC S9(4)V9(2) USAGE COMP-3.
+      *    *************************************************************
+      *                       POLICY_PREMIEUM_PAID
+           10 BPOLICY-PREMIEUM-PAID
+              PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************

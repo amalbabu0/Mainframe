@@ -1,0 +1,56 @@
+  SELECT                                                                00000104
+       B.BOOK_ID                                                        00000204
+      ,B.MEMBER_ID                                                      00000304
+      ,M.MEMBER_NAME                                                    00000404
+      ,M.PHONE_NO                                                       00000504
+      ,M.CITY                                                           00000604
+      ,B.DATE_ISSUE                                                     00000704
+      ,M.DATE_REGISTER                                                  00000804
+      ,B.DATE_TO_BE_RETURN                                              00000904
+      ,B.DATE_RETURNED                                                  00001004
+  FROM                                                                  00001104
+      BOOK_DET B                                                        00001204
+  JOIN                                                                  00001304
+      MEM_DET M                                                         00001404
+  ON                                                                    00001504
+      B.MEMBER_ID = M.MEMBER_ID                                         00001604
+  ORDER BY B.MEMBER_ID;                                                 00001704
+  SELECT * FROM MEM_DET;                                                00001803
+  SELECT * FROM BOOK_DET;                                               00002003
+--INSERT INTO MEM_DET VALUES                                            00010001
+--('LIB001','AMAR NATH','986578','DELHI','2020-10-12',NULL);            00020001
+--INSERT INTO MEM_DET VALUES                                            00021001
+--('LIB002','RADHA','955689','CHENNAI','2020-12-11',NULL);              00030001
+--INSERT INTO MEM_DET VALUES                                            00031001
+--('LIB003','GURU','894568','BANGLORE','2020-09-10',NULL);              00040001
+--INSERT INTO MEM_DET VALUES                                            00041001
+--('LIB004','MOHAN','758469','KOLKATTA',NULL,NULL);                     00050001
+--INSERT INTO MEM_DET VALUES                                            00051001
+--('LIB005','RAVI','658947','MUMBAI','2020-11-11',NULL);                00060001
+--INSERT INTO MEM_DET VALUES                                            00061001
+--('LIB006','PRIYA','554897','COCHIN','2020-03-11',NULL);               00070001
+--INSERT INTO MEM_DET VALUES                                            00071001
+--('LIB007','PAVITHRA','479681','INDORE',NULL,NULL);                    00080001
+--INSERT INTO MEM_DET VALUES                                            00081001
+--('LIB008','ANEESH','894589','VIZAG','2020-05-20',NULL);               00090001
+--INSERT INTO MEM_DET VALUES                                            00091001
+--('LIB009','MOHAMAD','457894','COIMBATORE','2020-03-10',NULL);         00100001
+--INSERT INTO MEM_DET VALUES                                            00101001
+--('LIB010','JOHN','445596','DELHI','2021-07-10',NULL);                 00110001
+--INSERT INTO BOOK_DET VALUES                                           00120003
+--('BK123','LIB001','2020-10-12','2020-12-12','2020-12-18');            00130003
+--INSERT INTO BOOK_DET VALUES                                           00131003
+--('BK124','LIB002','2020-12-11','2021-02-11','2021-12-11');            00140003
+--INSERT INTO BOOK_DET VALUES                                           00141003
+--('BK125','LIB003','2020-09-10','2020-11-10','2020-12-10');            00150003
+--INSERT INTO BOOK_DET VALUES                                           00151003
+--('BK126','LIB004','2020-04-10','2020-06-10','2020-06-20');            00160003
+--INSERT INTO BOOK_DET VALUES                                           00161003
+--('BK127','LIB005','2020-11-11','2021-01-11','2021-02-11');            00170003
+--INSERT INTO BOOK_DET VALUES                                           00171003
+--('BK128','LIB006','2020-03-11','2020-05-11','2020-05-30');            00180003
+--INSERT INTO BOOK_DET VALUES                                           00181003
+--('BK129','LIB007','2020-06-10','2020-08-10','2020-09-15');            00190003
+--INSERT INTO BOOK_DET VALUES                                           00191003
+--('BK130','LIB008','2020-05-12','2020-07-12','2020-07-12');            00200003
+

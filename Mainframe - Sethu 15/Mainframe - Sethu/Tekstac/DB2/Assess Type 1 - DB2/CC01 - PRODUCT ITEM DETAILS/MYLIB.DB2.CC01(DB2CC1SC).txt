@@ -1,0 +1,75 @@
+  CREATE TABLE PRODUCT_ITEM(                                            00010008
+  ITEM_CODE CHAR(05) PRIMARY KEY NOT NULL                               00020008
+  ,ITEM_COUNT INT NOT NULL                                              00030008
+  ,ITEM_STATUS VARCHAR(03)                                              00040008
+  ,ITEM_TYPE VARCHAR(15)                                                00050008
+  ,ITEM_PRICE DECIMAL(8,2)                                              00060008
+  )IN SHRDB4.SHRTS4;                                                    00070008
+  CREATE TABLE INVOICE(                                                 00080008
+  INVOICE_NO CHAR(06) PRIMARY KEY NOT NULL                              00090008
+  ,INVOICE_ITEM CHAR(05)                                                00100008
+  ,INVOICE_COUNT INT                                                    00110008
+  ,INVOICE_TOT_COST DECIMAL(11,2)                                       00120008
+  ,INVOICE_STATUS VARCHAR(15)                                           00130008
+  )IN SHRDB4.SHRTS4;                                                    00140008
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00150002
+                           ITEM_PRICE) VALUES                           00160002
+  ('ITM11',100,'YES','ELECTRONICS',1100.4);                             00170002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00180002
+                           ITEM_PRICE) VALUES                           00190002
+  ('ITM12',200,'YES','MOBILE',7500.6);                                  00200002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00210002
+                           ITEM_PRICE) VALUES                           00220002
+  ('ITM13',300,'YES','GROCERY',6000.3);                                 00230002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00240002
+                           ITEM_PRICE) VALUES                           00250002
+  ('ITM14',400,'YES',NULL,4300.7);                                      00260002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00270002
+                           ITEM_PRICE) VALUES                           00280002
+  ('ITM15',660,'YES','FOOD',1500);                                      00290002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00300002
+                           ITEM_PRICE) VALUES                           00310002
+  ('ITM16',500,'YES',NULL,6500.25);                                     00320002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00330002
+                           ITEM_PRICE) VALUES                           00340002
+  ('ITM17',600,'NO','BABY',7500.25);                                    00350002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00360002
+                           ITEM_PRICE) VALUES                           00370002
+  ('ITM18',820,'YES','GADGETS',9000);                                   00380002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00390002
+                           ITEM_PRICE) VALUES                           00400002
+  ('ITM19',180,'NO',NULL,8000.7);                                       00410002
+  INSERT INTO PRODUCT_ITEM(ITEM_CODE,ITEM_COUNT,ITEM_STATUS,ITEM_TYPE,  00420002
+                           ITEM_PRICE) VALUES                           00430002
+  ('ITM20',500,'YES','CLOTHING',7000);                                  00440004
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00450002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00460002
+  ('IV1808','ITM11',75,0,'ORDERED');                                    00470002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00480002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00490002
+  ('IV1627','ITM14',500,0,'ORDERED');                                   00500002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00510002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00520002
+  ('IV1576','ITM13',300,0,'ORDERED');                                   00530002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00540002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00550002
+  ('IV8376','ITM19',100,0,'ORDERED');                                   00560002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00570002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00580002
+  ('IV1452','ITM18',500,0,'ORDERED');                                   00590002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00600002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00610002
+  ('IV2947','ITM17',200,0,'ORDERED');                                   00620002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00630002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00640002
+  ('IV6285','ITM20',100,0,'ORDERED');                                   00650002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00660002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00670002
+  ('IV4563','ITM12',250,0,'ORDERED');                                   00680002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00690002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00700002
+  ('IV3782','ITM15',525,0,'ORDERED');                                   00710002
+  INSERT INTO INVOICE(INVOICE_NO,INVOICE_ITEM,INVOICE_COUNT,            00720002
+                      INVOICE_TOT_COST,INVOICE_STATUS) VALUES           00730002
+  ('IV8936','ITM16',475,0,'ORDERED');                                   00740002
+

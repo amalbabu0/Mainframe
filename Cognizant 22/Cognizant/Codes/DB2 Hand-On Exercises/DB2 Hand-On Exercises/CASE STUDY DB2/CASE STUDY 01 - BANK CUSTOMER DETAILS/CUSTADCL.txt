@@ -1,0 +1,28 @@
+      ******************************************************************
+      * DCLGEN TABLE(CUSTACCT)                                         *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTADCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTACCT TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             CUST_ACC_TYPE                  CHAR(2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTACCT                           *
+      ******************************************************************
+       01  DCLCUSTACCT.
+      *    *************************************************************
+      *                       CUST_ID
+           10 ACUST-ID             PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       CUST_ACC_TYPE
+           10 ACUST-ACC-TYPE       PIC X(2).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************

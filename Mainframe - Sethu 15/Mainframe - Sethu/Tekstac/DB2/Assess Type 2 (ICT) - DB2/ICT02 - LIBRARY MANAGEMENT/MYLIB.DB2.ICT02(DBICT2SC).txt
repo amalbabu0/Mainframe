@@ -1,0 +1,18 @@
+  CREATE TABLE MEM_DET(                                                 00010001
+   MEMBER_ID          CHAR(06)    NOT NULL PRIMARY KEY                  00020001
+  ,MEMBER_NAME        VARCHAR(15)                                       00030001
+  ,PHONE_NO           CHAR(06)    NOT NULL                              00040001
+  ,CITY               VARCHAR(15)                                       00050001
+  ,DATE_REGISTER      DATE                                              00060001
+  ,DATE_EXPIRE        DATE                                              00070001
+  )IN SHRDB4.SHRTS4;                                                    00080001
+  CREATE UNIQUE INDEX IDX201 ON MEM_DET(MEMBER_ID);                     00090001
+  CREATE TABLE BOOK_DET(                                                00100001
+   BOOK_ID           CHAR(05)    NOT NULL PRIMARY KEY                   00110001
+  ,MEMBER_ID         CHAR(06)    NOT NULL                               00120001
+  ,DATE_ISSUE        DATE        NOT NULL                               00130001
+  ,DATE_TO_BE_RETURN DATE        NOT NULL                               00140001
+  ,DATE_RETURNED     DATE        NOT NULL                               00150001
+  ) IN SHRDB4.SHRTS4;                                                   00160001
+  CREATE UNIQUE INDEX IDX202 ON BOOK_DET(BOOK_ID);                      00240001
+

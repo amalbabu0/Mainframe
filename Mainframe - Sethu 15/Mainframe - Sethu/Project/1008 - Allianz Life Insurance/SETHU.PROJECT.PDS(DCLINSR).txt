@@ -1,0 +1,41 @@
+      ******************************************************************
+      * DCLGEN TABLE(INSURANCE)                                        *
+      *        LIBRARY(TECN013.SETHU.PROJECT.PDS(DCLINSR))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(HV2-)                                             *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE INSURANCE TABLE
+           ( POLICY_ID                      CHAR(5) NOT NULL,
+             POLICY_CODE                    CHAR(10),
+             POLICY_NAME                    CHAR(25),
+             POLICY_TYPE                    CHAR(10),
+             TERM                           CHAR(7),
+             POLICY_AMOUNT                  CHAR(13),
+             MATURITY_PERIOD                INTEGER
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE INSURANCE                          *
+      ******************************************************************
+       01  DCLINSURANCE.
+      *                       POLICY_ID
+           10 HV2-POLICY-ID        PIC X(5).
+      *                       POLICY_CODE
+           10 HV2-POLICY-CODE      PIC X(10).
+      *                       POLICY_NAME
+           10 HV2-POLICY-NAME      PIC X(25).
+      *                       POLICY_TYPE
+           10 HV2-POLICY-TYPE      PIC X(10).
+      *                       TERM
+           10 HV2-TERM             PIC X(7).
+      *                       POLICY_AMOUNT
+           10 HV2-POLICY-AMOUNT    PIC X(13).
+      *                       MATURITY_PERIOD
+           10 HV2-MATURITY-PERIOD  PIC S9(9) USAGE COMP.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 7       *
+      ******************************************************************
+

@@ -1,0 +1,11 @@
+  CREATE TABLE INSURANCE(                                               00010000
+   POLICY_ID             CHAR(05) NOT NULL PRIMARY KEY                  00020000
+  ,POLICY_CODE           CHAR(10)                                       00030000
+  ,POLICY_NAME           CHAR(25)                                       00040000
+  ,POLICY_TYPE           CHAR(10)                                       00050000
+  ,TERM                  CHAR(07)                                       00060000
+  ,POLICY_AMOUNT         CHAR(13)                                       00070000
+  ,MATURITY_PERIOD       INTEGER                                        00080000
+  ) IN SHRDB4.SHRTS4;                                                   00090000
+  CREATE UNIQUE INDEX POLICY_ID_INDEX ON INSURANCE(POLICY_ID);          00100000
+

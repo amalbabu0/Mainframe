@@ -1,0 +1,220 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. ICT01CBM.                                            00020000
+       AUTHOR. TECN013.                                                 00021000
+       ENVIRONMENT DIVISION.                                            00030000
+       INPUT-OUTPUT SECTION.                                            00040000
+       FILE-CONTROL.                                                    00050000
+           SELECT TI001-PS   ASSIGN       TO INFLIPS1                   00060002
+                             ACCESS       IS SEQUENTIAL                 00070002
+                             ORGANIZATION IS SEQUENTIAL                 00080002
+                             FILE STATUS  IS WS05-FST-TI001.            00090002
+           SELECT TI002-KSDS ASSIGN       TO INFLIPS2                   00100002
+                             ACCESS       IS DYNAMIC                    00110029
+                             ORGANIZATION IS INDEXED                    00120005
+                             RECORD KEY   IS TI002-FLIGHT-NO            00121002
+                             FILE STATUS  IS WS05-FST-TI002.            00130002
+           SELECT TO001-PS   ASSIGN       TO OUTFLIPS                   00140002
+                             ACCESS       IS SEQUENTIAL                 00150002
+                             ORGANIZATION IS SEQUENTIAL                 00160002
+                             FILE STATUS  IS WS05-FST-TO001.            00170002
+       DATA DIVISION.                                                   00180001
+       FILE SECTION.                                                    00190001
+       FD TI001-PS.                                                     00200001
+       01 TI001-PS-REC.                                                 00210001
+           05 TI001-BOOKING-ID         PIC X(05).                       00220029
+           05 FILLER                   PIC X(01).                       00230029
+           05 TI001-FLIGHT-NO          PIC 9(05).                       00240029
+           05 FILLER                   PIC X(01).                       00250029
+           05 TI001-NO-OF-TICKETS      PIC 9(02).                       00260029
+           05 FILLER                   PIC X(01).                       00270029
+           05 TI001-CLASS              PIC X(02).                       00280029
+           05 FILLER                   PIC X(01).                       00281029
+           05 TI001-BOOKING-TYPE       PIC X(10).                       00282029
+           05 FILLER                   PIC X(52).                       00283029
+       FD TI002-KSDS.                                                   00290002
+       01 TI002-KSDS-REC.                                               00300002
+           05 TI002-FLIGHT-NO          PIC X(05).                       00310029
+           05 FILLER                   PIC X(01).                       00311029
+           05 TI002-DEPARTURE          PIC X(12).                       00320029
+           05 FILLER                   PIC X(01).                       00321029
+           05 TI002-ARRIVAL            PIC X(12).                       00330029
+           05 FILLER                   PIC X(01).                       00331029
+           05 TI002-FARE               PIC 9(04).9(02).                 00340029
+           05 FILLER                   PIC X(01).                       00341029
+           05 TI002-CLASS              PIC X(02).                       00350029
+           05 FILLER                   PIC X(01).                       00351029
+           05 TI002-SEATS-AVAILABLE    PIC 9(02).                       00360029
+           05 FILLER                   PIC X(35).                       00361029
+       FD TO001-PS.                                                     00370002
+       01 TO001-PS-REC.                                                 00380002
+           05 TO001-BOOKING-ID         PIC X(05).                       00390029
+           05 FILLER                   PIC X(01).                       00391029
+           05 TO001-FLIGHT-NO          PIC 9(05).                       00400029
+           05 FILLER                   PIC X(01).                       00401029
+           05 TO001-DEPARTURE          PIC X(12).                       00410029
+           05 FILLER                   PIC X(01).                       00411029
+           05 TO001-ARRIVAL            PIC X(12).                       00420029
+           05 FILLER                   PIC X(01).                       00421029
+           05 TO001-TOTALFARE          PIC 9(06).9(02).                 00430029
+           05 FILLER                   PIC X(01).                       00431029
+           05 TO001-STATUS             PIC X(15).                       00440029
+           05 FILLER                   PIC X(17).                       00450029
+       WORKING-STORAGE SECTION.                                         00460002
+       01 WS01-VARS.                                                    00470002
+           05 WS05-FST-TI001           PIC 9(02).                       00480029
+           05 WS05-FST-TI002           PIC 9(02).                       00490029
+           05 WS05-FST-TO001           PIC 9(02).                       00500029
+           05 WS05-TABLE OCCURS 100 TIMES INDEXED BY WS-INDEX.          00500129
+               10 WS10-FLIGHT-NO       PIC 9(05).                       00500229
+               10 WS10-TOTALFARE       PIC 9(06)V9(02).                 00500329
+               10 WS10-NO-OF-TICKETS   PIC 9(02).                       00500429
+               10 WS10-SEATS-AVAILABLE PIC 9(02).                       00500529
+               10 WS10-DEPARTURE       PIC X(12).                       00500629
+               10 WS10-ARRIVAL         PIC X(12).                       00500729
+               10 WS10-CLASS           PIC X(02).                       00500829
+           05 WS05-FARE                PIC 9(04)V9(02).                 00500929
+           05 WS05-STATUS              PIC X(15).                       00504029
+       PROCEDURE DIVISION.                                              00510002
+       0000-MAIN-PARA.                                                  00520002
+           PERFORM 1000-INIT-PARA                                       00530002
+           PERFORM 3000-PROC-PARA                                       00540002
+              THRU 3000-PROC-PARA-EXIT                                  00550002
+           PERFORM 9000-TERM-PARA                                       00560002
+           .                                                            00570002
+       1000-INIT-PARA.                                                  00580002
+           SET WS-INDEX TO 1                                            00581029
+           CONTINUE                                                     00590002
+           .                                                            00600002
+       9000-TERM-PARA.                                                  00601004
+           STOP RUN                                                     00602004
+           .                                                            00603004
+       3000-PROC-PARA.                                                  00610002
+           PERFORM 3100-OPEN-PARA                                       00620002
+              THRU 3100-OPEN-PARA-EXIT                                  00630002
+           PERFORM 3200-READ-PARA                                       00640002
+              THRU 3200-READ-PARA-EXIT                                  00650002
+             UNTIL WS05-FST-TI001 = 10                                  00660029
+           PERFORM 3300-CLOSE-PARA                                      00670002
+              THRU 3300-CLOSE-PARA-EXIT                                 00680002
+           .                                                            00690002
+       3000-PROC-PARA-EXIT.                                             00700002
+           EXIT                                                         00710002
+           .                                                            00720002
+       3100-OPEN-PARA.                                                  00730002
+           OPEN INPUT TI001-PS                                          00740002
+           EVALUATE TRUE                                                00750002
+               WHEN WS05-FST-TI001 = 00                                 00760002
+                   DISPLAY 'TI001 OPENED'                               00761015
+                   CONTINUE                                             00770002
+               WHEN OTHER                                               00780002
+                   PERFORM 9000-TERM-PARA                               00790002
+           END-EVALUATE                                                 00800002
+           OPEN INPUT TI002-KSDS                                        00801008
+           EVALUATE TRUE                                                00802002
+               WHEN WS05-FST-TI002 = 00                                 00803002
+                   DISPLAY 'TI002 OPENED'                               00803115
+                   CONTINUE                                             00804002
+               WHEN OTHER                                               00805002
+                   PERFORM 9000-TERM-PARA                               00806002
+           END-EVALUATE                                                 00807002
+           OPEN OUTPUT TO001-PS                                         00808002
+           EVALUATE TRUE                                                00809002
+               WHEN WS05-FST-TO001 = 00                                 00809102
+                   DISPLAY 'TO001 OPENED'                               00809215
+                   CONTINUE                                             00809302
+               WHEN OTHER                                               00809402
+                   PERFORM 9000-TERM-PARA                               00809502
+           END-EVALUATE                                                 00809602
+           .                                                            00810002
+       3100-OPEN-PARA-EXIT.                                             00820002
+           EXIT                                                         00830002
+           .                                                            00840002
+       3200-READ-PARA.                                                  00850002
+           MOVE SPACES TO TI001-PS-REC TI002-KSDS-REC TO001-PS-REC      00860008
+           READ TI001-PS                                                00870002
+           EVALUATE TRUE                                                00880029
+           WHEN WS05-FST-TI001 = 00                                     00890029
+               PERFORM 3210-VALIDATION-PARA                             00900029
+                  THRU 3210-VALIDATION-PARA-EXIT                        00910029
+           WHEN WS05-FST-TI001 = 10                                     00920029
+               DISPLAY 'ALL PS2 RECORDS WERE READ.'                     00920129
+           WHEN OTHER                                                   00920229
+               PERFORM 9000-TERM-PARA                                   00920329
+           .                                                            00970002
+       3200-READ-PARA-EXIT.                                             00980002
+           EXIT                                                         00990002
+           .                                                            01000002
+       3210-VALIDATION-PARA.                                            01010002
+           EVALUATE TRUE                                                01020002
+           WHEN FUNCTION LENGTH (TI001-BOOKING-ID) = 5 AND              01030029
+                            TI001-FLIGHT-NO IS NUMERIC AND              01050029
+                            TI001-NO-OF-TICKETS < 50   AND              01060029
+                            (TI001-CLASS = 'FC'        OR               01070029
+                             TI001-CLASS = 'EC')                        01080029
+               PERFORM 3211-CALCULATION-PARA                            01090029
+                  THRU 3211-CALCULATION-PARA-EXIT                       01100029
+               PERFORM 3212-WRITE-PARA                                  01101029
+                  THRU 3212-WRITE-PARA-EXIT                             01102029
+           END-EVALUATE                                                 01110029
+           .                                                            01120029
+       3210-VALIDATION-PARA-EXIT.                                       01130029
+           EXIT                                                         01140029
+           .                                                            01150029
+       3211-CALCULATION-PARA.                                           01160029
+           MOVE TI001-FLIGHT-NO       TO TI002-FLIGHT-NO                01170029
+           READ TI002-KSDS                                              01180029
+           MOVE TI001-NO-OF-TICKETS   TO WS10-NO-OF-TICKETS   (WS-INDEX)01181029
+           MOVE TI002-FARE            TO WS05-FARE                      01182030
+           MOVE TI002-FLIGHT-NO       TO WS10-FLIGHT-NO       (WS-INDEX)01184029
+           MOVE TI002-SEATS-AVAILABLE TO WS10-SEATS-AVAILABLE (WS-INDEX)01185029
+           MOVE TI002-DEPARTURE       TO WS10-DEPARTURE       (WS-INDEX)01186029
+           MOVE TI002-ARRIVAL         TO WS10-ARRIVAL         (WS-INDEX)01187029
+           MOVE TI002-CLASS           TO WS10-CLASS           (WS-INDEX)01188029
+           EVALUATE TRUE                                                01190029
+           WHEN TI001-CLASS = TI002-CLASS                               01200029
+               COMPUTE   WS10-TOTALFARE     (WS-INDEX)                  01210029
+                       = WS10-NO-OF-TICKETS (WS-INDEX) * WS05-FARE      01211029
+           WHEN OTHER                                                   01220029
+               MOVE ZEROS TO WS10-TOTALFARE (WS-INDEX)                  01230029
+           END-EVALUATE                                                 01240029
+           EVALUATE TRUE                                                01250029
+           WHEN TI001-BOOKING-TYPE = 'ONLINE    '                       01260029
+               ADD 100    TO WS10-TOTALFARE (WS-INDEX)                  01270029
+           END-EVALUATE                                                 01280029
+           EVALUATE TRUE                                                01290029
+           WHEN WS10-NO-OF-TICKETS   (WS-INDEX) <                       01300029
+                WS10-SEATS-AVAILABLE (WS-INDEX)                         01310029
+                MOVE 'CONFIRMED      ' TO WS05-STATUS                   01320029
+           WHEN OTHER                                                   01330029
+                MOVE 'NOT CONFIRMED  ' TO WS05-STATUS                   01340029
+           END-EVALUATE                                                 01350029
+           .                                                            01360029
+       3211-CALCULATION-PARA-EXIT.                                      01370029
+           EXIT                                                         01380029
+           .                                                            01390029
+       3212-WRITE-PARA.                                                 01400029
+           MOVE TI001-BOOKING-ID               TO TO001-BOOKING-ID      01410030
+           MOVE WS10-FLIGHT-NO (WS-INDEX)      TO TO001-FLIGHT-NO       01420029
+           MOVE WS10-DEPARTURE (WS-INDEX)      TO TO001-DEPARTURE       01430029
+           MOVE WS10-ARRIVAL   (WS-INDEX)      TO TO001-ARRIVAL         01440029
+           MOVE WS10-TOTALFARE (WS-INDEX)      TO TO001-TOTALFARE       01450029
+           MOVE WS05-STATUS                    TO TO001-STATUS          01460029
+           WRITE TO001-PS-REC                                           01470029
+           SET WS-INDEX UP BY 1                                         01480029
+           EVALUATE TRUE                                                01490029
+           WHEN WS05-FST-TO001 = 00                                     01500029
+               DISPLAY 'RECORD IS WRITTEN.'                             01510029
+           WHEN OTHER                                                   01520029
+               DISPLAY 'UNABLE TO WRITE THE RECORD.'                    01530029
+           END-EVALUATE                                                 01540029
+           .                                                            01550029
+       3212-WRITE-PARA-EXIT.                                            01560029
+           EXIT                                                         01570029
+           .                                                            01580029
+       3300-CLOSE-PARA.                                                 01590029
+           CLOSE TI001-PS TI002-KSDS TO001-PS                           01600029
+           .                                                            01610029
+       3300-CLOSE-PARA-EXIT.                                            01620029
+           EXIT                                                         01630029
+           .                                                            01640029
+

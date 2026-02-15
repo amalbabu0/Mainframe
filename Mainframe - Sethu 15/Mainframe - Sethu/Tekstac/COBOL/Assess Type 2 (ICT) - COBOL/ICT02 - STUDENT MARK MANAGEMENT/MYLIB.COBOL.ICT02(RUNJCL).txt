@@ -1,0 +1,8 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//RUN      EXEC PGM=ICT02CBM                                            00020000
+//STEPLIB  DD DSN=TECN013.MYLIB.COBOL.LOADLIB,DISP=SHR                  00030000
+//SYSPRINT DD SYSOUT=*                                                  00040000
+//INPKS    DD DSN=TECN013.MYDATA.ICT02.KSDS,DISP=SHR                    00050001
+//OUTPS    DD DSN=TECN013.MYDATA.ICT02.PS3,DISP=SHR                     00060001
+//SYSIN    DD DUMMY                                                     00070000
+

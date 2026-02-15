@@ -1,0 +1,164 @@
+       IDENTIFICATION DIVISION.                                         00010001
+       PROGRAM-ID. COBCS03M.                                            00020001
+       AUTHOR. ANIL.                                                    00030001
+       ENVIRONMENT DIVISION.                                            00040001
+       INPUT-OUTPUT SECTION.                                            00050001
+       FILE-CONTROL.                                                    00060001
+      *INPUT DATASET                                                    00061001
+           SELECT TI001-INPUT ASSIGN TO INPOLPS                         00070002
+           ORGANIZATION IS SEQUENTIAL                                   00080001
+           ACCESS MODE IS SEQUENTIAL                                    00090001
+           FILE STATUS IS WS-FILE-STATUS1.                              00100001
+      *OUTPUT DATASET                                                   00110001
+           SELECT TO001-OUTPUT ASSIGN TO OUTPOLPS                       00120004
+           ORGANIZATION IS INDEXED                                      00130001
+           ACCESS MODE IS SEQUENTIAL                                    00140001
+           RECORD KEY IS TO001-POLICY-NUMBER                            00141005
+           FILE STATUS IS WS-FILE-STATUS2.                              00150001
+       DATA DIVISION.                                                   00160001
+       FILE SECTION.                                                    00170001
+       FD TI001-INPUT.                                                  00180001
+       01 TI001-INPUT-RECORD.                                           00190001
+           05 TI001-POLICY-NUMBER         PIC    X(10).                 00200001
+           05 FILLER                      PIC    X.                     00210001
+           05 TI001-POLICY-HOLDER-NAME    PIC    X(20).                 00220001
+           05 FILLER                      PIC    X.                     00230001
+           05 TI001-POLICY-TERM           PIC    9(2).                  00240001
+           05 FILLER                      PIC    X.                     00250001
+           05 TI001-POLICY-START-YEAR     PIC    9(4).                  00260001
+           05 FILLER                      PIC    X.                     00270001
+           05 TI001-AGENT-CODE            PIC    X(8).                  00280001
+           05 FILLER                      PIC    X(32).                 00290002
+       FD TO001-OUTPUT.                                                 00300002
+       01 TO001-OUTPUT-RECORD.                                          00310002
+           05 TO001-POLICY-NUMBER         PIC    X(10).                 00320002
+           05 FILLER                      PIC    X.                     00330002
+           05 TO001-POLICY-HOLDER-NAME    PIC    X(20).                 00340002
+           05 FILLER                      PIC    X.                     00350002
+           05 TO001-POLICY-AGE            PIC    9(2).                  00360002
+           05 FILLER                      PIC    X.                     00370002
+           05 TO001-AGENT-CODE            PIC    X(8).                  00380002
+           05 FILLER                      PIC    X(37).                 00390002
+       WORKING-STORAGE SECTION.                                         00400002
+       01 WS-G-FILE-STATUS.                                             00410002
+           05 WS-FILE-STATUS1             PIC    X(02).                 00420002
+              88 WFS1-SUCCESS             VALUE  '00'.                  00422002
+              88 WFS1-EOF                 VALUE  '10'.                  00423002
+           05 WS-FILE-STATUS2             PIC    X(02).                 00424002
+              88 WFS2-SUCCESS             VALUE  '00'.                  00425002
+              88 WFS2-EOF                 VALUE  '10'.                  00426002
+        77 WS-POLICY-AGE          PIC   9(2).                           00427018
+        PROCEDURE DIVISION.                                             00430002
+        0000-MAIN-PARA.                                                 00440002
+             PERFORM 1000-INITIALIZATION-PARA THRU                      00441006
+             1000-INITIALIZATION-PARA-EXIT.                             00442007
+             PERFORM 2000-PROCESS-PARA THRU                             00443006
+             2000-PROCESS-PARA-EXIT.                                    00444006
+             PERFORM 9000-TERMINATION-PARA THRU                         00445006
+             9000-TERMINATION-PARA-EXIT.                                00446006
+        0000-MAIN-PARA-EXIT.                                            00450002
+             EXIT.                                                      00451006
+        1000-INITIALIZATION-PARA.                                       00460002
+      *      DISPLAY 'INITIALIZATION-PARA'.                             00461002
+        1000-INITIALIZATION-PARA-EXIT.                                  00470002
+             EXIT.                                                      00480002
+        2000-PROCESS-PARA.                                              00490002
+             PERFORM 2100-FILE-OPEN-PARA                                00500004
+               THRU 2100-FILE-OPEN-PARA-EXIT.                           00510004
+               DISPLAY 'FILE STATUS IS' WS-FILE-STATUS1,                00511009
+               WS-FILE-STATUS2.                                         00512009
+              IF WFS1-SUCCESS                                           00520004
+             PERFORM 2200-READ-PARA                                     00530004
+              THRU 2200-READ-PARA-EXIT                                  00540004
+             UNTIL WFS1-EOF                                             00550004
+              END-IF.                                                   00560004
+        2000-PROCESS-PARA-EXIT.                                         00570004
+             EXIT.                                                      00580004
+        2100-FILE-OPEN-PARA.                                            00590004
+             OPEN INPUT TI001-INPUT                                     00600004
+             EVALUATE TRUE                                              00610004
+              WHEN WFS1-SUCCESS                                         00620004
+              CONTINUE                                                  00630004
+              WHEN OTHER                                                00640004
+                 DISPLAY "INPUT FILE OPEN FAILED"                       00650004
+                 DISPLAY 'FILE STATUS' WS-FILE-STATUS1                  00660004
+              END-EVALUATE                                              00670004
+             OPEN OUTPUT TO001-OUTPUT                                   00680004
+             EVALUATE TRUE                                              00690004
+              WHEN WFS2-SUCCESS                                         00700004
+              CONTINUE                                                  00710004
+              WHEN OTHER                                                00720004
+                 DISPLAY "OUTPUT FILE OPEN FAILED"                      00730004
+                 DISPLAY 'FILE STATUS' WS-FILE-STATUS2                  00740004
+              END-EVALUATE.                                             00750004
+         2100-FILE-OPEN-PARA-EXIT.                                      00760004
+              EXIT.                                                     00770004
+         2200-READ-PARA.                                                00780004
+              READ TI001-INPUT                                          00790004
+              EVALUATE TRUE                                             00800004
+               WHEN WFS1-SUCCESS                                        00810004
+               PERFORM 2300-VALIDATION-PARA                             00820004
+                THRU 2300-VALIDATION-PARA-EXIT                          00830004
+               WHEN WFS1-EOF                                            00840004
+                CONTINUE                                                00850004
+               WHEN                                                     00860004
+                 OTHER                                                  00870004
+                  DISPLAY "INPUT  FILE READ FAILED"                     00880004
+                  DISPLAY 'FILE STATUS' WS-FILE-STATUS1                 00890004
+             PERFORM 9000-TERMINATION-PARA                              00900019
+                THRU 9000-TERMINATION-PARA                              00910019
+             END-EVALUATE.                                              00920019
+         2200-READ-PARA-EXIT.                                           00930004
+             EXIT.                                                      00940019
+         2300-VALIDATION-PARA.                                          00941004
+           IF TI001-POLICY-NUMBER IS NOT NUMERIC OR TI001-POLICY-NUMBER 00942027
+           IS NOT ALPHABETIC AND TI001-POLICY-TERM = 10 OR 15 OR 20     00943028
+           AND TI001-AGENT-CODE IS NOT EQUAL TO ' ' THEN                00944029
+             CALL 'COBCS03S' USING TI001-POLICY-TERM                    00948032
+             TI001-POLICY-START-YEAR WS-POLICY-AGE                      00949036
+             PERFORM 2500-WRITE-PARA                                    00949219
+             THRU 2500-WRITE-PARA-EXIT                                  00949323
+             ELSE                                                       00949425
+             DISPLAY 'RECORD IS INVALID'                                00949530
+             END-IF.                                                    00949623
+         2300-VALIDATION-PARA-EXIT.                                     00949704
+             EXIT.                                                      00949819
+         2500-WRITE-PARA.                                               00949904
+             IF WS-POLICY-AGE > 5 THEN                                  00950034
+             MOVE TI001-POLICY-NUMBER TO TO001-POLICY-NUMBER            00950119
+             MOVE TI001-POLICY-HOLDER-NAME TO TO001-POLICY-HOLDER-NAME  00950219
+             MOVE WS-POLICY-AGE TO TO001-POLICY-AGE                     00950319
+             MOVE TI001-AGENT-CODE TO TO001-AGENT-CODE                  00950434
+             DISPLAY TO001-OUTPUT-RECORD                                00950534
+             WRITE TO001-OUTPUT-RECORD                                  00950637
+             ELSE                                                       00950734
+             DISPLAY 'POLICY AGE'                                       00950834
+             END-IF.                                                    00951034
+         2500-WRITE-PARA-EXIT.                                          00951104
+              EXIT.                                                     00951204
+         9000-TERMINATION-PARA.                                         00952004
+              PERFORM 9100-CLOSE-PARA                                   00960004
+              THRU 9100-CLOSE-PARA-EXIT.                                00970004
+              STOP RUN.                                                 00980004
+         9000-TERMINATION-PARA-EXIT.                                    00990004
+              EXIT.                                                     01000004
+         9100-CLOSE-PARA.                                               01010004
+               CLOSE TI001-INPUT                                        01020004
+                EVALUATE TRUE                                           01030004
+                 WHEN WFS1-SUCCESS                                      01040004
+                   DISPLAY 'INPUT FILE CLOSED'                          01050004
+                 WHEN OTHER                                             01060004
+                   DISPLAY 'INPUT FILE NOT CLOSED'                      01070004
+                   DISPLAY WS-FILE-STATUS1                              01080004
+                END-EVALUATE                                            01090005
+               CLOSE TO001-OUTPUT                                       01100004
+                 EVALUATE TRUE                                          01110004
+                  WHEN WFS2-SUCCESS                                     01120004
+                    DISPLAY 'OUTPUT FILE CLOSED'                        01130004
+                  WHEN OTHER                                            01140004
+                    DISPLAY 'OUTPUT FILE NOT CLOSED'                    01150004
+                    DISPLAY WS-FILE-STATUS2                             01160004
+                  END-EVALUATE.                                         01170004
+         9100-CLOSE-PARA-EXIT.                                          01180004
+                  EXIT.                                                 01190004
+

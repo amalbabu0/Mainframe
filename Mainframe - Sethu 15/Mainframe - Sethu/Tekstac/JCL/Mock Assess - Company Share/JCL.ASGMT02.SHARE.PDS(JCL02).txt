@@ -1,0 +1,13 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//  SET DSNAME=TECN013.JCL.ASGMT02.SHARE                                00020000
+//  JCLLIB ORDER=&DSNAME..PDS                                           00030000
+//STEP010  EXEC PROC=KSDSCRT                                            00040000
+//STEP020  EXEC PGM=IDCAMS                                              00050000
+//SYSPRINT DD SYSOUT=*                                                  00060000
+//SYSIN    DD *                                                         00070000
+  PRINT INDATASET(&DSNAME..PS2) -                                       00080000
+  CHAR COUNT(1)                                                         00090000
+/*                                                                      00100000
+//  IF (STEP020.RC = 0) THEN                                            00110000
+//STEP030  DD PGM=IDCAMS                                                00120000
+

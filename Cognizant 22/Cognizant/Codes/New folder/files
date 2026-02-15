@@ -1,0 +1,191 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. IO.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+            SELECT TI001-PS ASSIGN TO DD1
+            ORGANIZATION IS SEQUENTIAL
+            ACCESS       IS SEQUENTIAL
+            FILE STATUS WS05-FST-TI001.
+            SELECT MI001-KSDS ASSIGN TO DD2
+            ORGANIZATION IS INDEXED
+            ACCESS       IS RANDOM
+            RECORD KEY IS MI001-ID
+            FILE STATUS WS05-FST-MI001.
+       DATA DIVISION.
+       FILE SECTION.
+       FD TI001-PS.
+       01 TI001-PS-REC.
+          05 TI001-ID      PIC X(05).
+          05 FILLER        PIC X(01).
+          05 TI001-OPT     PIC A(03).
+          05 FILLER        PIC X(71).
+       FD MI001-KSDS.
+       01 MI001-KSDS-REC.
+          05 MI001-ID      PIC X(05).
+          05 FILLER        PIC X(01).
+          05 MI001-SHR     PIC 9(03).
+          05 FILLER        PIC X(01).
+          05 MI001-CMP-NA  PIC A(19).
+          05 FILLER        PIC X(01).
+          05 MI001-PZE     PIC 9(03).9(02).
+          05 FILLER        PIC X(44).
+       WORKING-STORAGE SECTION.
+       01 WS01-VARS.
+          05 WS05-FST-TI001 PIC 9(02).
+             88 TI001-SUCC  VALUE 00.
+             88 TI001-EOF   VALUE 10.
+          05 WS05-FST-MI001 PIC 9(02).
+             88 MI001-SUCC  VALUE 00.
+             88 MI001-EOF   VALUE 10.
+          05 WS05-PZE       PIC 9(03)V9(02).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INIT-PARA
+              THRU 1000-INIT-PARA-EXIT
+           PERFORM 3000-PROC-PARA
+              THRU 3000-PROC-PARA-EXIT
+           PERFORM 9000-TERM-PARA
+           .
+       1000-INIT-PARA.
+           CONTINUE
+           .
+       1000-INIT-PARA-EXIT.
+           EXIT
+           .
+       3000-PROC-PARA.
+           PERFORM 3100-OPEN-PARA
+              THRU 3100-OPEN-PARA-EXIT
+           PERFORM 3200-READ-PARA
+              THRU 3200-READ-PARA-EXIT
+              UNTIL WS05-FST-TI001 = 10
+           PERFORM 3300-CLOSE-PARA
+              THRU 3300-CLOSE-PARA-EXIT
+           .
+       3000-PROC-PARA-EXIT.
+           EXIT
+           .
+       9000-TERM-PARA.
+           STOP RUN
+           .
+       3100-OPEN-PARA.
+           OPEN INPUT TI001-PS
+           EVALUATE TRUE
+           WHEN TI001-SUCC
+              DISPLAY ' TI001 IS  OPEN '
+           WHEN OTHER
+              DISPLAY ' TI001 IS FAILED' WS05-FST-TI001
+              PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           OPEN I-O MI001-KSDS
+           EVALUATE TRUE
+           WHEN MI001-SUCC
+              DISPLAY ' MI001 IS  OPEN '
+           WHEN OTHER
+              DISPLAY ' MI001 IS FAILED' WS05-FST-MI001
+              PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           .
+       3100-OPEN-PARA-EXIT.
+           EXIT
+           .
+       3200-READ-PARA.
+           READ TI001-PS
+           EVALUATE TRUE
+           WHEN TI001-SUCC
+              DISPLAY 'TI001 IS READED'
+           PERFORM 3210-BRANCH-PARA
+              THRU 3210-BRANCH-PARA-EXIT
+           WHEN TI001-EOF
+              DISPLAY 'ALL RECORDS PROCESED'
+           WHEN OTHER
+              DISPLAY 'READ FAILED'
+           END-EVALUATE
+           .
+       3200-READ-PARA-EXIT.
+           EXIT
+           .
+       3300-CLOSE-PARA.
+           CLOSE TI001-PS, MI001-KSDS
+           .
+       3300-CLOSE-PARA-EXIT.
+           EXIT
+           .
+       3210-BRANCH-PARA.
+           EVALUATE TRUE
+           WHEN TI001-OPT = 'DEL'
+           PERFORM 3211-DEL-PARA
+              THRU 3211-DEL-PARA-EXIT
+           WHEN TI001-OPT = 'RED'
+           PERFORM 3212-RED-PARA
+              THRU 3212-RED-PARA-EXIT
+           WHEN TI001-OPT = 'MOD'
+           PERFORM 3213-MOD-PARA
+              THRU 3213-MOD-PARA-EXIT
+           WHEN OTHER
+              DISPLAY ' INVALID OPTION ' TI001-OPT
+           END-EVALUATE
+           .
+       3210-BRANCH-PARA-EXIT.
+           EXIT
+           .
+       3211-DEL-PARA.
+           MOVE TI001-ID TO MI001-ID
+           DELETE MI001-KSDS
+           EVALUATE TRUE
+           WHEN MI001-SUCC
+                DISPLAY 'DELETE IS SUCCESS' TI001-ID
+                DISPLAY MI001-KSDS-REC
+           WHEN OTHER
+                DISPLAY ' KSDS IS FAILED' WS05-FST-MI001
+           END-EVALUATE
+           .
+       3211-DEL-PARA-EXIT.
+           EXIT
+           .
+       3212-RED-PARA.
+           MOVE TI001-ID TO MI001-ID
+           READ MI001-KSDS
+           EVALUATE TRUE
+           WHEN MI001-SUCC
+                DISPLAY 'MATCHING RECORD IS FOUND'
+                DISPLAY MI001-KSDS-REC
+           WHEN OTHER
+                DISPLAY ' KSDS IS FAILED' WS05-FST-MI001
+           END-EVALUATE
+           .
+       3212-RED-PARA-EXIT.
+           EXIT
+           .
+       3213-MOD-PARA.
+           MOVE TI001-ID TO MI001-ID
+           READ MI001-KSDS
+           EVALUATE TRUE
+           WHEN MI001-SUCC
+              PERFORM 3214-REWRITE-PARA
+                 THRU 3214-REWRITE-PARA-EXIT
+           WHEN OTHER
+                DISPLAY 'MODIFY IS FAILED' WS05-FST-MI001
+           END-EVALUATE
+           .
+       3213-MOD-PARA-EXIT.
+           EXIT
+           .
+       3214-REWRITE-PARA.
+           MOVE 0 TO WS05-PZE
+           MOVE MI001-PZE TO WS05-PZE
+           MOVE 0 TO MI001-PZE
+           COMPUTE WS05-PZE = WS05-PZE * 1.15
+           MOVE WS05-PZE TO MI001-PZE
+           REWRITE MI001-KSDS-REC
+           EVALUATE TRUE
+           WHEN MI001-SUCC
+                DISPLAY 'RECORD MODIFIED'
+           WHEN OTHER
+                DISPLAY 'REWRITE IS FAILED' WS05-FST-MI001
+           END-EVALUATE
+           .
+       3214-REWRITE-PARA-EXIT.
+           EXIT
+           .
+

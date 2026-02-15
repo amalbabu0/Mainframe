@@ -1,0 +1,43 @@
+      ******************************************************************
+      * DCLGEN TABLE(CUSTM)                                            *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTMDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTM TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             POL_NO                         INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_GENDER                    CHAR(1),
+             CUST_ANNUAL_INCOME             DECIMAL(8, 2) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTM                              *
+      ******************************************************************
+       01  DCLCUSTM.
+      *    *************************************************************
+      *                       CUST_ID
+           10 ACUST-ID             PIC S9(9) USAGE COMP.
+      *    *************************************************************
+      *                       POL_NO
+           10 APOL-NO              PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 ACUST-NAME.
+      *                       CUST_NAME LENGTH
+              49 ACUST-NAME-LEN    PIC S9(4) USAGE COMP.
+      *                       CUST_NAME
+              49 ACUST-NAME-TEXT   PIC X(15).
+      *    *************************************************************
+      *                       CUST_GENDER
+           10 ACUST-GENDER         PIC X(1).
+      *    *************************************************************
+      *                       CUST_ANNUAL_INCOME
+           10 ACUST-ANNUAL-INCOME  PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************

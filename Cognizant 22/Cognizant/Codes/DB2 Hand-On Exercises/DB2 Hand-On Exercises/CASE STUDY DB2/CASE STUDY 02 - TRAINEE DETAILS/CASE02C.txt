@@ -1,0 +1,153 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. CASE02C.                                            00020000
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WSS-ERR-MSG.                                                 00050000
+            05 WS-ERR-MSG.                                              00060000
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE 800.           00070000
+              10 WS-ERR-TEXT       PIC  X(80) OCCURS 10 TIMES.          00080000
+            05 WS-ERR-LRECL        PIC  S9(4) COMP VALUE 80.            00090000
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00100000
+            88 WS-EOT              VALUE  +100.                         00110000
+            88 WS-SUCCESS          VALUE  +000.                         00120000
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00130000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00140000
+            EXEC SQL INCLUDE TRINDCL END-EXEC.                          00150001
+            EXEC SQL INCLUDE TRINFDCL END-EXEC.                         00160001
+            EXEC SQL INCLUDE LOCDCL END-EXEC.                           00170001
+            EXEC SQL                                                    00190000
+            DECLARE CS-TB-TRAINEE CURSOR FOR                            00200001
+            SELECT A.TRAINEE_ID,A.TRAINEE_NAME,                         00210001
+            A.TRAINEE_LOCATION_CODE,                                    00211001
+            B.LOCATION_NAME                                             00220001
+            FROM TRAINEE_INF A , LOCATION B WHERE                       00230001
+            A.TRAINEE_LOCATION_CODE = B.LOCATION_CODE                   00240001
+            END-EXEC.                                                   00260000
+        PROCEDURE DIVISION.                                             00270000
+        0000-MAIN-PARA.                                                 00280000
+                 PERFORM 1000-INITIALIZATION-PARA THRU                  00290000
+                 1000-INITIALIZATION-PARA-EXIT                          00300000
+                 PERFORM 2000-PROCESS-PARA THRU                         00310000
+                 2000-PROCESS-PARA-EXIT                                 00320000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00330000
+                 9000-TERMINATION-PARA-EXIT.                            00340000
+        0000-MAIN-PARA-EXIT.                                            00350000
+                 EXIT.                                                  00360000
+        1000-INITIALIZATION-PARA.                                       00370000
+        1000-INITIALIZATION-PARA-EXIT.                                  00380000
+                 EXIT.                                                  00390000
+        2000-PROCESS-PARA.                                              00400000
+                 PERFORM 2100-OPEN-PARA THRU                            00410000
+                 2100-OPEN-PARA-EXIT                                    00420000
+                 PERFORM 2200-FETCH-PARA THRU                           00430000
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00440000
+                 PERFORM 3000-CLOSE-PARA THRU                           00450000
+                 3000-CLOSE-PARA-EXIT.                                  00460000
+        2000-PROCESS-PARA-EXIT.                                         00470000
+                 EXIT.                                                  00480000
+        2100-OPEN-PARA.                                                 00490000
+                 EXEC SQL OPEN CS-TB-TRAINEE END-EXEC.                  00500001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00510000
+                 EVALUATE TRUE                                          00520000
+                 WHEN WS-SUCCESS                                        00530000
+                 CONTINUE                                               00540000
+                 WHEN WS-EOT                                            00550000
+                 CONTINUE                                               00560000
+                 WHEN OTHER                                             00570000
+                 DISPLAY 'CURSOR NOT OPENED'                            00580000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00590000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00600000
+                 DISPLAY WS-ERR-MSG                                     00610000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00620000
+                 9000-TERMINATION-PARA-EXIT                             00630000
+                 END-EVALUATE.                                          00640000
+        2100-OPEN-PARA-EXIT.                                            00650000
+                 EXIT.                                                  00660000
+        2200-FETCH-PARA.                                                00670000
+                 EXEC SQL FETCH CS-TB-TRAINEE INTO :ATRAINEE-ID,        00680003
+                 :ATRAINEE-NAME,                                        00690001
+                 :ATRAINEE-LOCATION-CODE:NULL-IND,                      00700003
+                 :BLOCATION-NAME                                        00720001
+                 END-EXEC.                                              00730000
+                 MOVE SQLCODE TO WSS-SQLCODE                            00740000
+                 EVALUATE TRUE                                          00750000
+                 WHEN WS-SUCCESS                                        00760000
+                 PERFORM 2300-MOVE-PARA THRU                            00770000
+                 2300-MOVE-PARA-EXIT                                    00780000
+                 WHEN WS-EOT                                            00790000
+                 CONTINUE                                               00800000
+                 WHEN OTHER                                             00810000
+                 DISPLAY 'CURSOR NOT FETCHED'                           00820000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00830000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00840000
+                 DISPLAY WS-ERR-MSG                                     00850000
+                 PERFORM 9000-TERMINATION-PARA THRU                     00860000
+                 9000-TERMINATION-PARA-EXIT                             00870000
+                 END-EVALUATE.                                          00880000
+         2200-FETCH-PARA-EXIT.                                          00890000
+                 EXIT.                                                  00900000
+         3000-CLOSE-PARA.                                               00910000
+                 EXEC SQL CLOSE CS-TB-TRAINEE END-EXEC.                 00920001
+                 MOVE SQLCODE TO WSS-SQLCODE                            00930000
+                 EVALUATE TRUE                                          00940000
+                 WHEN WS-SUCCESS                                        00950000
+                 CONTINUE                                               00960000
+                 WHEN OTHER                                             00970000
+                 DISPLAY 'CURSOR NOT CLOSED'                            00980000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00990000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01000000
+                 DISPLAY WS-ERR-MSG                                     01010000
+                 PERFORM 9000-TERMINATION-PARA THRU                     01020000
+                 9000-TERMINATION-PARA-EXIT                             01030000
+                 END-EVALUATE.                                          01040000
+         3000-CLOSE-PARA-EXIT.                                          01050000
+                 EXIT.                                                  01060000
+         2300-MOVE-PARA.                                                01070000
+                 IF (NULL-IND = -1)                                     01080000
+                 CONTINUE                                               01090000
+                 ELSE                                                   01100000
+                 MOVE 5 TO TRAINEE-ID-LEN                               01110002
+                 MOVE ATRAINEE-ID-TEXT TO TRAINEE-ID-TEXT               01120002
+                 MOVE 20 TO TRAINEE-NAME-LEN                            01130001
+                 MOVE ATRAINEE-NAME-TEXT TO TRAINEE-NAME-TEXT           01140001
+                 MOVE 15 TO TRAINEE-LOCATION-LEN                        01141005
+                 MOVE BLOCATION-NAME-TEXT TO TRAINEE-LOCATION-TEXT      01142002
+                 IF ATRAINEE-LOCATION-CODE = 'MUM' OR 'CHN'             01190002
+                 MOVE 'Y' TO TRAINEE-ONBOARD-STATUS                     01200002
+                 ELSE                                                   01210002
+                 MOVE 'N' TO TRAINEE-ONBOARD-STATUS                     01211002
+                 END-IF                                                 01240000
+                 MOVE SPACES TO ATRAINEE-ID                             01280002
+                 MOVE SPACES TO ATRAINEE-NAME                           01290002
+                 MOVE SPACES TO ATRAINEE-LOCATION-CODE                  01300002
+                 MOVE SPACES TO BLOCATION-NAME                          01310002
+                 END-IF                                                 01320000
+                 PERFORM 2400-INSERT-PARA THRU                          01340000
+                 2400-INSERT-PARA-EXIT.                                 01350000
+         2300-MOVE-PARA-EXIT.                                           01360000
+                 EXIT.                                                  01370000
+         2400-INSERT-PARA.                                              01380000
+                 EXEC SQL                                               01400000
+                 INSERT INTO TRAINEE VALUES (                           01410002
+                 :TRAINEE-ID,                                           01420004
+                 :TRAINEE-NAME,                                         01430002
+                 :TRAINEE-LOCATION,                                     01440002
+                 :TRAINEE-ONBOARD-STATUS )                              01450002
+                 END-EXEC.                                              01480000
+                 MOVE SQLCODE TO WSS-SQLCODE                            01490000
+                 EVALUATE TRUE                                          01500000
+                 WHEN WS-SUCCESS                                        01510000
+                 CONTINUE                                               01550000
+                 WHEN OTHER                                             01560000
+                 DISPLAY 'INSERT FAILED'                                01570000
+                 DISPLAY 'ERROR STATUS' SQLCODE                         01580000
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    01590000
+                 DISPLAY WS-ERR-MSG.                                    01600000
+         2400-INSERT-PARA-EXIT.                                         01610000
+                 EXIT.                                                  01620000
+         9000-TERMINATION-PARA.                                         01630000
+                 STOP RUN.                                              01640000
+         9000-TERMINATION-PARA-EXIT.                                    01650000
+                 EXIT.                                                  01660000
+         9100-CURSOR-CLOSE-PARA-EXIT.                                   01670000
+                 EXIT.                                                  01680000

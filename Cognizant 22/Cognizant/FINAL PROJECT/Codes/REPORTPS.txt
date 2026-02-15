@@ -1,0 +1,25 @@
+                        APPLICANTS DETAIL REPORT                        
+                                                                                
+DATE: 2024-04-10                                        PAGE: 1                 
+TIME: 03:57:23                                          REPORT ID: 1001         
+                                                                                
+APPROVED LOAN AMOUNT FOR NOVEMBER                                               
+                                                                                
+APPLICANT_ID   APPLICANT_NAME         STATE        APPROVED_LOAN_AMOUNT         
+------------   --------------         -----        --------------------         
+1000000001     JOHN COPER             TAMILNADU    01000000                     
+                                                                                
+------------------------------END OF PAGE-------------------------------
+                                                        PAGE: 2                 
+                                                        REPORT ID: 1001         
+                                                                                
+APPLICANT_ID   APPLICANT_NAME         STATE        APPROVED_LOAN_AMOUNT         
+------------   --------------         -----        --------------------         
+1000000009     DHILIP ANTONY          TAMILNADU    04350000                     
+                                                                                
+------------------------------END OF PAGE-------------------------------
+                                                                                
+ TOTAL APPROVED AMOUNT: 05350000                                                
+                                                                                
+-----------------------------END OF REPORT------------------------------
+

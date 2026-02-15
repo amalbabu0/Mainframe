@@ -1,0 +1,9 @@
+//TECN005V JOB NOTIFY=&SYSUID                                         
+//STEP1 EXEC PGM=IDCAMS                                              
+//SYSABEND DD SYSOUT=*                                                
+//DD1 DD DSN=IBMUSER.MYLIB.JCL3(JCLEX01),DISP=SHR
+//DD2 DD DSN=IBMUSER.MYLIB.TEST.JCL1(JCLEX02),DISP=SHR
+//SYSIN DD *
+   REPRO INFILE(DD1) OUTFILE(DD2)
+/*
+//

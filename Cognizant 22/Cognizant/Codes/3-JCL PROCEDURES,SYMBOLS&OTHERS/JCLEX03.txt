@@ -1,0 +1,14 @@
+//TECN005V JOB NOTIFY=&SYSUID                               
+// JCLLIB ORDER=TECN005.MYPROC.JCL                          
+//STEPA EXEC DSCOPY,INP=TECN005.MYLIB.JCL1,                 
+//          OUT=TECN005.MYSAMP.PDS1                         
+//SYSIN DD *                                                
+     COPY INDD=DD1,OUTDD=DD2                                
+     SELECT MEMBER=JCLEX01,JCLEX02                          
+/*                                                          
+//STEPB EXEC DSCOPY,INP=TECN005.MYLIB.JCL1,                 
+//          OUT=TECN005.MYSAMP.PDS2                         
+//SYSIN DD *                                                
+     COPY INDD=DD1,OUTDD=DD2                                
+     EXCLUDE MEMBER=JCLEX01,JCLEX02                         
+/*                                  

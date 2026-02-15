@@ -1,0 +1,8 @@
+//SYSIN DD *                                                            00010001
+  SORT FIELDS=(1,5,CH,A)                                                00020001
+    INREC IFTHEN=(WHEN=INIT,                                            00030003
+        OVERLAY=(32:1,5,CHANGE=(2,C'AC',C'ACTION',                      00040002
+                C'TH',C'THRILLER'),                                     00050002
+           NOMATCH=C'OTHERS'))                                          00060002
+/*                                                                      00070001
+

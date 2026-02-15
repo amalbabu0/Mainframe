@@ -1,0 +1,18 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=IDCAMS                                              00020000
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSIN    DD *                                                         00040000
+  DELETE TECN013.MYDATA.ICT02.KSDS                                      00050000
+  DEFINE CLUSTER(                 -                                     00060000
+  NAME(TECN013.MYDATA.ICT02.KSDS) -                                     00070000
+  TRACKS(10,10)                   -                                     00080000
+  VOLUME(ZAPRD4)                  -                                     00090000
+  RECORDSIZE(80,80)               -                                     00100000
+  CISZ(512)                       -                                     00110000
+  KEYS(5,0)                       -                                     00120000
+  FREESPACE(10,10)                -                                     00130000
+  INDEXED)                                                              00140000
+  REPRO INDATASET(TECN013.MYDATA.ICT02.PS2) -                           00150000
+        OUTDATASET(TECN013.MYDATA.ICT02.KSDS)                           00160000
+/*                                                                      00170000
+

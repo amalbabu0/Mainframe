@@ -1,0 +1,49 @@
+//TECN013A  JOB CLASS=A,MSGCLASS=A,NOTIFY=&SYSUID                       00010000
+// JCLLIB ORDER=(TECN013.JCL.MYPROC)                                    00011002
+//STEP010   EXEC PROC=KSDSCRT                                           00020003
+//STEP020   EXEC PGM=IDCAMS                                             00030000
+//SYSPRINT  DD SYSOUT=*                                                 00040000
+//SYSIN     DD *                                                        00050000
+  PRINT INDATASET(TECN013.JCL.ASSMT01.STUD.PS2) -                       00060003
+  CHAR COUNT(1)                                                         00061003
+/*                                                                      00070000
+// IF (STEP020.RC = 0) THEN                                             00080005
+//STEP030   EXEC PGM=IDCAMS                                             00090000
+//SYSPRINT  DD SYSOUT=*                                                 00120000
+//SYSIN     DD *                                                        00121003
+  REPRO INFILE(TECN013.JCL.ASSMT01.STUD.PS2) -                          00122006
+        OUTFILE(TECN013.JCL.ASSMT01.STUD.KSDS)                          00123003
+// ELSE                                                                 00130004
+//STEP040   EXEC PGM=IEBGENER                                           00140000
+//SYSUT1    DD *                                                        00150000
+DATASET IS EMPTY                                                        00160000
+/*                                                                      00170000
+//SYSUT2    DD SYSOUT=*                                                 00180000
+//SYSPRINT  DD SYSOUT=*                                                 00190000
+//SYSIN     DD DUMMY                                                    00200000
+// ENDIF                                                                00210004
+//STEP050   EXEC PGM=IDCAMS                                             00220000
+//SYSPRINT  DD SYSOUT=*                                                 00230000
+//SYSIN     DD *                                                        00240000
+  DEFINE ALTERNATIVEINDEX (NAME(TECN013.JCL.ASSMT01.STUD.AIX) -         00250007
+  RELATE(TECN013.JCL.ASSMT01.STUD.KSDS) -                               00260000
+  TRACK(10,10) -                                                        00261002
+  CONTROLINTERVALSIZE(512) -                                            00262005
+  VOLUME(ZAPRD4) -                                                      00263002
+  RECORDSIZE(80,80) -                                                   00264002
+  KEYS(7,8) -                                                           00270003
+  NONUNIQUEKEY)                                                         00271003
+/*                                                                      00280000
+//STEP060   EXEC PGM=IDCAMS                                             00290000
+//SYSPRINT  DD SYSOUT=*                                                 00300000
+//SYSIN     DD *                                                        00310000
+  BLDINDEX INDATASET(TECN013.JCL.ASSMT01.STUD.KSDS) -                   00320000
+  OUTDATASET(TECN013.JCL.ASSMT01.STUD.AIX)                              00330000
+/*                                                                      00340000
+//STEP070   EXEC PGM=IDCAMS                                             00350000
+//SYSPRINT  DD SYSOUT=*                                                 00360000
+//SYSIN     DD *                                                        00370000
+  DEFINE PATH (NAME(TECN013.JCL.ASSMT01.STUD.PATH) -                    00380000
+  PATHENTRY(TECN013.JCL.ASSMT01.STUD.AIX))                              00390000
+/*                                                                      00400000
+

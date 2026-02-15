@@ -1,0 +1,13 @@
+CREATE TABLE TRAINEE(                                                   00010001
+TRAINEE_ID VARCHAR(5) NOT NULL PRIMARY KEY,                             00020002
+TRAINEE_NAME VARCHAR(20) NOT NULL,                                      00040001
+TRAINEE_LOCATION VARCHAR(15) NOT NULL,                                  00050001
+TRAINEE_ONBOARD_STATUS CHAR(1)                                          00051002
+  CHECK(TRAINEE_ONBOARD_STATUS IN('Y','N')));                           00051102
+CREATE TABLE TRAINEE_INF(                                               00051204
+TRAINEE_ID VARCHAR(5) NOT NULL PRIMARY KEY,                             00051302
+TRAINEE_NAME VARCHAR(20) NOT NULL,                                      00051402
+TRAINEE_LOCATION_CODE CHAR(3));                                         00051503
+CREATE TABLE LOCATION(                                                  00051603
+LOCATION_CODE CHAR(3) NOT NULL PRIMARY KEY,                             00051702
+LOCATION_NAME VARCHAR(15) NOT NULL );                                   00051802

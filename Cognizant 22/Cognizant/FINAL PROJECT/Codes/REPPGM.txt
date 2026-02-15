@@ -1,0 +1,283 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. REPPGM.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT TO001-PS ASSIGN TO DD1
+           ORGANIZATION  IS   SEQUENTIAL
+           ACCESS        IS   SEQUENTIAL
+           FILE STATUS   IS WS-FST-TO001
+           .
+       DATA DIVISION.
+       FILE SECTION.
+       FD TO001-PS
+           RECORDING MODE IS F
+           RECORD CONTAINS 80 CHARACTERS.
+       01 TO001-PS-REC   PIC X(80).
+       WORKING-STORAGE SECTION.
+       01 WS-VARS.
+         05 WS-FST-TO001 PIC 9(02).
+           88 C05-TO001-SUCCESS VALUE 00.
+           88 C05-TO001-EOF     VALUE 10.
+         05 WS-ERR-MSG.
+           10 WS-ERR-LEN  PIC S9(04) COMP VALUE 800.
+           10 WS-ERR-TEXT PIC X(80) OCCURS 10 TIMES.
+         05 WS-LRECL      PIC S9(09) COMP VALUE 80.
+      *  -------------------------------------------
+         05 HEADER1.
+           10 F          PIC X(24).
+           10 HEADER     PIC X(24) VALUE 'APPLICANTS DETAIL REPORT'.
+           10 F          PIC X(24).
+         05 FILLERH.
+           10 F          PIC X(80).
+         05 HEADER2.
+           10 DATEH      PIC X(06) VALUE 'DATE: '.
+           10 WS-DATE.
+              15 WS-YEAR  PIC 9(04).
+              15 F        PIC X VALUE '-'.
+              15 WS-MONTH PIC 9(02).
+              15 F        PIC X VALUE '-'.
+              15 WS-DAY   PIC 9(02).
+           10 F          PIC X(40).
+           10 PAGENO     PIC X(06) VALUE 'PAGE: '.
+           10 WS-PAGENO  PIC 9(01) VALUE 1.
+           10 F          PIC X(17).
+         05 HEADER3.
+           10 TIMEH      PIC X(06) VALUE 'TIME: '.
+           10 WS-TIME.
+             15 WS-HOUR PIC 9(02).
+             15 F       PIC X VALUE ':'.
+             15 WS-MIN  PIC 9(02).
+             15 F       PIC X VALUE ':'.
+             15 WS-SEC  PIC 9(02).
+           10 F          PIC X(42).
+           10 REPORTID   PIC X(15) VALUE 'REPORT ID: 1001'.
+           10 F          PIC X(19).
+         05 HEADER4.
+           10 HEADER     PIC X(33) VALUE
+                         'APPROVED LOAN AMOUNT FOR NOVEMBER'.
+           10 F          PIC X(47).
+         05 HEADER5.
+           10 APPID      PIC X(12) VALUE 'APPLICANT_ID'.
+           10 F          PIC X(03).
+           10 APPNAME    PIC X(14) VALUE 'APPLICANT_NAME'.
+           10 F          PIC X(09).
+           10 STATE      PIC X(05) VALUE 'STATE'.
+           10 F          PIC X(08).
+           10 ALAMOUNT   PIC X(20) VALUE 'APPROVED_LOAN_AMOUNT'.
+           10 F          PIC X(09).
+         05 HYPHENS.
+           10 APPID      PIC X(12) VALUE ALL '-'.
+           10 F          PIC X(03).
+           10 APPNAME    PIC X(14) VALUE ALL '-'.
+           10 F          PIC X(09).
+           10 STATE      PIC X(05) VALUE ALL '-'.
+           10 F          PIC X(08).
+           10 ALAMOUNT   PIC X(20) VALUE ALL '-'.
+           10 F          PIC X(09).
+         05 HEADER6.
+           10 F          PIC X(56).
+           10 PAGENO     PIC X(06) VALUE 'PAGE: '.
+           10 WS-PAGENO2 PIC 9(01) VALUE 1.
+           10 F          PIC X(19).
+         05 HEADER7.
+           10 F          PIC X(56).
+           10 REPORTID   PIC X(15) VALUE 'REPORT ID: 1001'.
+           10 F          PIC X(09).
+         05 TO001-RECORD.
+           10 TO001-APPID    PIC X(10).
+           10 F              PIC X(03).
+           10 TO001-APPNAME  PIC A(22).
+           10 F              PIC X(03).
+           10 TO001-STATE    PIC A(10).
+           10 F              PIC X(03).
+           10 TO001-ALAMOUNT PIC 9(08).
+           10 F              PIC X(21).
+         05 TOTAL.
+           10 TOTALT         PIC X(24) VALUE ' TOTAL APPROVED AMOUNT: '.
+           10 WS-TOTALAMOUNT PIC 9(08).
+           10 F              PIC X(48).
+         05 TRAILER1.
+           10 HYPHENS1       PIC X(30) VALUE ALL '-'.
+           10 EOPT           PIC X(11) VALUE 'END OF PAGE'.
+           10 HYPHENS1       PIC X(31) VALUE ALL '-'.
+         05 TRAILER2.
+           10 HYPHENS2       PIC X(29) VALUE ALL '-'.
+           10 EORT           PIC X(13) VALUE 'END OF REPORT'.
+           10 HYPHENS2       PIC X(30) VALUE ALL '-'.
+         05 WS-LINE-COUNTER  PIC 9(01) VALUE 1.
+         05 WS-PAGE-NUM      PIC 9(01) VALUE 1.
+           EXEC SQL
+             INCLUDE SQLCA
+           END-EXEC.
+           EXEC SQL
+             INCLUDE DCLAPDB
+           END-EXEC.
+           EXEC SQL
+             INCLUDE DCLLDB
+           END-EXEC.
+           EXEC SQL
+             DECLARE CUR1 CURSOR FOR
+             SELECT A.APPLICANT_ID,APPLICANT_NAME,STATE,
+                    L.APPROVED_LOAN_AMOUNT
+             FROM APPLICANT_DB A
+             INNER JOIN LOAN_DB L ON A.APPLICANT_ID = L.APPLICANT_ID
+             WHERE CITY='CHENNAI' AND MONTH(LOAN_APPROVAL_DATE) = 11
+           END-EXEC.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INIT-PARA
+              THRU 1000-INIT-PARA-EXIT
+           PERFORM 3000-PROC-PARA
+              THRU 3000-PROC-PARA-EXIT
+           PERFORM 9000-TERM-PARA
+           .
+       1000-INIT-PARA.
+           CONTINUE
+           .
+       1000-INIT-PARA-EXIT.
+           EXIT
+           .
+       3000-PROC-PARA.
+           PERFORM 3100-OPEN-PARA
+              THRU 3100-OPEN-PARA-EXIT
+           PERFORM 3200-FETCH-PARA
+              THRU 3200-FETCH-PARA-EXIT
+             UNTIL SQLCODE = 100
+           PERFORM 3300-CLOSE-PARA
+              THRU 3300-CLOSE-PARA-EXIT
+           .
+       3000-PROC-PARA-EXIT.
+           EXIT
+           .
+       3100-OPEN-PARA.
+           OPEN OUTPUT TO001-PS
+           EVALUATE TRUE
+           WHEN C05-TO001-SUCCESS
+             DISPLAY 'TO001 OPENED'
+           WHEN OTHER
+             DISPLAY 'TO001 OPEN FAILED ' WS-FST-TO001
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           EXEC SQL
+             OPEN CUR1
+           END-EXEC.
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+               DISPLAY 'CURSR OPENED'
+           WHEN OTHER
+               DISPLAY 'CURSR OPEN FAILED'
+               CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+               DISPLAY WS-ERR-MSG
+               PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           .
+       3100-OPEN-PARA-EXIT.
+           EXIT
+           .
+       3300-CLOSE-PARA.
+           EXEC SQL
+             CLOSE CUR1
+           END-EXEC
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+               DISPLAY 'CURSR CLOSED'
+           WHEN OTHER
+               DISPLAY 'CURSR CLOSE FAILED'
+               CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+               DISPLAY WS-ERR-MSG
+               PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           CLOSE TO001-PS
+           .
+       3300-CLOSE-PARA-EXIT.
+           EXIT
+           .
+       3200-FETCH-PARA.
+           INITIALIZE DCLAPPLICANT-DB
+           INITIALIZE DCLLOAN-DB
+           EXEC SQL
+             FETCH CUR1
+              INTO  :HV-APPLICANT-ID
+                   ,:HV-APPLICANT-NAME
+                   ,:HV-STATE
+                   ,:HL-APPROVED-LOAN-AMOUNT
+           END-EXEC.
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+             COMPUTE WS-TOTALAMOUNT = WS-TOTALAMOUNT +
+                                      HL-APPROVED-LOAN-AMOUNT
+             PERFORM 3250-REPORT-WRITE-PARA
+                THRU 3250-REPORT-WRITE-PARA-EXIT
+           WHEN SQLCODE = 100
+             DISPLAY "ALL RECORDS FETCHED"
+             WRITE TO001-PS-REC FROM FILLERH
+             WRITE TO001-PS-REC FROM TOTAL
+             WRITE TO001-PS-REC FROM FILLERH
+             WRITE TO001-PS-REC FROM TRAILER2
+           WHEN OTHER
+             DISPLAY "CURSOR FETCH FAILED"
+             CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+             DISPLAY WS-ERR-MSG
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           .
+       3200-FETCH-PARA-EXIT.
+           EXIT
+           .
+       3250-REPORT-WRITE-PARA.
+           IF ( WS-LINE-COUNTER = 1 AND WS-PAGE-NUM = 1 )
+              MOVE FUNCTION CURRENT-DATE(1:4) TO WS-YEAR
+              MOVE FUNCTION CURRENT-DATE(5:2) TO WS-MONTH
+              MOVE FUNCTION CURRENT-DATE(7:2) TO WS-DAY
+              MOVE FUNCTION CURRENT-DATE(9:2) TO WS-HOUR
+              MOVE FUNCTION CURRENT-DATE(11:2) TO WS-MIN
+              MOVE FUNCTION CURRENT-DATE(13:2) TO WS-SEC
+                WRITE TO001-PS-REC FROM HEADER1
+                WRITE TO001-PS-REC FROM FILLERH
+                WRITE TO001-PS-REC FROM HEADER2
+                WRITE TO001-PS-REC FROM HEADER3
+                WRITE TO001-PS-REC FROM FILLERH
+                WRITE TO001-PS-REC FROM HEADER4
+                WRITE TO001-PS-REC FROM FILLERH
+                WRITE TO001-PS-REC FROM HEADER5
+                WRITE TO001-PS-REC FROM HYPHENS
+           END-IF
+           IF ( WS-LINE-COUNTER = 1 AND WS-PAGE-NUM NOT = 1 )
+             ADD 1 TO WS-PAGENO2
+             WRITE TO001-PS-REC FROM HEADER6
+             WRITE TO001-PS-REC FROM HEADER7
+             WRITE TO001-PS-REC FROM FILLERH
+             WRITE TO001-PS-REC FROM HEADER5
+             WRITE TO001-PS-REC FROM HYPHENS
+           END-IF
+             MOVE HV-APPLICANT-ID         TO TO001-APPID
+             MOVE HV-APPLICANT-NAME       TO TO001-APPNAME
+             MOVE HV-STATE                TO TO001-STATE
+             MOVE HL-APPROVED-LOAN-AMOUNT TO TO001-ALAMOUNT
+             MOVE TO001-RECORD            TO TO001-PS-REC
+             WRITE TO001-PS-REC
+             ADD 1 TO WS-LINE-COUNTER
+           IF ( WS-LINE-COUNTER > 1 )
+              ADD 1 TO WS-PAGE-NUM
+              MOVE 1 TO WS-LINE-COUNTER
+                WRITE TO001-PS-REC FROM FILLERH
+                WRITE TO001-PS-REC FROM TRAILER1
+           END-IF
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+             DISPLAY "WRITE SUCCESS"
+           WHEN OTHER
+             DISPLAY "WRITE FAILED" SQLCODE
+             CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+             DISPLAY WS-ERR-MSG
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           .
+       3250-REPORT-WRITE-PARA-EXIT.
+           EXIT
+           .
+       9000-TERM-PARA.
+           STOP RUN
+           .
+

@@ -1,0 +1,57 @@
+//TECN116H JOB NOTIFY=&SYSUID                                           00010000
+// JCLLIB ORDER=TECN116.JCL.MYPROC                                      00020000
+//STEP010  EXEC PROC=KSDSCRT                                            00030000
+//STEP020  EXEC PGM=IDCAMS                                              00040001
+//SYSPRINT DD SYSOUT=*                                                  00050001
+//SYSIN    DD *                                                         00060001
+  PRINT INDATASET(TECN116.JCL.ASSMT01.STUD.PS2) -                       00070011
+  CHAR -                                                                00080001
+  COUNT(1)                                                              00090001
+/*                                                                      00100001
+// IF (STEP020.RC EQ 0) THEN                                            00110007
+//STEP030  EXEC PGM=IDCAMS                                              00120002
+//SYSPRINT DD SYSOUT=*                                                  00130002
+//SYSIN    DD *                                                         00140002
+  REPRO INDATASET(TECN116.JCL.ASSMT01.STUD.PS2) -                       00150011
+        OUTDATASET(TECN116.JCL.ASSMT01.STUD.KSDS)                       00160011
+/*                                                                      00170002
+// ELSE                                                                 00180004
+//STEP040  EXEC PGM=IDCAMS                                              00200004
+//SYSUT1   DD *                                                         00210004
+"DATASET IS EMPTY"                                                      00220004
+//SYSPRINT DD SYSOUT=*                                                  00240004
+//SYSIN    DD *                                                         00241005
+  PRINT INFILE(SYSUT1) -                                                00241105
+  CHAR                                                                  00241205
+/*                                                                      00242005
+// ENDIF                                                                00250004
+//STEP050  EXEC PGM=IDCAMS                                              00260008
+//SYSPRINT DD SYSOUT=*                                                  00270008
+//SYSIN    DD *                                                         00280008
+  DEFINE AIX( -                                                         00290008
+  NAME(TECN116.JCL.ASSMT01.STUD.AIX) -                                  00300011
+  RELATE(TECN116.JCL.ASSMT01.STUD.KSDS) -                               00310011
+  KEYS(20,7) -                                                          00320011
+  TRACKS(1,1) -                                                         00330008
+  CISZ(512) -                                                           00340008
+  RECORDSIZE(80,80) -                                                   00350008
+  VOLUME(ZAPRD4) -                                                      00360008
+  FREESPACE(10,10) -                                                    00370008
+  UNIQUEKEY)                                                            00380009
+/*                                                                      00390008
+//STEP060  EXEC PGM=IDCAMS                                              00400010
+//SYSPRINT DD SYSOUT=*                                                  00410010
+//SYSIN    DD *                                                         00420010
+  BLDINDEX -                                                            00430010
+  INDATASET(TECN116.JCL.ASSMT01.STUD.KSDS) -                            00440011
+  OUTDATASET(TECN116.JCL.ASSMT01.STUD.AIX) -                            00450011
+  NOSORTCALL                                                            00460010
+/*                                                                      00470010
+//STEP070  EXEC PGM=IDCAMS                                              00480010
+//SYSPRINT DD SYSOUT=*                                                  00490010
+//SYSIN    DD *                                                         00500010
+  DEFINE PATH( -                                                        00510010
+  NAME(TECN116.JCL.ASSMT01.STUD.PATH) -                                 00520011
+  PATHENTRY(TECN116.JCL.ASSMT01.STUD.AIX))                              00530011
+/*                                                                      00540010
+

@@ -1,0 +1,57 @@
+//TECN116A JOB NOTIFY=&SYSUID                                           00010000
+//DSCRT    PROC                                                         00020000
+//STEP001  EXEC PGM=IEFBR14                                             00030000
+//DD1      DD DSN=TECN116.VSAM.CC03.PS2,                                00040000
+//            DISP=(NEW,CATLG,DELETE),                                  00050000
+//            SPACE=(TRK,(2,2)),                                        00060000
+//            DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)                       00070000
+//DD2      DD DSN=TECN116.VSAM.CC03.PS3,                                00090000
+//            DISP=(NEW,CATLG,DELETE),                                  00100000
+//            SPACE=(TRK,(2,2)),                                        00110000
+//            DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)                       00120000
+//         PEND                                                         00130000
+//STEP010  EXEC PGM=IEFBR14                                             00140000
+//DD3      DD DSN=TECN116.VSAM.CC03.PS2,                                00150000
+//            DISP=(MOD,DELETE,DELETE),                                 00160000
+//            SPACE=(TRK,(2,2))                                         00170000
+//DD4      DD DSN=TECN116.VSAM.CC03.PS3,                                00180000
+//            DISP=(MOD,DELETE,DELETE),                                 00190000
+//            SPACE=(TRK,(2,2))                                         00200000
+//STEP020   EXEC DSCRT                                                  00210000
+//STEP030   EXEC PGM=IDCAMS                                             00220000
+//SYSPRINT  DD SYSOUT=*                                                 00230000
+//SYSOUT    DD SYSOUT=*                                                 00240000
+//SYSIN     DD *                                                        00250000
+  DEFINE CLUSTER( -                                                     00260000
+  NAME(TECN116.VSAM.CC03.RRDS) -                                        00270000
+  TRACK(2,2) -                                                          00280000
+  CISZ(1024) -                                                          00290000
+  RECORDSIZE(80,80) -                                                   00300000
+  VOLUME(ZAPRD4)   -                                                    00310000
+  NUMBERED)                                                             00320000
+/*                                                                      00330000
+//STEP040   EXEC PGM=IDCAMS                                             00340000
+//SYSPRINT  DD SYSOUT=*                                                 00350000
+//SYSOUT    DD SYSOUT=*                                                 00360000
+//SYSIN     DD *                                                        00370000
+  REPRO INDATASET(TECN116.VSAM.CC03.PS1) -                              00380000
+  OUTDATASET(TECN116.VSAM.CC03.RRDS)                                    00390000
+/*                                                                      00400000
+//STEP050   EXEC PGM=IDCAMS                                             00410000
+//SYSOUT    DD SYSOUT=*                                                 00411000
+//SYSPRINT  DD SYSOUT=*                                                 00411100
+//SYSIN     DD *                                                        00412000
+  REPRO INDATASET(TECN116.VSAM.CC03.RRDS) -                             00420000
+  OUTDATASET(TECN116.VSAM.CC03.PS2) -                                   00430000
+  SKIP(2) -                                                             00440000
+  COUNT(2)                                                              00450000
+/*                                                                      00460005
+//STEP060   EXEC PGM=IDCAMS                                             00470005
+//DD1       DD DSN=TECN116.VSAM.CC03.PS3,DISP=SHR                       00481008
+//SYSPRINT  DD SYSOUT=*                                                 00490000
+//SYSIN     DD *                                                        00500000
+  EXPORT TECN116.VSAM.CC03.RRDS -                                       00510008
+  OUTFILE(DD1) -                                                        00520008
+  TEMPORARY                                                             00530000
+/*                                                                      00540000
+

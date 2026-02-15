@@ -1,0 +1,162 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. CC01CB01.                                            00020000
+       AUTHOR. TECN013A.                                                00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+           SELECT TI001-PS ASSIGN       TO INPRDS                       00070000
+                           ACCESS       IS SEQUENTIAL                   00080000
+                           ORGANIZATION IS SEQUENTIAL                   00090000
+                           FILE STATUS  IS WS05-FST-TI001.              00100000
+           SELECT TO001-PS ASSIGN       TO OUTPRDS                      00110000
+                           ACCESS       IS SEQUENTIAL                   00120000
+                           ORGANIZATION IS SEQUENTIAL                   00130000
+                           FILE STATUS  IS WS05-FST-TO001.              00140000
+       DATA DIVISION.                                                   00150000
+       FILE SECTION.                                                    00160002
+       FD TI001-PS.                                                     00170000
+       01 TI001-PS-REC.                                                 00180000
+           05 TI001-PRODUCT-CODE  PIC X(05).                            00190003
+           05 FILLER              PIC X(01).                            00191000
+           05 TI001-QUANTITY      PIC 9(03).                            00200000
+           05 FILLER              PIC X(01).                            00201000
+           05 TI001-ORDER-STATUS  PIC X(10).                            00210003
+           05 FILLER              PIC X(01).                            00211000
+           05 TI001-EXPIRY-STATUS PIC X(10).                            00220003
+           05 FILLER              PIC X(01).                            00221000
+           05 TI001-EXPIRY-DATE   PIC X(10).                            00230003
+           05 FILLER              PIC X(38).                            00240000
+       FD TO001-PS.                                                     00250000
+       01 TO001-PS-REC.                                                 00260000
+           05 TO001-PRODUCT-CODE  PIC X(05).                            00270003
+           05 FILLER              PIC X(01).                            00280000
+           05 TO001-QUANTITY      PIC 9(03).                            00290000
+           05 FILLER              PIC X(01).                            00300000
+           05 TO001-ORDER-STATUS  PIC X(10).                            00310003
+           05 FILLER              PIC X(01).                            00320000
+           05 TO001-EXPIRY-STATUS PIC X(10).                            00330003
+           05 FILLER              PIC X(01).                            00340000
+           05 TO001-EXPIRY-DATE   PIC X(10).                            00350003
+           05 FILLER              PIC X(01).                            00360000
+           05 TO001-PRIORITY      PIC X(05).                            00361000
+           05 FILLER              PIC X(32).                            00362000
+       WORKING-STORAGE SECTION.                                         00370000
+       01 WS01-VARS.                                                    00380000
+           05 WS05-FST-TI001      PIC 9(02).                            00390000
+           05 WS05-FST-TO001      PIC 9(02).                            00400000
+           05 WS05-CURRENT-DATE.                                        00410004
+               10 WS10-CD-YEAR    PIC 9(04).                            00420004
+               10 WS10-CD-MONTH   PIC 9(02).                            00430004
+               10 WS10-CD-DAY     PIC 9(02).                            00440004
+           05 WS05-EXPIRY-DATE.                                         00441004
+               10 WS10-ED-YEAR    PIC 9(04).                            00441104
+               10 WS10-ED-MONTH   PIC 9(02).                            00441204
+               10 WS10-ED-DAY     PIC 9(02).                            00441304
+           05 WS05-ORDER-STATUS   PIC X(10).                            00441403
+           05 WS05-EXPIRY-STATUS  PIC X(10).                            00441503
+           05 WS05-PRIORITY       PIC X(05).                            00441600
+       PROCEDURE DIVISION.                                              00450000
+       0000-MAIN-PARA.                                                  00460000
+           PERFORM 1000-INIT-PARA                                       00470000
+           PERFORM 3000-PROC-PARA                                       00480000
+              THRU 3000-PROC-PARA-EXIT                                  00490000
+           PERFORM 9000-TERM-PARA                                       00500000
+           .                                                            00501000
+       1000-INIT-PARA.                                                  00510000
+           CONTINUE                                                     00520000
+           .                                                            00530000
+       9000-TERM-PARA.                                                  00540000
+           STOP RUN                                                     00550000
+           .                                                            00560000
+       3000-PROC-PARA.                                                  00570000
+           PERFORM 3100-OPEN-PARA                                       00580000
+              THRU 3100-OPEN-PARA-EXIT                                  00590000
+           PERFORM 3200-READ-PARA                                       00600000
+              THRU 3200-READ-PARA-EXIT                                  00610001
+             UNTIL WS05-FST-TI001 = 10                                  00620000
+           PERFORM 3300-CLOSE-PARA                                      00630000
+              THRU 3300-CLOSE-PARA-EXIT                                 00640000
+           .                                                            00650000
+       3000-PROC-PARA-EXIT.                                             00660000
+           EXIT                                                         00670000
+           .                                                            00680000
+       3100-OPEN-PARA.                                                  00690000
+           OPEN INPUT TI001-PS                                          00700000
+           EVALUATE TRUE                                                00710000
+               WHEN WS05-FST-TI001 = 00                                 00720000
+                   CONTINUE                                             00730000
+               WHEN OTHER                                               00740000
+                   PERFORM 9000-TERM-PARA                               00750000
+           END-EVALUATE                                                 00760000
+           OPEN OUTPUT TO001-PS                                         00770000
+           EVALUATE TRUE                                                00780000
+               WHEN WS05-FST-TO001 = 00                                 00790000
+                   CONTINUE                                             00800000
+               WHEN OTHER                                               00810000
+                   PERFORM 9000-TERM-PARA                               00820000
+           END-EVALUATE                                                 00830000
+           .                                                            00840000
+       3100-OPEN-PARA-EXIT.                                             00850000
+           EXIT                                                         00860000
+           .                                                            00870000
+       3200-READ-PARA.                                                  00880000
+           MOVE SPACES TO TI001-PS-REC TO001-PS-REC                     00890000
+           READ TI001-PS                                                00900000
+           EVALUATE TRUE                                                00910000
+               WHEN WS05-FST-TI001 = 00                                 00920000
+                   PERFORM 3210-CALCULATION-PARA                        00930000
+                      THRU 3210-CALCULATION-PARA-EXIT                   00940000
+                   PERFORM 3220-WRITE-PARA                              00941000
+                      THRU 3220-WRITE-PARA-EXIT                         00942000
+               WHEN WS05-FST-TI001 = 10                                 00950000
+                   CONTINUE                                             00960000
+               WHEN OTHER                                               00970000
+                   PERFORM 9000-TERM-PARA                               00980000
+           END-EVALUATE                                                 00990000
+           .                                                            01000000
+       3200-READ-PARA-EXIT.                                             01010000
+           EXIT                                                         01020000
+           .                                                            01030000
+       3210-CALCULATION-PARA.                                           01040000
+           MOVE FUNCTION CURRENT-DATE  TO WS05-CURRENT-DATE             01050005
+           MOVE TI001-EXPIRY-DATE(1:2) TO WS10-ED-DAY                   01060005
+           MOVE TI001-EXPIRY-DATE(4:2) TO WS10-ED-MONTH                 01070005
+           MOVE TI001-EXPIRY-DATE(7:4) TO WS10-ED-YEAR                  01080005
+           EVALUATE TRUE                                                01090000
+           WHEN WS05-EXPIRY-DATE < WS05-CURRENT-DATE                    01100003
+               MOVE 'EXPIRED   ' TO WS05-EXPIRY-STATUS                  01110003
+               MOVE 'NA   '      TO WS05-PRIORITY                       01120000
+               MOVE 'RETURN    ' TO WS05-ORDER-STATUS                   01130003
+           WHEN WS05-EXPIRY-DATE > WS05-CURRENT-DATE                    01140003
+               MOVE 'NOTEXPIRED' TO WS05-EXPIRY-STATUS                  01150003
+               MOVE 'ORDER     ' TO WS05-ORDER-STATUS                   01160003
+               EVALUATE TRUE                                            01170000
+                   WHEN TI001-QUANTITY > 075                            01180001
+                       MOVE 'HIGH ' TO WS05-PRIORITY                    01190000
+                   WHEN TI001-QUANTITY < 075                            01200001
+                       MOVE 'LOW  ' TO WS05-PRIORITY                    01210000
+               END-EVALUATE                                             01220000
+           END-EVALUATE                                                 01230000
+           .                                                            01240000
+       3210-CALCULATION-PARA-EXIT.                                      01250000
+           EXIT                                                         01260000
+           .                                                            01270000
+       3220-WRITE-PARA.                                                 01280000
+           MOVE TI001-PRODUCT-CODE TO TO001-PRODUCT-CODE                01290003
+           MOVE TI001-QUANTITY     TO TO001-QUANTITY                    01300000
+           MOVE WS05-ORDER-STATUS  TO TO001-ORDER-STATUS                01310003
+           MOVE WS05-EXPIRY-STATUS TO TO001-EXPIRY-STATUS               01320003
+           MOVE TI001-EXPIRY-DATE  TO TO001-EXPIRY-DATE                 01330003
+           MOVE WS05-PRIORITY      TO TO001-PRIORITY                    01340000
+           WRITE TO001-PS-REC                                           01350000
+           .                                                            01360000
+       3220-WRITE-PARA-EXIT.                                            01370000
+           EXIT                                                         01380000
+           .                                                            01390000
+       3300-CLOSE-PARA.                                                 01400000
+           CLOSE TI001-PS TO001-PS                                      01410000
+           .                                                            01420000
+       3300-CLOSE-PARA-EXIT.                                            01430000
+           EXIT                                                         01440000
+           .                                                            01450000
+

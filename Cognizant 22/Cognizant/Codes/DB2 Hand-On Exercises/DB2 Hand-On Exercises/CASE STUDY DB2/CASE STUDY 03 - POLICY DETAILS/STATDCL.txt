@@ -1,0 +1,32 @@
+      ******************************************************************
+      * DCLGEN TABLE(STATE)                                            *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(STATDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(C)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE STATE TABLE
+           ( STATE_ID                       CHAR(3) NOT NULL,
+             STATE_NAME                     VARCHAR(15) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE STATE                              *
+      ******************************************************************
+       01  DCLSTATE.
+      *    *************************************************************
+      *                       STATE_ID
+           10 CSTATE-ID            PIC X(3).
+      *    *************************************************************
+           10 CSTATE-NAME.
+      *                       STATE_NAME LENGTH
+              49 CSTATE-NAME-LEN   PIC S9(4) USAGE COMP.
+      *                       STATE_NAME
+              49 CSTATE-NAME-TEXT
+                 PIC X(15).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************

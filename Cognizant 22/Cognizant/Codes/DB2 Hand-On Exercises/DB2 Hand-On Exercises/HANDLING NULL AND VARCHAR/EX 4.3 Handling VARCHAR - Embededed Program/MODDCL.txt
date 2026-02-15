@@ -1,0 +1,37 @@
+      ******************************************************************
+      * DCLGEN TABLE(TEKUS00.MODEL_INF)                                *
+      *        LIBRARY(TEKUS00.DB2.DCLGEN(MODDCL))                     *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TEKUS00.MODEL_INF TABLE
+           ( ASSET_ID                       INTEGER NOT NULL,
+             ASSET_NAME                     VARCHAR(25),
+             BRAND_NAME                     VARCHAR(25),
+             MODEL_NUMBER                   VARCHAR(25),
+             MANUFACTURER_ID                INTEGER,
+             CATEGORY_ID                    INTEGER
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TEKUS00.MODEL_INF                  *
+      ******************************************************************
+       01  DCLMODEL-INF.
+           10 ASSET-ID             PIC S9(9) USAGE COMP.
+           10 ASSET-NAME.
+              49 ASSET-NAME-LEN    PIC S9(4) USAGE COMP.
+              49 ASSET-NAME-TEXT   PIC X(25).
+           10 BRAND-NAME.
+              49 BRAND-NAME-LEN    PIC S9(4) USAGE COMP.
+              49 BRAND-NAME-TEXT   PIC X(25).
+           10 MODEL-NUMBER.
+              49 MODEL-NUMBER-LEN
+                 PIC S9(4) USAGE COMP.
+              49 MODEL-NUMBER-TEXT
+                 PIC X(25).
+           10 MANUFACTURER-ID      PIC S9(9) USAGE COMP.
+           10 CATEGORY-ID          PIC S9(9) USAGE COMP.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 6       *
+      ******************************************************************

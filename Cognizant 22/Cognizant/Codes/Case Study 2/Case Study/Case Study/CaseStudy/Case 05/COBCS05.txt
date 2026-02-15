@@ -1,0 +1,182 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. COBCS05.                                            00020000
+        ENVIRONMENT DIVISION.                                           00030000
+        INPUT-OUTPUT SECTION.                                           00040000
+        FILE-CONTROL.                                                   00050000
+      * INPUT FILE                                                      00060000
+           SELECT TI001-INPUT ASSIGN TO INPDTPS                         00070000
+           ORGANIZATION IS SEQUENTIAL                                   00080000
+           ACCESS MODE IS SEQUENTIAL                                    00090000
+           FILE STATUS IS WS-FILE-STATUS1.                              00100000
+      * OUTPUT FILE                                                     00110000
+           SELECT TO001-OUTPUT ASSIGN TO OUTPDTPS                       00120000
+           ORGANIZATION IS SEQUENTIAL                                   00130000
+           ACCESS MODE IS SEQUENTIAL                                    00140000
+           FILE STATUS IS WS-FILE-STATUS2.                              00150000
+        DATA DIVISION.                                                  00160000
+        FILE SECTION.                                                   00170000
+        FD TI001-INPUT.                                                 00180000
+        01 TI001-INPUT-RECORD.                                          00190000
+           05 TI001-PRODUCT-ID            PIC   X(5).                   00200000
+           05 FILLER                      PIC   X.                      00210000
+           05 TI001-PRODUCT-NAME          PIC   X(20).                  00220000
+           05 FILLER                      PIC   X.                      00221000
+           05 TI001-PRODUCT-PRICE         PIC   9(4)V9(2).              00230000
+           05 FILLER                      PIC   X.                      00231000
+           05 TI001-PRODUCT-MANF-YEAR     PIC   9(4).                   00240008
+           05 FILLER                      PIC   X(42).                  00250010
+        FD TO001-OUTPUT.                                                00260000
+        01 TO001-OUTPUT-RECORD.                                         00270000
+           05 TO001-PRODUCT-ID            PIC   X(5).                   00280000
+           05 FILLER                      PIC   X.                      00290000
+           05 TO001-PRODUCT-NAME          PIC   X(20).                  00300000
+           05 FILLER                      PIC   X.                      00310000
+           05 TO001-PRODUCT-NEW-PRICE     PIC   9(4)V9(2).              00320001
+           05 FILLER                      PIC   X.                      00330000
+           05 TO001-PRODUCT-MANF-YEAR     PIC   9(4).                   00340000
+           05 FILLER                      PIC   X(42).                  00350010
+        WORKING-STORAGE SECTION.                                        00360001
+        01 WS-G-FILE-STATUS.                                            00370001
+           05 WS-FILE-STATUS1 PIC X(02).                                00380001
+              88 WFS1-SUCCESS VALUE '00'.                               00390001
+              88 WFS1-EOF     VALUE '10'.                               00400001
+           05 WS-FILE-STATUS2 PIC X(02).                                00410001
+              88 WFS2-SUCCESS VALUE '00'.                               00420001
+              88 WFS2-EOF     VALUE '10'.                               00430001
+        01 WS-PRODUCT-TABLE.                                            00431012
+           02 WS-PRODUCT-DETAILS OCCURS 7 TIMES                         00431112
+                                INDEXED BY WS-INDEX.                    00431326
+           10 WS-PRODUCT-ID               PIC   X(5).                   00432012
+           10 WS-PRODUCT-NAME             PIC   X(20).                  00433012
+           10 WS-PRODUCT-NEW-PRICE        PIC   9(4)V9(2).              00434012
+           10 WS-PRODUCT-MANF-YEAR        PIC   9(4).                   00435012
+       PROCEDURE DIVISION.                                              00440001
+       0000-MAIN-PARA.                                                  00450001
+           PERFORM 1000-INITIALIZATION-PARA                             00460013
+             THRU 1000-INITIALIZATION-PARA-EXIT.                        00470013
+           PERFORM 2000-PROCESS-PARA                                    00480013
+             THRU 2000-PROCESS-PARA-EXIT.                               00490013
+           PERFORM 9000-TERMINATION-PARA                                00500013
+             THRU 9000-TERMINATION-PARA-EXIT.                           00510013
+       0000-MAIN-PARA-EXIT.                                             00520001
+             EXIT.                                                      00530001
+       1000-INITIALIZATION-PARA.                                        00540001
+      *     DISPLAY 'INTIALIZATION PARA'.                               00550001
+        1000-INITIALIZATION-PARA-EXIT.                                  00560001
+             EXIT.                                                      00570001
+        2000-PROCESS-PARA.                                              00580001
+           PERFORM 2100-FILE-OPEN-PARA                                  00590013
+            THRU 2100-FILE-OPEN-PARA-EXIT.                              00600013
+           IF WFS1-SUCCESS                                              00610013
+             PERFORM 2200-READ-PARA                                     00620013
+               THRU 2200-READ-PARA-EXIT                                 00630013
+            UNTIL WFS1-EOF                                              00640013
+            END-IF.                                                     00650013
+        2000-PROCESS-PARA-EXIT.                                         00660001
+             EXIT.                                                      00670001
+        2100-FILE-OPEN-PARA.                                            00680001
+            OPEN INPUT TI001-INPUT                                      00690013
+            EVALUATE TRUE                                               00700013
+              WHEN WFS1-SUCCESS                                         00710013
+               CONTINUE                                                 00720013
+              WHEN OTHER                                                00730013
+                DISPLAY "INPUT FILE OPEN FAILED"                        00740013
+                 DISPLAY 'FILE STATUS' WS-FILE-STATUS1                  00750001
+             END-EVALUATE                                               00760001
+            OPEN OUTPUT TO001-OUTPUT                                    00770001
+            EVALUATE TRUE                                               00780001
+              WHEN WFS2-SUCCESS                                         00790001
+               CONTINUE                                                 00800001
+              WHEN OTHER                                                00810001
+                DISPLAY "OUTPUT FILE OPEN FAILED"                       00820001
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS2                   00830006
+            END-EVALUATE.                                               00840001
+       2100-FILE-OPEN-PARA-EXIT.                                        00850001
+            EXIT.                                                       00860001
+       2200-READ-PARA.                                                  00870001
+            READ TI001-INPUT                                            00880001
+            EVALUATE TRUE                                               00890001
+              WHEN WFS1-SUCCESS                                         00900001
+              PERFORM 2300-VALIDATION-PARA                              00910001
+              THRU 2300-VALIDATION-PARA-EXIT                            00911005
+              WHEN WFS1-EOF                                             00914042
+              CONTINUE                                                  00930001
+              WHEN                                                      00940001
+               OTHER                                                    00950001
+                DISPLAY "INPUT  FILE READ FAILED"                       00960001
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00970001
+              PERFORM 9000-TERMINATION-PARA                             00980001
+               THRU 9000-TERMINATION-PARA                               00990001
+              END-EVALUATE.                                             01000001
+       2200-READ-PARA-EXIT.                                             01010001
+              EXIT.                                                     01020001
+       2300-VALIDATION-PARA.                                            01030001
+              IF TI001-PRODUCT-MANF-YEAR = 2018 THEN                    01030101
+              COMPUTE TO001-PRODUCT-NEW-PRICE = (( TI001-PRODUCT-PRICE  01031001
+              * 0.30 ) + ( TI001-PRODUCT-PRICE * 0.02 ))                01032001
+              END-IF.                                                   01033001
+              IF TI001-PRODUCT-MANF-YEAR = 2019 THEN                    01034001
+              COMPUTE TO001-PRODUCT-NEW-PRICE = (( TI001-PRODUCT-PRICE  01035001
+              * 0.20 ) + ( TI001-PRODUCT-PRICE * 0.02 ))                01036001
+              END-IF.                                                   01037001
+              IF TI001-PRODUCT-MANF-YEAR = 2020 THEN                    01038001
+              COMPUTE TO001-PRODUCT-NEW-PRICE = ( TI001-PRODUCT-PRICE   01039001
+              * 0.02 )                                                  01039101
+              END-IF.                                                   01039201
+           SET WS-INDEX TO 1.                                           01039332
+           MOVE TI001-PRODUCT-ID TO WS-PRODUCT-ID(WS-INDEX).            01039428
+           MOVE TI001-PRODUCT-NAME TO WS-PRODUCT-NAME(WS-INDEX).        01039528
+           MOVE TO001-PRODUCT-NEW-PRICE TO                              01039628
+           WS-PRODUCT-NEW-PRICE(WS-INDEX).                              01039728
+           MOVE TI001-PRODUCT-MANF-YEAR TO                              01039828
+           WS-PRODUCT-MANF-YEAR(WS-INDEX).                              01039928
+           PERFORM 2400-SEARCH-PARA THRU 2400-SEARCH-PARA-EXIT.         01040051
+         2300-VALIDATION-PARA-EXIT.                                     01070001
+            EXIT.                                                       01080012
+         2400-SEARCH-PARA.                                              01090025
+           MOVE SPACES TO TO001-OUTPUT-RECORD.
+           SET WS-INDEX TO 1.                                           01090237
+           SEARCH WS-PRODUCT-DETAILS AT END                             01090921
+           DISPLAY 'RECORD NOT FOUND'                                   01091022
+           WHEN WS-PRODUCT-MANF-YEAR(WS-INDEX) = 2018                   01091126
+           MOVE WS-PRODUCT-ID(WS-INDEX) TO TO001-PRODUCT-ID             01091226
+           MOVE WS-PRODUCT-NAME(WS-INDEX) TO TO001-PRODUCT-NAME         01091326
+           MOVE WS-PRODUCT-NEW-PRICE(WS-INDEX) TO                       01091426
+           TO001-PRODUCT-NEW-PRICE                                      01091522
+           MOVE WS-PRODUCT-MANF-YEAR(WS-INDEX) TO                       01091626
+           TO001-PRODUCT-MANF-YEAR                                      01091726
+           PERFORM 2500-WRITE-PARA THRU 2500-WRITE-PARA-EXIT            01091852
+            END-SEARCH.                                                 01092022
+        2400-SEARCH-PARA-EXIT.                                          01101025
+              EXIT.                                                     01102025
+        2500-WRITE-PARA.                                                01103025
+           DISPLAY TO001-OUTPUT-RECORD.                                 01103152
+           WRITE TO001-OUTPUT-RECORD.                                   01103253
+        2500-WRITE-PARA-EXIT.                                           01110001
+              EXIT.                                                     01120001
+        9000-TERMINATION-PARA.                                          01130001
+           PERFORM 9100-CLOSE-PARA                                      01140012
+           THRU 9100-CLOSE-PARA-EXIT.                                   01150012
+            STOP RUN.                                                   01160012
+        9000-TERMINATION-PARA-EXIT.                                     01170001
+              EXIT.                                                     01180001
+        9100-CLOSE-PARA.                                                01190001
+              CLOSE TI001-INPUT                                         01200001
+                EVALUATE TRUE                                           01210001
+                 WHEN WFS1-SUCCESS                                      01220001
+                  DISPLAY 'INPUT FILE CLOSED'                           01230001
+                 WHEN OTHER                                             01240001
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01250001
+                 DISPLAY WS-FILE-STATUS1                                01260001
+               END-EVALUATE.                                            01270001
+             CLOSE TO001-OUTPUT                                         01280001
+               EVALUATE TRUE                                            01290001
+                WHEN WFS2-SUCCESS                                       01300001
+                 DISPLAY 'OUTPUT FILE CLOSED'                           01310001
+                WHEN OTHER                                              01320001
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01330001
+                 DISPLAY WS-FILE-STATUS2                                01340001
+               END-EVALUATE.                                            01350001
+       9100-CLOSE-PARA-EXIT.                                            01360001
+             EXIT.                                                      01370001
+

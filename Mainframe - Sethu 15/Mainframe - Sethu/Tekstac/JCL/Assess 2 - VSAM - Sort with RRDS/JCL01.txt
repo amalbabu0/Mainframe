@@ -1,0 +1,48 @@
+//TECN013A JOB CLASS=A,MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=&SYSUID         00010000
+//DSCRT PROC                                                            00020002
+//STEP001 EXEC PGM=IEFBR14                                              00021003
+//PS2ALLOC DD DSN=TECN013.VSAM.CC03.PS2,                                00030000
+//            DISP=(MOD,DELETE,DELETE),                                 00040004
+//            SPACE=(TRK,1),                                            00050004
+//            VOLUME=SER=ZAPRD4,                                        00051003
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                       00060000
+//PS3ALLOC DD DSN=TECN013.VSAM.CC03.PS3,                                00070000
+//            DISP=(MOD,DELETE,DELETE),                                 00080004
+//            SPACE=(TRK,1),                                            00090004
+//            VOLUME=SER=ZAPRD4,                                        00091003
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                       00100000
+// PEND                                                                 00110000
+//STEP020 EXEC DSCRT                                                    00150001
+//STEP030 EXEC PGM=IDCAMS                                               00160000
+//SYSPRINT DD SYSOUT=*                                                  00170000
+//SYSIN DD *                                                            00180000
+  DEFINE CLUSTER(NAME(TECN013.VSAM.CC03.RRDS) -                         00190000
+  RECORDS(10) -                                                         00200000
+  RECORDSIZE(80,80) -                                                   00210000
+  NUMBERED -                                                            00220000
+  VOLUMES(ZAPRD4) -                                                     00250000
+  CISZ(4096))                                                           00280005
+/*                                                                      00290001
+//STEP040 EXEC PGM=IDCAMS                                               00300001
+//SYSPRINT DD SYSOUT=*                                                  00310001
+//SYSIN DD *                                                            00320001
+  REPRO -                                                               00330001
+  INFILE(INPUT) -                                                       00340001
+  OUTDATASET(TECN013.VSAM.CC03.RRDS)                                    00350001
+/*                                                                      00360001
+//INPUT DD DSN=TECN013.VSAM.CC03.PS1,DISP=SHR                           00370001
+//STEP050 EXEC PGM=IDCAMS                                               00380001
+//SYSPRINT DD SYSOUT=*                                                  00390001
+//SYSIN DD *                                                            00400001
+  REPRO -                                                               00410001
+  INDATASET(TECN013.VSAM.CC03.RRDS) -                                   00420001
+  OUTFILE(OUTPART) SKIP(2) COUNT(2)                                     00430001
+/*                                                                      00440001
+//OUTPART DD DSN=TECN013.VSAM.CC03.PS2,DISP=SHR                         00450001
+//STEP060 EXEC PGM=IDCAMS                                               00460001
+//SYSPRINT DD SYSOUT=*                                                  00470001
+//SYSIN DD *                                                            00480001
+  EXPORT TECN013.VSAM.CC03.RRDS OUTFILE(EXPORTDD) TEMPORARY             00490001
+/*                                                                      00500001
+//EXPORTDD DD DSN=TECN013.VSAM.CC03.PS3,DISP=SHR                        00510001
+

@@ -1,0 +1,28 @@
+//TECN132A JOB NOTIFY=&SYSUID                                           00010000
+//STEP01   EXEC PGM=IDCAMS                                              00020000
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSIN    DD *                                                         00040000
+  DELETE TECN132.MYDATA.ICT02.KSDS PURGE                                00050000
+  IF LASTCC > 0 THEN SET MAXCC = 0                                      00060000
+/*                                                                      00070000
+//STEP02   EXEC PGM=IDCAMS                                              00080000
+//SYSPRINT DD SYSOUT=*                                                  00090000
+//SYSIN    DD *                                                         00100000
+  DEFINE CLUSTER (      -                                               00110000
+  NAME(TECN132.MYDATA.ICT02.KSDS)-                                      00120000
+  FREESPACE(10,10)-                                                     00130000
+  KEYS(5,0)-                                                            00140000
+  RECORDSIZE(80,80)-                                                    00150000
+  CISZ(4096)-                                                           00151000
+  TRACKS(3,2)-                                                          00160000
+  VOLUME(ZAPRD4)-                                                       00170000
+  INDEXED)                                                              00180000
+/*                                                                      00190000
+//STEP03   EXEC PGM=IDCAMS                                              00200000
+//SYSPRINT DD SYSOUT=*                                                  00210000
+//SYSIN    DD *                                                         00220000
+  REPRO INDATASET(TECN132.MYDATA.ICT02.PS2)-                            00230000
+  OUTDATASET(TECN132.MYDATA.ICT02.KSDS)                                 00240000
+/*                                                                      00250000
+                                                                        00260000
+

@@ -1,0 +1,101 @@
+       IDENTIFICATION DIVISION.                                         00001001
+       PROGRAM-ID. COBEX06.                                             00002001
+       AUTHOR.  TEKMFDEV.                                               00003001
+       ENVIRONMENT DIVISION.                                            00004001
+       INPUT-OUTPUT SECTION.                                            00005001
+       FILE-CONTROL.                                                    00006001
+      *INPUT FILE                                                       00007001
+           SELECT TI001-INPUT ASSIGN TO INPRRDS                         00008001
+              ORGANIZATION IS RELATIVE                                  00009001
+              ACCESS MODE IS DYNAMIC                                    00009101
+              RELATIVE KEY IS WS-RRN-NUM                                00009202
+              FILE STATUS IS WS-FILE-STATUS1.                           00009401
+       DATA DIVISION.                                                   00009501
+       FILE SECTION.                                                    00009601
+       FD TI001-INPUT.                                                  00009801
+       01 TI001-INPUT-RECORD.                                           00009901
+          05 TI001-POLICY-NUM PIC X(05).                                00010001
+          05 FILLER PIC X(01).                                          00010101
+          05 TI001-POLICY-TYPE PIC X(20).                               00010201
+          05 FILLER PIC X(01).                                          00010301
+          05 TI001-POLICY-TERM PIC X(02).                               00010402
+          05 FILLER PIC X(01).                                          00010501
+          05 TI001-POLICY-STATUS PIC A(10).                             00010601
+          05 FILLER PIC X(40).                                          00010701
+       WORKING-STORAGE SECTION.                                         00010901
+       01 WS-G-FILE-STATUS.                                             00011001
+          05 WS-FILE-STATUS1 PIC X(02).                                 00011101
+             88 WFS1-SUCCESS VALUE '00'.                                00011201
+             88 WFS1-EOF     VALUE '10'.                                00011301
+             88 WFS1-FILE-NOT-FND    VALUE '23'.                        00011401
+             88 WFS1-DUP-KEY    VALUE '22'.                             00011501
+             88 WFS1-INVAIID-REC-LGT VALUE '04'.                        00011601
+       77 WS-RRN-NUM PIC 9(3).                                          00011703
+       PROCEDURE DIVISION.                                              00013901
+       0000-MAIN-PARA.                                                  00014001
+            PERFORM 1000-INITIALIZATION-PARA                            00014101
+              THRU 1000-INITIALIZATION-PARA-EXIT                        00014201
+            PERFORM 2000-PROCESS-PARA                                   00014301
+              THRU 2000-PROCESS-PARA-EXIT                               00014401
+            PERFORM 9000-TERMINATION-PARA                               00014501
+              THRU 9000-TERMINATION-PARA-EXIT.                          00014601
+       0000-MAIN-PARA-EXIT.                                             00014701
+             EXIT.                                                      00014801
+       1000-INITIALIZATION-PARA.                                        00014901
+      *     DISPLAY 'INTIALIZATION PARA'.                               00015001
+       1000-INITIALIZATION-PARA-EXIT.                                   00015101
+            EXIT.                                                       00015201
+       2000-PROCESS-PARA.                                               00015301
+            PERFORM 2100-FILE-OPEN-PARA                                 00015401
+              THRU 2100-FILE-OPEN-PARA-EXIT                             00015501
+            IF WFS1-SUCCESS                                             00015601
+              PERFORM 2200-READ-PARA-RAN                                00015701
+                THRU 2200-READ-PARA-RAN-EXIT                            00015801
+            END-IF.                                                     00015901
+       2000-PROCESS-PARA-EXIT.                                          00016001
+            EXIT.                                                       00016101
+       2100-FILE-OPEN-PARA.                                             00016201
+            OPEN I-O TI001-INPUT                                        00016301
+            EVALUATE TRUE                                               00016501
+              WHEN WFS1-SUCCESS                                         00016601
+               CONTINUE                                                 00016701
+              WHEN OTHER                                                00016801
+                DISPLAY "INPUT FILE OPEN FAILED"                        00016901
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00017001
+            END-EVALUATE.                                               00017101
+       2100-FILE-OPEN-PARA-EXIT.                                        00017201
+            EXIT.                                                       00017301
+       2200-READ-PARA-RAN.                                              00017401
+            MOVE '007' TO WS-RRN-NUM                                    00017506
+            READ TI001-INPUT  INVALID KEY                               00017701
+            DISPLAY 'RECORD NOT FOUND'                                  00017801
+            PERFORM 9000-TERMINATION-PARA                               00017901
+            THRU 9000-TERMINATION-PARA-EXIT.                            00018001
+            PERFORM 2300-DELETE-PARA                                    00018101
+            THRU 2300-DELETE-PARA-EXIT.                                 00018201
+       2200-READ-PARA-RAN-EXIT.                                         00018301
+            EXIT.                                                       00018401
+       2300-DELETE-PARA.                                                00018501
+             DELETE  TI001-INPUT RECORD NOT INVALID KEY                 00018604
+             DISPLAY 'RECORD DELETED'                                   00018704
+             END-DELETE.                                                00018804
+       2300-DELETE-PARA-EXIT.                                           00018901
+             EXIT.                                                      00019001
+       9000-TERMINATION-PARA.                                           00019101
+             PERFORM 9100-CLOSE-PARA                                    00019201
+              THRU 9100-CLOSE-PARA-EXIT.                                00019301
+             STOP RUN.                                                  00019401
+       9000-TERMINATION-PARA-EXIT.                                      00019501
+             EXIT.                                                      00019601
+       9100-CLOSE-PARA.                                                 00019701
+             CLOSE TI001-INPUT                                          00019801
+               EVALUATE TRUE                                            00019901
+                WHEN WFS1-SUCCESS                                       00020001
+                CONTINUE                                                00020101
+                WHEN OTHER                                              00020201
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        00020301
+                 DISPLAY WS-FILE-STATUS1                                00020401
+               END-EVALUATE.                                            00020501
+       9100-CLOSE-PARA-EXIT.                                            00021001
+             EXIT.                                                      00030001
+

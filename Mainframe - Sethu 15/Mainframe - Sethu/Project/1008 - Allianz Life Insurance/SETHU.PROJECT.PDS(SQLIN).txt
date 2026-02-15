@@ -1,0 +1,64 @@
+--SELECT * FROM AGENT;                                                  00001021
+--SELECT * FROM INSURANCE;                                              00002038
+--DELETE FROM PREMIUM;                                                  00004043
+  SELECT * FROM PREMIUM;                                                00004143
+--DROP TABLE PREMIUM;                                                   00005031
+--CREATE TABLE PREMIUM(                                                 00010033
+-- HOLDER_ID             CHAR(05) NOT NULL PRIMARY KEY                  00020033
+--,HOLDER_NAME           CHAR(10)                                       00030033
+--,POLICY_ID             CHAR(05)                                       00040033
+--,POLICY_CODE           CHAR(10)                                       00050033
+--,POLICY_NUMBER         CHAR(11)                                       00060033
+--,POLICY_AMOUNT         CHAR(13)                                       00070033
+--,PREMIUM_AMOUNT        CHAR(13)                                       00080033
+--,PREMIUM_RECEIVED_DATE DATE                                           00090033
+--,BALANCE_AMOUNT        CHAR(10)                                       00100033
+--,NEXT_PREMIUM_DUE      DATE                                           00110033
+--,INTEREST_PAID         CHAR(13)                                       00120033
+--) IN SHRDB4.SHRTS4;                                                   00130033
+--CREATE UNIQUE INDEX HOLDER_ID_INDEX ON PREMIUM(HOLDER_ID);            00140033
+--                                                                      00150003
+--CREATE TABLE AGENT(                                                   00160011
+-- AGENT_CODE            CHAR(05) NOT NULL PRIMARY KEY                  00170011
+--,AGENT_NAME            CHAR(10)                                       00180011
+--,STREET                CHAR(20)                                       00190011
+--,CITY                  CHAR(20)                                       00200011
+--,STATE                 CHAR(20)                                       00210011
+--,PIN                   INTEGER                                        00220011
+--,PHONE_NO              CHAR(12)                                       00230011
+--,REG_NO                CHAR(17)                                       00240011
+--,COMMISSION            INTEGER                                        00250011
+--,EMAIL                 CHAR(30)                                       00260011
+--) IN SHRDB4.SHRTS4;                                                   00270011
+--CREATE UNIQUE INDEX AGENT_CODE_INDEX ON AGENT(AGENT_CODE);            00280011
+--                                                                      00290005
+--CREATE TABLE INSURANCE(                                               00300006
+-- POLICY_ID             CHAR(05) NOT NULL PRIMARY KEY                  00310006
+--,POLICY_CODE           CHAR(10)                                       00320006
+--,POLICY_NAME           CHAR(25)                                       00330006
+--,POLICY_TYPE           CHAR(10)                                       00340006
+--,TERM                  CHAR(07)                                       00350006
+--,POLICY_AMOUNT         CHAR(13)                                       00360006
+--,MATURITY_PERIOD       INTEGER                                        00370006
+--) IN SHRDB4.SHRTS4;                                                   00380006
+--CREATE UNIQUE INDEX POLICY_ID_INDEX ON INSURANCE(POLICY_ID);          00390006
+--                                                                      00400006
+--INSERT INTO AGENT VALUES                                              00410016
+--('4278A','R. RAJESH','15TH STREET','CHENNAI','TAMIL NADU',600006,     00420016
+--'99-4055-1867','TN-CHN-2013-10005',10,'R_RAJESH@BHARATHINSURANCE.COM' 00430016
+--);                                                                    00440016
+--                                                                      00450016
+--INSERT INTO INSURANCE VALUES                                          00460026
+--('M1011','A276453891','JEEVAN ULTRA PRO MAX','MEDICAL','YEARLY',      00470026
+-- '0,001,000,000',12);                                                 00480026
+--INSERT INTO INSURANCE VALUES                                          00481026
+--('M1012','B276453891','JEEVAN PREMIUM PRO','MEDICAL','MONTHLY',       00482026
+-- '0,000,800,000',4);                                                  00483026
+--INSERT INTO INSURANCE VALUES                                          00484026
+--('M1013','C276453891','JEEVAN PREMIUM','MEDICAL','QLY',               00485026
+-- '0,000,600,000',1);                                                  00486026
+--ALTER TABLE PREMIUM                                                   00490041
+--ADD CONSTRAINT FK_POLICY_ID                                           00500041
+--FOREIGN KEY (POLICY_ID)                                               00510041
+--REFERENCES INSURANCE(POLICY_ID);                                      00520041
+

@@ -1,0 +1,8 @@
+//DSCRT    PROC                                                         00010000
+//PSTEP1   EXEC PGM=IEFBR14                                             00020000
+//DD1      DD DSN=TECN116.JCL.CC02.PS2,DISP=(NEW,CATLG),                00030000
+//         SPACE=(TRK,(1,1)),                                           00040000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00050000
+//SYSPRINT DD SYSOUT=*                                                  00060000
+//DSCRT    PEND                                                         00070000
+

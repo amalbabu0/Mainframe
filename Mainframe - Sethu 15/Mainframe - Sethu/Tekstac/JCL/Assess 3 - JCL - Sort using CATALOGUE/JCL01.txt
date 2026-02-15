@@ -1,0 +1,20 @@
+//TECN013A JOB CLASS=A,MSGCLASS=A,NOTIFY=&SYSUID                        00010000
+//  JCLLIB ORDER=TECN013.JCL.CC03.PDS                                   00011001
+//JCL01    EXEC PGM=IDCAMS                                              00020000
+//DSCRT    PROC                                                         00030000
+//PS2DEL   EXEC PGM=IEFBR14                                             00040000
+//PS2      DD  DSN=TECN013.JCL.CC03.PS2,                                00050000
+//             DISP=(MOD,DELETE,DELETE),                                00060000
+//             SPACE=(TRK,1),                                           00070000
+//             VOLUME=SER=ZAPRD4,                                       00071002
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                      00080000
+//PS2ALLOC EXEC PGM=IEFBR14                                             00090000
+//PS2A     DD  DSN=TECN013.JCL.CC03.PS2,                                00100000
+//             DISP=(NEW,CATLG,DELETE),                                 00110000
+//             SPACE=(TRK,1),                                           00120000
+//             VOLUME=SER=ZAPRD4,                                       00121002
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                      00130000
+//         PEND                                                         00140000
+//STEP001  EXEC DSCRT                                                   00150000
+//STEP003  EXEC CATSORT                                                 00160000
+

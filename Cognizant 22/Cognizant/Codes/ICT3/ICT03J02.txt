@@ -1,0 +1,30 @@
+//TECN116A JOB NOTIFY=&SYSUID                                           00010000
+//STEP01   EXEC PGM=IDCAMS                                              00020000
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSIN    DD *                                                         00040000
+  DEFINE CLUSTER (      -                                               00050000
+  NAME(TECN116.MYDATA.ICT03.BOOK.KSDS)-                                 00060000
+  FREESPACE(10,10)-                                                     00070000
+  KEYS(9,0)-                                                            00080000
+  RECORDSIZE(80,80)-                                                    00090000
+  CISZ(4096)-                                                           00100000
+  TRACKS(5,5)-                                                          00110000
+  VOLUME(ZAPRD7)-                                                       00120000
+  INDEXED)                                                              00130000
+  DEFINE CLUSTER (      -                                               00140000
+  NAME(TECN116.MYDATA.ICT03.OUTPUT.KSDS)-                               00150000
+  FREESPACE(10,10)-                                                     00160000
+  KEYS(9,0)-                                                            00170000
+  RECORDSIZE(80,80)-                                                    00180000
+  CISZ(4096)-                                                           00190000
+  TRACKS(5,5)-                                                          00200000
+  VOLUME(ZAPRD7)-                                                       00210000
+  INDEXED)                                                              00220000
+/*                                                                      00230000
+//STEP02   EXEC PGM=IDCAMS                                              00240000
+//SYSPRINT DD SYSOUT=*                                                  00250000
+//SYSIN    DD *                                                         00260000
+  REPRO INDATASET(TECN116.MYDATA.ICT03.PS2)-                            00270000
+  OUTDATASET(TECN116.MYDATA.ICT03.BOOK.KSDS)                            00280000
+/*                                                                      00290000
+

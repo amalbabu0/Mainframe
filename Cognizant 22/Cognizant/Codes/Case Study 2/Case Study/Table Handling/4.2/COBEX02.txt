@@ -1,0 +1,41 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX02.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-NUMBER.
+           02 WS-NUMBER-TABLE OCCURS 5 TIMES INDEXED BY K.
+              03 WS-NUM          PIC 9(3).
+       77 WS-I                   PIC 9.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-I.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CGPA-PARA THRU
+                   3000-CGPA-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CGPA-PARA.
+           PERFORM VARYING WS-I FROM 1 BY 1 UNTIL WS-I > 5
+              ACCEPT WS-NUM(WS-I)
+           END-PERFORM.
+           PERFORM VARYING K FROM 5 BY -1 UNTIL K < 1
+              DISPLAY WS-NUM(K)
+           END-PERFORM.
+       3000-CGPA-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+

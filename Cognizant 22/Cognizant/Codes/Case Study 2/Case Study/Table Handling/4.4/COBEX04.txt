@@ -1,0 +1,53 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX04.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       DATA DIVISION.                                                   00040000
+       WORKING-STORAGE SECTION.                                         00050000
+       01 WS-EMP.                                                       00060000
+          05 WS-EMP-DET  OCCURS 5 TIMES ASCENDING KEY IS                00070009
+                         WS-EMP-SALARY INDEXED BY WS-IND.               00072000
+             10 WS-EMP-NAME PIC X(20).                                  00080005
+             10 WS-EMP-NUM PIC X(5).                                    00090000
+             10 WS-EMP-SALARY PIC 9(5)V9(2).                            00100000
+       PROCEDURE DIVISION.                                              00120000
+       0000-MAIN-PARA.                                                  00130000
+            PERFORM 1000-INITIALIZATION-PARA                            00140000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00150000
+            PERFORM 2000-PROCESS-PARA                                   00160000
+              THRU 2000-PROCESS-PARA-EXIT.                              00170000
+            PERFORM 9000-TERMINATION-PARA                               00180000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00190000
+       0000-MAIN-PARA-EXIT.                                             00200000
+             EXIT.                                                      00210000
+       1000-INITIALIZATION-PARA.                                        00220000
+       1000-INITIALIZATION-PARA-EXIT.                                   00230000
+            EXIT.                                                       00240000
+       2000-PROCESS-PARA.                                               00250000
+            SET WS-IND TO 1.                                            00260000
+            PERFORM 2100-ACCEPT-PARA                                    00270000
+            THRU 2100-ACCEPT-PARA-EXIT UNTIL WS-IND > 5.                00280000
+            PERFORM 2200-SEARCH-PARA                                    00300000
+            THRU 2200-SEARCH-PARA-EXIT.                                 00310000
+       2000-PROCESS-PARA-EXIT.                                          00320000
+            EXIT.                                                       00330000
+       2100-ACCEPT-PARA.                                                00340000
+            ACCEPT WS-EMP-NAME(WS-IND).                                 00350000
+            ACCEPT WS-EMP-NUM(WS-IND).                                  00360000
+            ACCEPT WS-EMP-SALARY(WS-IND).                               00370000
+            SET WS-IND UP BY 1.                                         00380000
+       2100-ACCEPT-PARA-EXIT.                                           00390000
+            EXIT.                                                       00400000
+       2200-SEARCH-PARA.                                                00410000
+            SET WS-IND TO 1.                                            00260000
+            SEARCH ALL WS-EMP-DET AT END DISPLAY 'RECORD NOT FOUND'     00430000
+            WHEN WS-EMP-SALARY(WS-IND) = 10000                          00440009
+            DISPLAY WS-EMP-NAME(WS-IND)                                 00450000
+            DISPLAY WS-EMP-NUM(WS-IND)                                  00460000
+            DISPLAY WS-EMP-SALARY(WS-IND)                               00470007
+            END-SEARCH.                                                 00471008
+       2200-SEARCH-PARA-EXIT.                                           00480000
+            EXIT.                                                       00490000
+       9000-TERMINATION-PARA.                                           00500000
+             STOP RUN.                                                  00510000
+       9000-TERMINATION-PARA-EXIT.                                      00520000
+             EXIT.                                                      00530000
