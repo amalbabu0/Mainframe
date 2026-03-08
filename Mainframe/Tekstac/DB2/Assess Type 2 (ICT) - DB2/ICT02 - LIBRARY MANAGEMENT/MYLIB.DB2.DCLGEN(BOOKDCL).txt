@@ -1,0 +1,36 @@
+      ******************************************************************
+      * DCLGEN TABLE(BOOK_DET)                                         *
+      *        LIBRARY(TECN013.MYLIB.DB2.DCLGEN(BOOKDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(HV2-)                                             *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE BOOK_DET TABLE
+           ( BOOK_ID                        CHAR(5) NOT NULL,
+             MEMBER_ID                      CHAR(6) NOT NULL,
+             DATE_ISSUE                     DATE NOT NULL,
+             DATE_TO_BE_RETURN              DATE NOT NULL,
+             DATE_RETURNED                  DATE NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE BOOK_DET                           *
+      ******************************************************************
+       01  DCLBOOK-DET.
+      *                       BOOK_ID
+           10 HV2-BOOK-ID          PIC X(5).
+      *                       MEMBER_ID
+           10 HV2-MEMBER-ID        PIC X(6).
+      *                       DATE_ISSUE
+           10 HV2-DATE-ISSUE       PIC X(10).
+      *                       DATE_TO_BE_RETURN
+           10 HV2-DATE-TO-BE-RETURN
+              PIC X(10).
+      *                       DATE_RETURNED
+           10 HV2-DATE-RETURNED    PIC X(10).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+

@@ -1,0 +1,55 @@
+      ******************************************************************
+      * DCLGEN TABLE(POLICY_DETAIL)                                    *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(PDETDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE POLICY_DETAIL TABLE
+           ( CUST_ID                        INTEGER NOT NULL,
+             POL_NO                         INTEGER NOT NULL,
+             CUST_NAME                      VARCHAR(15) NOT NULL,
+             CUST_GENDER                    CHAR(1) NOT NULL,
+             CUST_ANNUAL_INCOME             DECIMAL(8, 2) NOT NULL,
+             CUST_STATE_NAME                VARCHAR(15),
+             POLICY_TERM                    CHAR(2) NOT NULL,
+             POLICY_PREMIEUM                DECIMAL(6, 2) NOT NULL,
+             POLICY_PREMIEUM_PAID           CHAR(1) NOT NULL,
+             BONUS                          DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE POLICY_DETAIL                      *
+      ******************************************************************
+       01  DCLPOLICY-DETAIL.
+      *    *************************************************************
+           10 CUST-ID              PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 POL-NO               PIC S9(9) USAGE COMP.
+      *    *************************************************************
+           10 CUST-NAME.
+              49 CUST-NAME-LEN     PIC S9(4) USAGE COMP.
+              49 CUST-NAME-TEXT    PIC X(15).
+      *    *************************************************************
+           10 CUST-GENDER          PIC X(1).
+      *    *************************************************************
+           10 CUST-ANNUAL-INCOME   PIC S9(6)V9(2) USAGE COMP-3.
+      *    *************************************************************
+           10 CUST-STATE-NAME.
+              49 CUST-STATE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 CUST-STATE-NAME-TEXT
+                 PIC X(15).
+      *    *************************************************************
+           10 POLICY-TERM          PIC X(2).
+      *    *************************************************************
+           10 POLICY-PREMIEUM      PIC S9(4)V9(2) USAGE COMP-3.
+      *    *************************************************************
+           10 POLICY-PREMIEUM-PAID
+              PIC X(1).
+      *    *************************************************************
+           10 BONUS                PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *
+      ******************************************************************

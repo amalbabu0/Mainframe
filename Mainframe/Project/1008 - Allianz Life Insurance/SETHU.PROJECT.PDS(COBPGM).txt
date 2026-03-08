@@ -1,0 +1,498 @@
+       IDENTIFICATION DIVISION.                                         00010001
+       PROGRAM-ID. COBPGM.                                              00020001
+       AUTHOR. TECN013A.                                                00030001
+       ENVIRONMENT DIVISION.                                            00040001
+       INPUT-OUTPUT SECTION.                                            00050001
+       FILE-CONTROL.                                                    00051003
+           SELECT TI001-PS   ASSIGN       TO INP                        00060006
+                             ACCESS       IS SEQUENTIAL                 00070002
+                             ORGANIZATION IS SEQUENTIAL                 00080002
+                             FILE STATUS  IS WS05-FST-TI001.            00090002
+           SELECT TO001-PS   ASSIGN       TO OUT                        00100002
+                             ACCESS       IS SEQUENTIAL                 00110002
+                             ORGANIZATION IS SEQUENTIAL                 00120002
+                             FILE STATUS  IS WS05-FST-TO001.            00130006
+           SELECT TO002-KSDS ASSIGN       TO KSDS                       00140002
+                             ACCESS       IS RANDOM                     00150031
+                             ORGANIZATION IS INDEXED                    00160004
+                             RECORD KEY   IS TO002-KEY                  00161007
+                             FILE STATUS  IS WS05-FST-TO002.            00170006
+           SELECT TO003-ERR  ASSIGN       TO ERR                        00180003
+                             ACCESS       IS SEQUENTIAL                 00190002
+                             ORGANIZATION IS SEQUENTIAL                 00200002
+                             FILE STATUS  IS WS05-FST-TO003.            00210006
+       DATA DIVISION.                                                   00220003
+       FILE SECTION.                                                    00240003
+       FD TI001-PS.                                                     00250003
+       01 TI001-PS-REC.                                                 00260003
+           05 TI001-HOLDER-ID       PIC  X(05).                         00270008
+           05 TI001-HOLDER-NAME     PIC  X(10).                         00280008
+           05 TI001-POLICY-ID       PIC  X(05).                         00290008
+           05 TI001-POLICY-CODE     PIC  X(10).                         00300008
+           05 TI001-POLICY-NO       PIC  9(10).                         00310008
+           05 TI001-PREM-AMT        PIC  9(10).                         00320008
+           05 TI001-PREM-REC.                                           00330003
+               10 TI001-DATE-D1     PIC  9(02).                         00340008
+               10 TI001-S1          PIC  X(01).                         00350008
+               10 TI001-DATE-M1     PIC  9(02).                         00360008
+               10 TI001-S2          PIC  X(01).                         00370008
+               10 TI001-DATE-Y1     PIC  9(04).                         00380008
+           05 TI001-PREM-DUE.                                           00381003
+               10 TI001-DATE-D2     PIC  9(02).                         00382008
+               10 TI001-S3          PIC  X(01).                         00383008
+               10 TI001-DATE-M2     PIC  9(02).                         00384008
+               10 TI001-S4          PIC  X(01).                         00385008
+               10 TI001-DATE-Y2     PIC  9(04).                         00386008
+           05 TI001-INT-PAID        PIC  9(10).                         00390008
+       FD TO001-PS.                                                     00391003
+       01 TO001-PS-REC.                                                 00400003
+           05 TO001-HOLDER-ID       PIC  X(05).                         00420008
+           05 TO001-HOLDER-NAME     PIC  X(10).                         00430008
+           05 TO001-POLICY-ID       PIC  X(05).                         00440008
+           05 TO001-POLICY-CODE     PIC  X(10).                         00450008
+           05 TO001-POLICY-NO       PIC  9(10).                         00460008
+           05 TO001-PREM-AMT        PIC  9(10).                         00470008
+           05 TO001-PREM-REC        PIC  X(10).                         00480008
+           05 TO001-PREM-DUE        PIC  X(10).                         00540008
+           05 TO001-INT-PAID        PIC  9(10).                         00600008
+       FD TO002-KSDS.                                                   00610003
+       01 TO002-KSDS-REC.                                               00620003
+           05 TO002-KEY.                                                00621008
+               10 TO002-HOLDER-ID   PIC  X(05).                         00630008
+               10 TO002-HOLDER-NAME PIC  X(10).                         00640008
+               10 TO002-POLICY-ID   PIC  X(05).                         00650008
+           05 TO002-PREM-REC        PIC  X(10).                         00690008
+           05 TO002-PREM-AMT        PIC  X(13).                         00741015
+           05 FILLER                PIC  X(37).                         00741115
+       FD TO003-ERR.                                                    00741603
+       01 TO003-ERR-REC.                                                00742003
+           05 TO003-HOLDER-ID       PIC  X(05).                         00743008
+           05 TO003-HOLDER-NAME     PIC  X(10).                         00744008
+           05 TO003-POLICY-ID       PIC  X(05).                         00745008
+           05 TO003-POLICY-CODE     PIC  X(10).                         00746008
+           05 TO003-POLICY-NO       PIC  9(10).                         00747008
+           05 TO003-PREM-AMT        PIC  9(10).                         00748008
+           05 TO003-PREM-REC        PIC  X(10).                         00749008
+           05 TO003-PREM-DUE        PIC  X(10).                         00800008
+           05 TO003-INT-PAID        PIC  9(10).                         00860008
+           05 FILLER                PIC  X(01).                         00870008
+           05 TO003-ERROR           PIC  X(19).                         00880008
+       WORKING-STORAGE SECTION.                                         01010006
+       01 WS01-VARS.                                                    01020006
+           05 WS05-FST-TI001        PIC  9(02).                         01030008
+           05 WS05-FST-TO001        PIC  9(02).                         01040008
+           05 WS05-FST-TO002        PIC  9(02).                         01050008
+           05 WS05-FST-TO003        PIC  9(02).                         01060008
+           05 WS05-POL-AMT          PIC  9(10).                         01061013
+           05 WS05-POL-AMT-GRP.                                         01061114
+               10 WS10-POL-BILL     PIC  9(01).                         01062008
+               10 WS10-POL-MILL     PIC  9(03).                         01063008
+               10 WS10-POL-THOU     PIC  9(03).                         01064008
+               10 WS10-POL-HUND     PIC  9(03).                         01065008
+           05 WS05-PREM-AMT         PIC  9(10).                         01066008
+           05 WS05-BAL-AMT          PIC  9(10).                         01067008
+           05 WS05-ERROR            PIC  X(19).                         01068008
+           05 WS05-REC-COUNT        PIC  9(02).                         01070008
+           05 WS05-SQLCODE          PIC S9(04) SIGN LEADING SEPARATE.   01080008
+           05 WS05-ERR-LRECL        PIC S9(09) COMP VALUE 80.           01090024
+           05 WS05-ERR-MSG.                                             01100006
+               10 WS10-ERR-LEN      PIC S9(04) COMP VALUE 800.          01110024
+               10 WS10-ERR-TXT      PIC  X(80) OCCURS 10 TIMES.         01120008
+           EXEC SQL                                                     01121006
+               INCLUDE SQLCA                                            01122006
+           END-EXEC.                                                    01123006
+           EXEC SQL                                                     01127006
+               INCLUDE DCLINSR                                          01128006
+           END-EXEC.                                                    01129006
+           EXEC SQL                                                     01129106
+               INCLUDE DCLPREM                                          01129206
+           END-EXEC.                                                    01129306
+       PROCEDURE DIVISION.                                              01130006
+       0000-MAIN-PARA.                                                  01140006
+           PERFORM 1000-INIT-PARA                                       01150006
+           PERFORM 3000-PROC-PARA                                       01160006
+              THRU 3000-PROC-PARA-EXIT                                  01170006
+           PERFORM 9000-TERM-PARA                                       01180006
+           .                                                            01190006
+       1000-INIT-PARA.                                                  01200006
+           INITIALIZE DCLINSURANCE DCLPREMIUM                           01210006
+           CONTINUE                                                     01220006
+           .                                                            01230006
+       3000-PROC-PARA.                                                  01240006
+           PERFORM 3100-OPEN-PARA                                       01250006
+              THRU 3100-OPEN-PARA-EXIT                                  01260006
+           PERFORM 3200-READ-PARA                                       01270006
+              THRU 3200-READ-PARA-EXIT                                  01280006
+             UNTIL WS05-FST-TI001 = 10                                  01281006
+           PERFORM 3300-CLOSE-PARA                                      01290006
+              THRU 3300-CLOSE-PARA-EXIT                                 01300006
+           .                                                            01310006
+       3000-PROC-PARA-EXIT.                                             01320006
+           EXIT                                                         01330006
+           .                                                            01340006
+       3100-OPEN-PARA.                                                  01350006
+           OPEN INPUT TI001-PS                                          01360006
+           EVALUATE TRUE                                                01370006
+           WHEN WS05-FST-TI001 = 00                                     01380006
+               DISPLAY 'TI001-PS WAS OPENED'                            01390006
+           WHEN OTHER                                                   01400006
+               DISPLAY 'TI001-PS WAS NOT OPENED'                        01410016
+               DISPLAY 'FILE STATUS : ' WS05-FST-TI001                  01420006
+               PERFORM 9000-TERM-PARA                                   01421006
+           END-EVALUATE                                                 01430006
+           OPEN OUTPUT TO001-PS                                         01450006
+           EVALUATE TRUE                                                01460006
+           WHEN WS05-FST-TO001 = 00                                     01470006
+               DISPLAY 'TO001-PS WAS OPENED'                            01480006
+           WHEN OTHER                                                   01490006
+               DISPLAY 'TO001-PS WAS NOT OPENED'                        01500016
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  01510006
+               PERFORM 9000-TERM-PARA                                   01511006
+           END-EVALUATE                                                 01520006
+           OPEN I-O TO002-KSDS                                          01530031
+           EVALUATE TRUE                                                01540006
+           WHEN WS05-FST-TO002 = 00                                     01550006
+               DISPLAY 'TO002-KSDS WAS OPENED'                          01560006
+           WHEN OTHER                                                   01570006
+               DISPLAY 'TO002-KSDS WAS NOT OPENED'                      01580016
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO002                  01590006
+               PERFORM 9000-TERM-PARA                                   01591006
+           END-EVALUATE                                                 01600006
+           OPEN OUTPUT TO003-ERR                                        01610006
+           EVALUATE TRUE                                                01620006
+           WHEN WS05-FST-TO003 = 00                                     01630006
+               DISPLAY 'TO003-ERR WAS OPENED'                           01640006
+           WHEN OTHER                                                   01650006
+               DISPLAY 'TO003-ERR WAS NOT OPENED'                       01660016
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO003                  01670006
+               PERFORM 9000-TERM-PARA                                   01671006
+           END-EVALUATE                                                 01680006
+           .                                                            01690006
+       3100-OPEN-PARA-EXIT.                                             01700006
+           EXIT                                                         01710006
+           .                                                            01720006
+       3200-READ-PARA.                                                  01730006
+            ADD 1 TO WS05-REC-COUNT                                     01731006
+           MOVE SPACES TO TI001-PS-REC                                  01732032
+           READ TI001-PS                                                01740006
+           EVALUATE TRUE                                                01750006
+           WHEN WS05-FST-TI001 = 00                                     01760006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS READ'             01770006
+               PERFORM 3210-VALIDATION-PARA                             01780006
+                  THRU 3210-VALIDATION-PARA-EXIT                        01790006
+           WHEN WS05-FST-TI001 = 10                                     01800006
+               DISPLAY 'ALL RECORDS WERE READ'                          01810006
+           WHEN OTHER                                                   01820006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT READ'         01830006
+               DISPLAY 'FILE STATUS : ' WS05-FST-TI001                  01840006
+           END-EVALUATE                                                 01850006
+           .                                                            01860006
+       3200-READ-PARA-EXIT.                                             01870006
+           EXIT                                                         01880006
+           .                                                            01890006
+       3210-VALIDATION-PARA.                                            01900006
+           EVALUATE TRUE                                                01910006
+           WHEN TI001-HOLDER-ID(1:4)   IS NUMERIC             AND       01920020
+                TI001-HOLDER-ID(5:1)   IS GREATER THAN SPACES AND       01921020
+                TI001-HOLDER-ID(5:1)   IS ALPHABETIC          AND       01922021
+                TI001-HOLDER-NAME(1:1) IS GREATER THAN SPACES AND       01930020
+                TI001-HOLDER-NAME(1:1) IS ALPHABETIC          AND       01931021
+                TI001-HOLDER-NAME(2:1) = '.'                  AND       01940020
+                TI001-HOLDER-NAME(3:8) IS GREATER THAN SPACES AND       01950020
+                TI001-HOLDER-NAME(3:8) IS ALPHABETIC          AND       01950121
+                TI001-POLICY-ID(1:1)   IS GREATER THAN SPACES AND       01951020
+                TI001-POLICY-ID(1:1)   IS ALPHABETIC          AND       01951121
+                TI001-POLICY-ID(2:4)   IS NUMERIC             AND       01952020
+                TI001-POLICY-CODE(1:1) IS GREATER THAN SPACES AND       01953025
+                TI001-POLICY-CODE(1:1) IS ALPHABETIC          AND       01953126
+                TI001-POLICY-CODE(2:9) IS NUMERIC             AND       01954026
+                TI001-POLICY-NO        IS NUMERIC             AND       01960020
+                TI001-PREM-AMT         IS NUMERIC             AND       01970020
+                TI001-DATE-D1          IS NUMERIC             AND       01980020
+                TI001-S1               = '-'                  AND       01981020
+                TI001-DATE-M1          IS NUMERIC             AND       01982020
+                TI001-S1               = '-'                  AND       01983020
+                TI001-DATE-Y1          IS NUMERIC             AND       01984020
+                TI001-DATE-D2          IS NUMERIC             AND       01990020
+                TI001-S1               = '-'                  AND       01991020
+                TI001-DATE-Y2          IS NUMERIC             AND       02020020
+                TI001-S1               = '-'                  AND       02021020
+                TI001-DATE-M2          IS NUMERIC                       02030013
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS VALIDATED'        02031006
+               PERFORM 3211-SELECT-PARA                                 02040006
+                  THRU 3211-SELECT-PARA-EXIT                            02050006
+               PERFORM 3212-UPDATE-PARA                                 02060006
+                  THRU 3212-UPDATE-PARA-EXIT                            02070006
+               PERFORM 3213-WRITE-PS-PARA                               02080006
+                  THRU 3213-WRITE-PS-PARA-EXIT                          02090006
+               PERFORM 3214-WRITE-KSDS-PARA                             02100006
+                  THRU 3214-WRITE-KSDS-PARA-EXIT                        02110006
+           WHEN OTHER                                                   02120006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT VALIDATED'    02121006
+               PERFORM 3215-ERROR-PARA                                  02130006
+                  THRU 3215-ERROR-PARA-EXIT                             02140006
+               PERFORM 3216-WRITE-ERROR-PARA                            02141007
+                  THRU 3216-WRITE-ERROR-PARA-EXIT                       02142007
+           END-EVALUATE                                                 02150006
+           .                                                            02160006
+       3210-VALIDATION-PARA-EXIT.                                       02170006
+           EXIT                                                         02180006
+           .                                                            02190006
+       3211-SELECT-PARA.                                                02200006
+           MOVE TI001-POLICY-ID TO HV2-POLICY-ID                        02201007
+           EXEC SQL                                                     02210006
+               SELECT                                                   02220006
+                   POLICY_AMOUNT                                        02221006
+               INTO                                                     02230006
+                   :HV2-POLICY-AMOUNT                                   02240006
+               FROM                                                     02250006
+                   INSURANCE                                            02260006
+               WHERE                                                    02270006
+                   POLICY_ID = :HV2-POLICY-ID                           02280006
+           END-EXEC.                                                    02290006
+           EVALUATE TRUE                                                02300006
+           WHEN SQLCODE = 0                                             02310006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' POLICY AMOUNT'        02320007
+                       ' WAS SELECTED'                                  02321007
+           WHEN SQLCODE = +100                                          02330006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT MATCHED'      02340007
+           WHEN OTHER                                                   02360006
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' POLICY AMOUNT'        02370007
+                       ' WAS NOT SELECTED'                              02371007
+               PERFORM SQL-ERROR-PARA                                   02380007
+                  THRU SQL-ERROR-PARA-EXIT                              02390007
+           END-EVALUATE                                                 02420006
+           .                                                            02430006
+       3211-SELECT-PARA-EXIT.                                           02440006
+           EXIT                                                         02450006
+           .                                                            02460006
+       3212-UPDATE-PARA.                                                02470007
+           UNSTRING HV2-POLICY-AMOUNT DELIMITED BY ","                  02471007
+               INTO WS10-POL-BILL                                       02472007
+                    WS10-POL-MILL                                       02473007
+                    WS10-POL-THOU                                       02474007
+                    WS10-POL-HUND                                       02475007
+               MOVE WS05-POL-AMT-GRP  TO WS05-POL-AMT                   02475114
+               MOVE TI001-PREM-AMT    TO WS05-PREM-AMT                  02476007
+            COMPUTE WS05-BAL-AMT       = WS05-POL-AMT - WS05-PREM-AMT   02480008
+               MOVE WS05-BAL-AMT      TO HV1-BALANCE-AMOUNT             02490007
+               MOVE TI001-HOLDER-ID   TO HV1-HOLDER-ID                  02500007
+               MOVE TI001-HOLDER-NAME TO HV1-HOLDER-NAME                02510007
+               MOVE TI001-POLICY-ID   TO HV1-POLICY-ID                  02520007
+               MOVE TI001-POLICY-CODE TO HV1-POLICY-CODE                02530007
+               MOVE TI001-POLICY-NO(1:5) TO HV1-POLICY-NUMBER(1:5)      02540008
+               MOVE '-'                  TO HV1-POLICY-NUMBER(6:1)      02540108
+               MOVE TI001-POLICY-NO(6:5) TO HV1-POLICY-NUMBER(7:5)      02540208
+               MOVE HV2-POLICY-AMOUNT TO HV1-POLICY-AMOUNT              02541007
+               MOVE TI001-PREM-AMT(1:1) TO HV1-PREMIUM-AMOUNT(1:1)      02550008
+               MOVE ','                 TO HV1-PREMIUM-AMOUNT(2:1)      02550108
+               MOVE TI001-PREM-AMT(2:3) TO HV1-PREMIUM-AMOUNT(3:3)      02551008
+               MOVE ','                 TO HV1-PREMIUM-AMOUNT(6:1)      02551108
+               MOVE TI001-PREM-AMT(5:3) TO HV1-PREMIUM-AMOUNT(7:3)      02552008
+               MOVE ','                 TO HV1-PREMIUM-AMOUNT(10:1)     02552108
+               MOVE TI001-PREM-AMT(8:3) TO HV1-PREMIUM-AMOUNT(11:3)     02553008
+               MOVE TI001-DATE-Y1     TO HV1-PREMIUM-RECEIVED-DATE(1:4) 02560007
+               MOVE TI001-S1          TO HV1-PREMIUM-RECEIVED-DATE(5:1) 02570007
+               MOVE TI001-DATE-M1     TO HV1-PREMIUM-RECEIVED-DATE(6:2) 02580007
+               MOVE TI001-S2          TO HV1-PREMIUM-RECEIVED-DATE(8:1) 02590007
+               MOVE TI001-DATE-D1     TO HV1-PREMIUM-RECEIVED-DATE(9:2) 02600007
+               MOVE TI001-DATE-Y2     TO HV1-NEXT-PREMIUM-DUE(1:4)      02610007
+               MOVE TI001-S3          TO HV1-NEXT-PREMIUM-DUE(5:1)      02620007
+               MOVE TI001-DATE-M2     TO HV1-NEXT-PREMIUM-DUE(6:2)      02630007
+               MOVE TI001-S4          TO HV1-NEXT-PREMIUM-DUE(8:1)      02640007
+               MOVE TI001-DATE-D2     TO HV1-NEXT-PREMIUM-DUE(9:2)      02650007
+               MOVE TI001-INT-PAID(1:1) TO HV1-INTEREST-PAID(1:1)       02661008
+               MOVE ','                 TO HV1-INTEREST-PAID(2:1)       02662008
+               MOVE TI001-INT-PAID(2:3) TO HV1-INTEREST-PAID(3:3)       02663008
+               MOVE ','                 TO HV1-INTEREST-PAID(6:1)       02664008
+               MOVE TI001-INT-PAID(5:3) TO HV1-INTEREST-PAID(7:3)       02665008
+               MOVE ','                 TO HV1-INTEREST-PAID(10:1)      02666008
+               MOVE TI001-INT-PAID(8:3) TO HV1-INTEREST-PAID(11:3)      02667008
+               EXEC SQL                                                 02670007
+                   INSERT INTO PREMIUM(                                 02680018
+                        HOLDER_ID                                       02690018
+                       ,HOLDER_NAME                                     02700018
+                       ,POLICY_ID                                       02710018
+                       ,POLICY_CODE                                     02720018
+                       ,POLICY_NUMBER                                   02730018
+                       ,POLICY_AMOUNT                                   02740018
+                       ,PREMIUM_AMOUNT                                  02741020
+                       ,PREMIUM_RECEIVED_DATE                           02750018
+                       ,BALANCE_AMOUNT                                  02760018
+                       ,NEXT_PREMIUM_DUE                                02770018
+                       ,INTEREST_PAID)                                  02780018
+                   VALUES(                                              02790018
+                        :HV1-HOLDER-ID                                  02800018
+                       ,:HV1-HOLDER-NAME                                02801018
+                       ,:HV1-POLICY-ID                                  02802018
+                       ,:HV1-POLICY-CODE                                02803018
+                       ,:HV1-POLICY-NUMBER                              02804018
+                       ,:HV1-POLICY-AMOUNT                              02805018
+                       ,:HV1-PREMIUM-AMOUNT                             02805120
+                       ,:HV1-PREMIUM-RECEIVED-DATE                      02806018
+                       ,:HV1-BALANCE-AMOUNT                             02807018
+                       ,:HV1-NEXT-PREMIUM-DUE                           02808018
+                       ,:HV1-INTEREST-PAID)                             02809019
+               END-EXEC.                                                02810007
+           EVALUATE TRUE                                                02810107
+           WHEN SQLCODE = 0                                             02810207
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' POLICY AMOUNT'        02810307
+                       ' WAS UPDATED'                                   02810407
+           WHEN SQLCODE = +100                                          02810507
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT MATCHED'      02810607
+           WHEN OTHER                                                   02810707
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' POLICY AMOUNT'        02810807
+                       ' WAS NOT UPDATED'                               02810907
+               PERFORM SQL-ERROR-PARA                                   02811007
+                  THRU SQL-ERROR-PARA-EXIT                              02811107
+           END-EVALUATE                                                 02811207
+           .                                                            02811307
+       3212-UPDATE-PARA-EXIT.                                           02811407
+           EXIT                                                         02811507
+           .                                                            02811607
+       3213-WRITE-PS-PARA.                                              02811707
+           MOVE SPACES            TO TO001-PS-REC                       02811818
+           MOVE TI001-HOLDER-ID   TO TO001-HOLDER-ID                    02811908
+           MOVE TI001-HOLDER-NAME TO TO001-HOLDER-NAME                  02812008
+           MOVE TI001-POLICY-ID   TO TO001-POLICY-ID                    02812108
+           MOVE TI001-POLICY-CODE TO TO001-POLICY-CODE                  02813008
+           MOVE TI001-POLICY-NO   TO TO001-POLICY-NO                    02814007
+           MOVE TI001-PREM-AMT    TO TO001-PREM-AMT                     02814118
+           MOVE TI001-PREM-REC    TO TO001-PREM-REC                     02815007
+           MOVE TI001-PREM-DUE    TO TO001-PREM-DUE                     02816007
+           MOVE TI001-INT-PAID    TO TO001-INT-PAID                     02817007
+           WRITE TO001-PS-REC                                           02818007
+           EVALUATE TRUE                                                02819007
+           WHEN WS05-FST-TO001 = 00                                     02819107
+               DISPLAY 'OUT RECORD ' WS05-REC-COUNT ' WAS WRITTEN'      02819207
+           WHEN OTHER                                                   02819307
+               DISPLAY 'OUT RECORD ' WS05-REC-COUNT ' WAS NOT WRITTEN'  02819407
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  02819507
+           END-EVALUATE                                                 02819607
+           .                                                            02819707
+       3213-WRITE-PS-PARA-EXIT.                                         02819807
+           EXIT                                                         02819907
+           .                                                            02820007
+       3214-WRITE-KSDS-PARA.                                            02820107
+           MOVE SPACES                 TO TO002-KSDS-REC                02820218
+           MOVE TI001-HOLDER-ID        TO TO002-HOLDER-ID               02820315
+           MOVE TI001-HOLDER-NAME      TO TO002-HOLDER-NAME             02820415
+           MOVE TI001-POLICY-ID        TO TO002-POLICY-ID               02820515
+           MOVE TI001-PREM-REC         TO TO002-PREM-REC                02820615
+           MOVE TI001-PREM-AMT(1:1)    TO TO002-PREM-AMT(1:1)           02820715
+           MOVE ','                    TO TO002-PREM-AMT(2:1)           02820815
+           MOVE TI001-PREM-AMT(2:3)    TO TO002-PREM-AMT(3:3)           02820915
+           MOVE ','                    TO TO002-PREM-AMT(6:1)           02821015
+           MOVE TI001-PREM-AMT(5:3)    TO TO002-PREM-AMT(7:3)           02821115
+           MOVE ','                    TO TO002-PREM-AMT(10:1)          02821215
+           MOVE TI001-PREM-AMT(8:3)    TO TO002-PREM-AMT(11:3)          02821315
+           WRITE TO002-KSDS-REC                                         02821412
+           EVALUATE TRUE                                                02821512
+           WHEN WS05-FST-TO002 = 00                                     02821612
+               DISPLAY 'KSDS RECORD ' WS05-REC-COUNT ' WAS WRITTEN'     02821712
+           WHEN OTHER                                                   02821812
+               DISPLAY 'KSDS RECORD ' WS05-REC-COUNT ' WAS NOT WRITTEN' 02821912
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO002                  02822033
+           END-EVALUATE                                                 02822112
+           .                                                            02822212
+       3214-WRITE-KSDS-PARA-EXIT.                                       02822313
+           EXIT                                                         02822413
+           .                                                            02822513
+       3215-ERROR-PARA.                                                 02822612
+           EVALUATE TRUE                                                02822712
+           WHEN TI001-HOLDER-ID(1:4)   IS NOT NUMERIC             OR    02822820
+                TI001-HOLDER-ID(5:1)   IS EQUAL TO SPACES         OR    02822921
+                TI001-HOLDER-ID(5:1)   IS NOT ALPHABETIC                02823021
+                MOVE 'HOLDER ID'       TO WS05-ERROR                    02823121
+           END-EVALUATE                                                 02823221
+           EVALUATE TRUE                                                02823321
+           WHEN TI001-HOLDER-NAME(1:1) IS EQUAL TO SPACES         OR    02823421
+                TI001-HOLDER-NAME(1:1) IS NOT ALPHABETIC          OR    02823521
+                TI001-HOLDER-NAME(2:1) IS NOT EQUAL TO '.'        OR    02823621
+                TI001-HOLDER-NAME(3:8) IS NOT GREATER THAN SPACES OR    02823721
+                TI001-HOLDER-NAME(3:8) IS NOT ALPHABETIC                02823821
+                MOVE 'HOLDER NAME'     TO WS05-ERROR                    02823921
+           END-EVALUATE                                                 02824021
+           EVALUATE TRUE                                                02824121
+           WHEN TI001-POLICY-ID(1:1)   IS EQUAL TO SPACES         OR    02824221
+                TI001-POLICY-ID(1:1)   IS NOT ALPHABETIC          OR    02824321
+                TI001-POLICY-ID(2:4)   IS NOT NUMERIC                   02824421
+                MOVE 'POLICY ID'       TO WS05-ERROR                    02824521
+           END-EVALUATE                                                 02824621
+           EVALUATE TRUE                                                02824725
+           WHEN TI001-POLICY-CODE(1:1) IS EQUAL TO SPACES         OR    02824825
+                TI001-POLICY-CODE(1:1) IS NOT ALPHABETIC          OR    02824926
+                TI001-POLICY-CODE(2:9) IS NOT NUMERIC                   02825026
+                MOVE 'POLICY CODE'     TO WS05-ERROR                    02825126
+           END-EVALUATE                                                 02825226
+           EVALUATE TRUE                                                02825326
+           WHEN TI001-POLICY-NO        IS NOT NUMERIC                   02825426
+                MOVE 'POLICY NUMBER'   TO WS05-ERROR                    02825526
+           END-EVALUATE                                                 02825626
+           EVALUATE TRUE                                                02825726
+           WHEN TI001-PREM-AMT         IS NOT NUMERIC                   02825826
+                MOVE 'PREMIUM AMOUNT'  TO WS05-ERROR                    02825926
+           END-EVALUATE                                                 02826026
+           EVALUATE TRUE                                                02826126
+           WHEN TI001-PREM-REC(1:2)    IS NOT NUMERIC      OR           02826226
+                TI001-PREM-REC(3:1)    IS NOT EQUAL TO '-' OR           02826326
+                TI001-PREM-REC(4:2)    IS NOT NUMERIC      OR           02826426
+                TI001-PREM-REC(6:1)    IS NOT EQUAL TO '-' OR           02826526
+                TI001-PREM-REC(7:4)    IS NOT NUMERIC                   02826626
+                MOVE 'PREM RECEIVED DATE' TO WS05-ERROR                 02826727
+           END-EVALUATE                                                 02826826
+           EVALUATE TRUE                                                02826926
+           WHEN TI001-PREM-DUE(1:2)    IS NOT NUMERIC      OR           02827026
+                TI001-PREM-DUE(3:1)    IS NOT EQUAL TO '-' OR           02827126
+                TI001-PREM-DUE(4:2)    IS NOT NUMERIC      OR           02827226
+                TI001-PREM-DUE(6:1)    IS NOT EQUAL TO '-' OR           02827326
+                TI001-PREM-DUE(7:4)    IS NOT NUMERIC                   02827426
+                MOVE 'NEXT PREM DUE DATE' TO WS05-ERROR                 02827527
+           END-EVALUATE                                                 02827626
+           .                                                            02827726
+       3215-ERROR-PARA-EXIT.                                            02827826
+           EXIT                                                         02827926
+           .                                                            02828026
+       3216-WRITE-ERROR-PARA.                                           02828126
+           MOVE SPACES            TO TO003-ERR-REC                      02828226
+           MOVE TI001-HOLDER-ID   TO TO003-HOLDER-ID                    02828326
+           MOVE TI001-HOLDER-NAME TO TO003-HOLDER-NAME                  02828426
+           MOVE TI001-POLICY-ID   TO TO003-POLICY-ID                    02828526
+           MOVE TI001-POLICY-CODE TO TO003-POLICY-CODE                  02828626
+           MOVE TI001-POLICY-NO   TO TO003-POLICY-NO                    02828726
+           MOVE TI001-PREM-AMT    TO TO003-PREM-AMT                     02828826
+           MOVE TI001-PREM-REC    TO TO003-PREM-REC                     02828926
+           MOVE TI001-PREM-DUE    TO TO003-PREM-DUE                     02829026
+           MOVE TI001-INT-PAID    TO TO003-INT-PAID                     02829126
+           MOVE WS05-ERROR        TO TO003-ERROR                        02829226
+           WRITE TO003-ERR-REC                                          02829326
+           EVALUATE TRUE                                                02829426
+           WHEN WS05-FST-TO003 = 00                                     02829526
+               DISPLAY 'ERROR RECORD ' WS05-REC-COUNT ' WAS WRITTEN'    02829626
+           WHEN OTHER                                                   02829726
+               DISPLAY 'ERROR RECORD ' WS05-REC-COUNT ' WAS NOT WRITTEN'02829826
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO003                  02829926
+           END-EVALUATE                                                 02830026
+           .                                                            02830126
+       3216-WRITE-ERROR-PARA-EXIT.                                      02830226
+           EXIT                                                         02830326
+           .                                                            02830426
+       3300-CLOSE-PARA.                                                 02830526
+           CLOSE TI001-PS TO001-PS TO002-KSDS TO003-ERR                 02830626
+           .                                                            02830726
+       3300-CLOSE-PARA-EXIT.                                            02830826
+           EXIT                                                         02830926
+           .                                                            02831026
+       9000-TERM-PARA.                                                  02831126
+           STOP RUN                                                     02831226
+           .                                                            02831326
+       SQL-ERROR-PARA.                                                  02831426
+           CALL 'DSNTIAR' USING SQLCA WS05-ERR-MSG WS05-ERR-LRECL       02832007
+           MOVE SQLCODE TO WS05-SQLCODE                                 02840007
+           DISPLAY 'SQLCODE : ' WS05-SQLCODE                            02850007
+           DISPLAY 'SQL ERR : ' WS05-ERR-MSG                            02860024
+           .                                                            02870007
+       SQL-ERROR-PARA-EXIT.                                             02880007
+           EXIT                                                         02890007
+           .                                                            02900007
+

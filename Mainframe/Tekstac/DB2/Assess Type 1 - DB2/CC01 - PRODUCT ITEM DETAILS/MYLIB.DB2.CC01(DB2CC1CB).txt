@@ -1,0 +1,252 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. DB2CC1CB.                                            00020000
+       AUTHOR. TECN013A.                                                00030004
+       ENVIRONMENT DIVISION.                                            00031001
+       INPUT-OUTPUT SECTION.                                            00032001
+       FILE-CONTROL.                                                    00033001
+           SELECT TO001-PS ASSIGN       TO OUTINV                       00034001
+                           ACCESS       IS SEQUENTIAL                   00035001
+                           ORGANIZATION IS SEQUENTIAL                   00036001
+                           FILE STATUS  IS WS05-FST-TO001.              00037005
+       DATA DIVISION.                                                   00040001
+       FILE SECTION.                                                    00050001
+       FD TO001-PS.                                                     00060001
+       01 TO001-PS-REC.                                                 00070001
+           05 TO001-INVOICE-NO       PIC  X(06).                        00080003
+           05 FILLER                 PIC  X(01).                        00090003
+           05 TO001-INVOICE-ITEM     PIC  X(05).                        00100003
+           05 FILLER                 PIC  X(01).                        00110003
+           05 TO001-PROD-TYPE        PIC  X(15).                        00120004
+           05 FILLER                 PIC  X(01).                        00130003
+           05 TO001-INVOICE-COUNT    PIC  9(03).                        00131004
+           05 FILLER                 PIC  X(01).                        00132004
+           05 TO001-INVOICE-TOT-COST PIC  9(08).9(02).                  00140003
+           05 FILLER                 PIC  X(01).                        00150003
+           05 TO001-INVOICE-STATUS   PIC  X(12).                        00160005
+           05 FILLER                 PIC  X(23).                        00170011
+       WORKING-STORAGE SECTION.                                         00180002
+       01 WS01-VARS.                                                    00190002
+           05 WS05-FST-TO001         PIC  9(02).                        00200003
+           05 WS05-REC-COUNT         PIC  9(02).                        00200103
+           05 WS05-SQLCODE           PIC S9(04) SIGN LEADING SEPARATE.  00200303
+           05 WS05-NULL-IND-TYPE     PIC S9(04) COMP.                   00201003
+           05 WS05-ERR-LRECL         PIC S9(09) COMP VALUE 80.          00202003
+           05 WS05-ERR-MSG.                                             00203003
+               10 WS10-ERR-LEN       PIC S9(04) COMP VALUE 800.         00204003
+               10 WS10-ERR-TXT       PIC  X(80) OCCURS 10 TIMES.        00205003
+           EXEC SQL                                                     00210002
+               INCLUDE SQLCA                                            00220002
+           END-EXEC.                                                    00230002
+           EXEC SQL                                                     00240002
+               INCLUDE PRDDCL                                           00250003
+           END-EXEC.                                                    00260003
+           EXEC SQL                                                     00270003
+               INCLUDE INVDCL                                           00280003
+           END-EXEC.                                                    00290003
+           EXEC SQL                                                     00291003
+               DECLARE CUR1 CURSOR                                      00292003
+               FOR                                                      00293003
+               SELECT                                                   00294003
+                   INVOICE_NO                                           00295003
+                   ,INVOICE_ITEM                                        00296003
+                   ,ITEM_TYPE                                           00297003
+                   ,INVOICE_COUNT                                       00298003
+                   ,INVOICE_TOT_COST                                    00299003
+                   ,INVOICE_STATUS                                      00299103
+                   ,ITEM_STATUS                                         00299203
+                   ,ITEM_COUNT                                          00299303
+                   ,ITEM_PRICE                                          00299404
+               FROM                                                     00299503
+                   INVOICE                                              00299618
+               JOIN                                                     00299703
+                   PRODUCT_ITEM                                         00299818
+               ON                                                       00299903
+                   ITEM_CODE = INVOICE_ITEM                             00300003
+               ORDER BY INVOICE_NO                                      00300103
+           END-EXEC.                                                    00300203
+       PROCEDURE DIVISION.                                              00301003
+       0000-MAIN-PARA.                                                  00310003
+           PERFORM 1000-INIT-PARA                                       00320003
+           PERFORM 3000-PROC-PARA                                       00330003
+              THRU 3000-PROC-PARA-EXIT                                  00340003
+           PERFORM 9000-TERM-PARA                                       00350003
+           .                                                            00360003
+       1000-INIT-PARA.                                                  00370003
+           CONTINUE                                                     00390003
+           .                                                            00400003
+       3000-PROC-PARA.                                                  00410003
+           PERFORM 3100-OPEN-PARA                                       00420003
+              THRU 3100-OPEN-PARA-EXIT                                  00430003
+           PERFORM 3200-FETCH-PARA                                      00440003
+              THRU 3200-FETCH-PARA-EXIT                                 00450003
+             UNTIL SQLCODE = +100                                       00451003
+           PERFORM 3300-CLOSE-PARA                                      00460003
+              THRU 3300-CLOSE-PARA-EXIT                                 00470003
+           .                                                            00480003
+       3000-PROC-PARA-EXIT.                                             00490003
+           EXIT                                                         00500003
+           .                                                            00510003
+       3100-OPEN-PARA.                                                  00520003
+           OPEN OUTPUT TO001-PS                                         00530003
+           EVALUATE TRUE                                                00540003
+           WHEN WS05-FST-TO001 = 00                                     00550003
+               DISPLAY 'TO001 WAS OPENED'                               00551004
+           WHEN OTHER                                                   00570003
+               DISPLAY 'TO001 WAS NOT OPENED'                           00571004
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  00572004
+               PERFORM 9000-TERM-PARA                                   00580003
+           END-EVALUATE                                                 00590003
+           EXEC SQL                                                     00591003
+               OPEN CUR1                                                00592003
+           END-EXEC.                                                    00600003
+           EVALUATE TRUE                                                00601003
+           WHEN SQLCODE = 0                                             00602003
+               DISPLAY 'CUR1 WAS OPENED'                                00603003
+           WHEN OTHER                                                   00604003
+               DISPLAY 'CUR1 WAS NOT OPENED'                            00605003
+               PERFORM SQL-ERROR-PARA                                   00605104
+                  THRU SQL-ERROR-PARA-EXIT                              00605204
+               PERFORM 9000-TERM-PARA                                   00605320
+           END-EVALUATE                                                 00609103
+           .                                                            00609203
+       3100-OPEN-PARA-EXIT.                                             00610003
+           EXIT                                                         00620003
+           .                                                            00630003
+       3200-FETCH-PARA.                                                 00640003
+           ADD 1 TO WS05-REC-COUNT                                      00641006
+           INITIALIZE DCLPRODUCT-ITEM DCLINVOICE                        00642015
+           EXEC SQL                                                     00650003
+               FETCH CUR1                                               00660003
+               INTO                                                     00720003
+                   :HV-INVOICE-NO                                       00730003
+                   ,:HV-INVOICE-ITEM                                    00740003
+                   ,:HV-ITEM-TYPE :WS05-NULL-IND-TYPE                   00741003
+                   ,:HV-INVOICE-COUNT                                   00750003
+                   ,:HV-INVOICE-TOT-COST                                00760003
+                   ,:HV-INVOICE-STATUS                                  00770003
+                   ,:HV-ITEM-STATUS                                     00780003
+                   ,:HV-ITEM-COUNT                                      00781003
+                   ,:HV-ITEM-PRICE                                      00782004
+           END-EXEC.                                                    00790003
+           EVALUATE TRUE                                                00791003
+           WHEN SQLCODE = 0                                             00792003
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS FETCHED'          00793003
+               PERFORM 3210-CALC-PARA                                   00800003
+                  THRU 3210-CALC-PARA-EXIT                              00810003
+               PERFORM 3220-UPDATE-PARA                                 00820004
+                  THRU 3220-UPDATE-PARA-EXIT                            00830004
+           WHEN SQLCODE = +100                                          00830103
+               DISPLAY 'ALL RECORDS WERE FETCHED'                       00830204
+               CONTINUE                                                 00830303
+           WHEN OTHER                                                   00830403
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT FETCHED'      00830504
+               PERFORM SQL-ERROR-PARA                                   00830604
+                  THRU SQL-ERROR-PARA-EXIT                              00830704
+           END-EVALUATE                                                 00832003
+           .                                                            00840003
+       3200-FETCH-PARA-EXIT.                                            00850003
+           EXIT                                                         00860003
+           .                                                            00870003
+       3210-CALC-PARA.                                                  00880003
+           EVALUATE TRUE                                                00890003
+           WHEN WS05-NULL-IND-TYPE = -1                                 00920012
+               MOVE SPACES TO HV-ITEM-TYPE-TEXT                         00921012
+               MOVE 'CANCELLED' TO HV-INVOICE-STATUS-TEXT               00930012
+           WHEN WS05-NULL-IND-TYPE = 0                                  00940016
+               EVALUATE TRUE                                            01000016
+               WHEN HV-ITEM-STATUS-TEXT = 'NO'                          01010016
+                   MOVE 'NO STOCK'  TO HV-INVOICE-STATUS-TEXT           01020016
+               WHEN HV-ITEM-STATUS-TEXT = 'YES'                         01030016
+                   EVALUATE TRUE                                        01040016
+                   WHEN HV-INVOICE-COUNT > HV-ITEM-COUNT                01050016
+                       MOVE 'OUT OF STOCK' TO HV-INVOICE-STATUS-TEXT    01060016
+                   WHEN OTHER                                           01070017
+                       MOVE 'ACCEPTED' TO HV-INVOICE-STATUS-TEXT        01080016
+                   END-EVALUATE                                         01081016
+               END-EVALUATE                                             01090016
+           END-EVALUATE                                                 01091016
+           EVALUATE TRUE                                                01100004
+               WHEN HV-INVOICE-STATUS-TEXT = 'ACCEPTED'                 01110012
+                   COMPUTE HV-INVOICE-TOT-COST                          01120004
+                           = HV-INVOICE-COUNT * HV-ITEM-PRICE           01130004
+           END-EVALUATE                                                 01140004
+           .                                                            01141004
+       3210-CALC-PARA-EXIT.                                             01150004
+           EXIT                                                         01160004
+           .                                                            01170004
+       3220-UPDATE-PARA.                                                01180004
+           MOVE LENGTH OF HV-INVOICE-STATUS-TEXT TO                     01181019
+                          HV-INVOICE-STATUS-LEN                         01182019
+           EXEC SQL                                                     01190004
+           UPDATE INVOICE                                               01200004
+               SET                                                      01210004
+                   INVOICE_STATUS = :HV-INVOICE-STATUS                  01220004
+                   ,INVOICE_TOT_COST = :HV-INVOICE-TOT-COST             01230004
+               WHERE                                                    01240004
+                   INVOICE_NO = :HV-INVOICE-NO                          01250004
+           END-EXEC.                                                    01260004
+           EVALUATE TRUE                                                01270004
+           WHEN SQLCODE = 0                                             01280004
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS UPDATED'          01290004
+               PERFORM 3221-WRITE-PARA                                  01291004
+                  THRU 3221-WRITE-PARA-EXIT                             01292004
+           WHEN OTHER                                                   01300004
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT UPDATED'      01301004
+               PERFORM SQL-ERROR-PARA                                   01301104
+                  THRU SQL-ERROR-PARA-EXIT                              01301204
+           END-EVALUATE                                                 01306004
+           .                                                            01307004
+       3220-UPDATE-PARA-EXIT.                                           01310004
+           EXIT                                                         01320004
+           .                                                            01330004
+       3221-WRITE-PARA.                                                 01340004
+           MOVE SPACES TO TO001-PS-REC                                  01341014
+           MOVE HV-INVOICE-NO          TO TO001-INVOICE-NO              01350004
+           MOVE HV-INVOICE-ITEM        TO TO001-INVOICE-ITEM            01360004
+           MOVE HV-ITEM-TYPE-TEXT      TO TO001-PROD-TYPE               01370004
+           MOVE HV-INVOICE-COUNT       TO TO001-INVOICE-COUNT           01380004
+           MOVE HV-INVOICE-TOT-COST    TO TO001-INVOICE-TOT-COST        01390004
+           MOVE HV-INVOICE-STATUS-TEXT TO TO001-INVOICE-STATUS          01400004
+           WRITE TO001-PS-REC                                           01410004
+           EVALUATE TRUE                                                01420004
+           WHEN WS05-FST-TO001 = 00                                     01430004
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS WRITTEN'          01440004
+           WHEN OTHER                                                   01450004
+               DISPLAY 'RECORD ' WS05-REC-COUNT ' WAS NOT WRITTEN'      01460004
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  01470004
+           END-EVALUATE                                                 01480004
+           .                                                            01500004
+       3221-WRITE-PARA-EXIT.                                            01510006
+           EXIT                                                         01520004
+           .                                                            01530004
+       3300-CLOSE-PARA.                                                 01540004
+           EXEC SQL                                                     01550004
+               CLOSE CUR1                                               01560004
+           END-EXEC.                                                    01570004
+           EVALUATE TRUE                                                01571004
+           WHEN SQLCODE = 0                                             01580004
+               DISPLAY 'CUR1 WAS CLOSED'                                01590004
+           WHEN OTHER                                                   01600004
+               DISPLAY 'CUR1 WAS NOT CLOSED'                            01610004
+               PERFORM SQL-ERROR-PARA                                   01611004
+                  THRU SQL-ERROR-PARA-EXIT                              01612004
+           END-EVALUATE                                                 01613004
+           CLOSE TO001-PS                                               01614004
+           DISPLAY 'TO001 WAS CLOSED'                                   01615004
+           .                                                            01615104
+       3300-CLOSE-PARA-EXIT.                                            01616004
+           EXIT                                                         01617004
+           .                                                            01618004
+       SQL-ERROR-PARA.                                                  01619004
+           MOVE SQLCODE TO WS05-SQLCODE                                 01620004
+           CALL 'DSNTIAR' USING SQLCA WS05-ERR-MSG WS05-ERR-LRECL       01630004
+           DISPLAY 'SQLCODE : ' WS05-SQLCODE                            01640004
+           DISPLAY 'SQL ERR : ' WS05-ERR-MSG                            01650004
+           .                                                            01660004
+       SQL-ERROR-PARA-EXIT.                                             01670004
+           EXIT                                                         01680004
+           .                                                            01690004
+       9000-TERM-PARA.                                                  01700004
+           STOP RUN                                                     01710004
+           .                                                            01720004
+

@@ -1,0 +1,54 @@
+//TECN116H JOB NOTIFY=&SYSUID                                           00010000
+// JCLLIB ORDER=TECN116.JCL.MYPROC                                      00020000
+//STEP010  EXEC KSDSCRT                                                 00030000
+//STEP020  EXEC PGM=IDCAMS                                              00040000
+//SYSPRINT DD SYSOUT=*                                                  00050000
+//SYSIN    DD *                                                         00060000
+  PRINT INDATASET(TECN116.JCL.ASSMT02.SHARE.PS2) CHAR COUNT(1)          00070000
+/*                                                                      00080000
+// IF (STEP020.RC EQ 0) THEN                                            00081000
+//STEP030  EXEC PGM=IDCAMS                                              00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//SYSIN    DD *                                                         00110000
+  REPRO INDATASET(TECN116.JCL.ASSMT02.SHARE.PS2) -                      00120000
+        OUTDATASET(TECN116.JCL.ASSMT02.SHARE.KSDS)                      00130000
+/*                                                                      00140000
+// ELSE                                                                 00150000
+//STEP040  EXEC PGM=IEBGENER                                            00160003
+//SYSUT1   DD *                                                         00170000
+DATASET IS EMPTY                                                        00180001
+//SYSUT2   DD SYSOUT=*                                                  00181003
+//SYSPRINT DD SYSOUT=*                                                  00190000
+//SYSIN    DD *                                                         00200000
+/*                                                                      00230000
+// ENDIF                                                                00240000
+//STEP050  EXEC PGM=IDCAMS                                              00250000
+//SYSPRINT DD SYSOUT=*                                                  00260000
+//SYSIN    DD *                                                         00270000
+  DEFINE AIX( -                                                         00280000
+  NAME(TECN116.JCL.ASSMT02.SHARE.AIX) -                                 00290000
+  RELATE(TECN116.JCL.ASSMT02.SHARE.KSDS) -                              00300000
+  KEYS(20,10) -                                                         00310000
+  RECORDSIZE(80,80) -                                                   00320000
+  CISZ(512) -                                                           00330000
+  FREESPACE(10,10) -                                                    00340000
+  TRACKS(1,1) -                                                         00350000
+  VOLUME(ZAPRD7) -                                                      00360000
+  NONUNIQUEKEY)                                                         00370000
+/*                                                                      00380000
+//STEP060  EXEC PGM=IDCAMS                                              00390000
+//SYSPRINT DD SYSOUT=*                                                  00400000
+//SYSIN    DD *                                                         00410000
+  BLDINDEX -                                                            00420000
+  INDATASET(TECN116.JCL.ASSMT02.SHARE.KSDS) -                           00430000
+  OUTDATASET(TECN116.JCL.ASSMT02.SHARE.AIX) -                           00440000
+  NOSORTCALL                                                            00450000
+/*                                                                      00460000
+//STEP070  EXEC PGM=IDCAMS                                              00470000
+//SYSPRINT DD SYSOUT=*                                                  00480000
+//SYSIN    DD *                                                         00490000
+  DEFINE PATH( -                                                        00500000
+  NAME(TECN116.JCL.ASSMT02.SHARE.PATH) -                                00510000
+  PATHENTRY(TECN116.JCL.ASSMT02.SHARE.AIX))                             00520000
+/*                                                                      00530000
+

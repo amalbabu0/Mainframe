@@ -1,0 +1,166 @@
+Activity 1: Using ISPF
+ 
+Allocate a PS dataset with record length 80 with naming convention as given below.
+ 
+PS1 <USERID>. JCLASSMT01.STUD.PS1
+ 
+Enter the records given below in the PS dataset PS1= <USERID>.JCLASSMT01.STUD.PS1.
+ 
+DO NOT ENTER ROWI as it contains header.
+ 
+DO NOT ENTER ROW2 as it contains layout details.
+ 
+Inset one space(filler) between each field.
+ 
+Enter all the records in capital letters.
+ 
+232450   TOM            M   50.00   67.00   71.00   188
+ 
+212680   MARRY       F   60.00   65.00   68.00   193
+ 
+222350   DAVID         M                 67.00   71.00   138
+ 
+282560   STELLA       F    55.00   86.00   88.00   229
+ 
+241620   STEPHAN   M   48.00   67.00   71.00   186
+ 
+235730   ΤΕΕΝΑ                             65.00   78.00   143
+ 
+252380   JACK           M    60.00   68.00   79.00   207
+ 
+272480   ROSY          F   70.00   75.00   78.00   223
+ 
+292580   JAMES       M   70.00   75.00   78.00   223
+ 
+202180   SARA          F   70.00   75.00   78.00   223
+ 
+Activity 2: SORT USING JCL
+ 
+Allocate a PDS <USERID>.JCL.ASSMT01.STUD using ISPF and create a member JCL01 and write a JCL to perform the given task.
+ 
+Create an instream procedure for deleting and allocating the PS output datasets
+ 
+Name the instream proc as DSCRT which contains STEP001 & STEP002.
+ 
+STEP001:
+ 
+This Step should be PRE DELETE of output datasets - PS2,PS3,PS4,PS5,PS6,PS7
+ 
+Declare the value for DSN as symbolic parameter &DSNAME
+ 
+Value for &DSNAME should be USERID.JCL.ASSMT01.STUD
+ 
+• Example: DSN=&DSNNAME..PS2
+ 
+STEP002:
+ 
+This Step should be allocation of output datasets PS2,PS3,PS4,PS5, PS6,PS7
+ 
+Declare the value for DSN as symbolic parameter &DSNAME
+ 
+Value for &DSNAME should be USERID.JCL.ASSMT01.STUD
+ 
+• Example: DSN=&DSNNAME..PS2
+ 
+STEP003:
+ 
+This Step should call the instream procedure DSCRT which will perform deletion and allocation of above mentioned PS datasets.
+ 
+STEP010:
+ 
+Using Sort utility perform the given eperations on PS1 <USERID>.JCLASSMT01.STUD.PST and store the output in PS2 <USERID>.JCLASSMT01.STUD.PS2
+ 
+Sort records in ascending order based on ROLLNO.
+ 
+Remove the records which have SUBJECTI as BLANK.
+ 
+Include the records which has TOTAL greater than 150
+ 
+ 
+For Example if ROLLNO 12345 has TOTAL 178 and ROLLNO 123678 has TOTAL 147, then only record having ROLLNO 12345 has to include in the output dataset.
+ 
+STEP020:
+ 
+• Using Sort utility perform the given operations on PS1 <USERID>.JCLASSMT01.STUD.PS1 and store the output in <USERID>.JCLASSMT01.STUD.PS3 and <USERID>.JCLASSMT01.STUD.PS4.
+ 
+Sort records in ascending order based on ROLLNO.
+ 
+Split the Records based on the Gender
+ 
+ 
+<USERID>.JCLASSMT01.STUD.PS3 file should contain records of Gender 'M' and <USERID>.JCLASSMT01.STUD.PS4 files should contain records of Gender 'F.
+ 
+STEP030:
+ 
+Using Sort utility perform the given operations on PS2 <USERID>.JCLASSMT01.STUD.PS2 and store the output in <USERID>.JCLASSMT01.STUD.PS5.
+ 
+Sort records in ascending order based on ROLLNO.
+ 
+Insert a column for "Grade" next to "Total" by leaving a one filler between "Grade" and "Total" (For example if grade ends at 56 position then enter total at 58 position). Based on the Total, update the grade based on below the category.
+ 
+More than 200 Update the grade to A
+ 
+Between 190-200 update the grade to B.
+ 
+Less than 190 update the grade to C.
+ 
+ 
+STEP040:
+ 
+Using Sort utility perform the given operations on PS2 <USERID>.JCL.ASSMT01.STUD.PS2 and store the output in <USERID>.JCLASSMT01.STUD.PS6.
+ 
+Copy the records
+ 
+Insert the header in the output file PS6 in the 12th Position as below
+ 
+ 
+STUDENT DETAILS
+ 
+Insert a trailer in the output file PS6 in the 2nd position with the count of records.
+ 
+For example if the PS6 file has 9 records the trailer record should be as below starting from position 1, NO OF RECORDS: 0009
+ 
+STEP050:
+ 
+Using Sort utility perform the given operations on PS2 <USERID>.JCL.ASSMT01.STUD.PS2 and store the output in <USERID>.JCLASSMT01.STUD.PS7
+ 
+Copy the records
+ 
+Change all the records with Gender 'M' as Male.
+ 
+Change all the records with Gender 'F as Female.
+ 
+ 
+Activity 2: VSAM
+ 
+Write a procedure <USERID>.JCL.MYPROC (KSDSCRT) to allocate a KSDS dataset with the following specifications,
+ 
+RECORDSIZE (80, 80)
+ 
+KEYS - ROLL NO (9(6))
+ 
+Name: KSDS = <USERID>.JCL.ASSMT01.STUD.KSDS
+ 
+Create a control card (MYCTL01) for the above procedure and store it in <USERID>.JCL.MYPROC.
+ 
+NOTE: IN THE CODE EDITOR DO NOT START CONTROL CARD STATEMENTS IN COLUMN 1
+ 
+Create a member JCL02 in the PDS
+ 
+<USERID>.JCLASSMT01.STUD and write a JCL to perform the below mentioned task.
+ 
+• STEP010: Call the procedure KSDSCRT and allocate a dataset
+ 
+<USERID>.JCLASSMT01.STUD.KSDS
+ 
+STEP020: Check if the PS2 file is Empty or not.
+ 
+• If Not Empty, In STEP030 Load KSDS file with data from PS2.Else in STEP040 display "Dataset is Empty" in the Spool.
+ 
+• STEP050: Write a JCL to create an Alternate Index <USERID>.JCL.ASSMT01.STUD.AIX for KSDS(<USERID>.JCLASSMT01.STUD.KSDS). The Alternate key is Name (X(20)) & NONUNIQUE KEY.
+ 
+STEP060: Define the BLDINDEX for the Alternate Index.
+ 
+STEP070: Define the Path.
+ 
+<USERID>.JCLASSMT01.STUD.PATH

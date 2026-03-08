@@ -1,0 +1,166 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBCS01M.                                            00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       INPUT-OUTPUT SECTION.                                            00050000
+       FILE-CONTROL.                                                    00060000
+      *INPUT FILE                                                       00070000
+           SELECT TI001-INPUT ASSIGN TO INCUSPS                         00080000
+              ORGANIZATION IS SEQUENTIAL                                00090000
+              ACCESS MODE IS SEQUENTIAL                                 00100000
+              FILE STATUS IS WS-FILE-STATUS1.                           00110000
+      *OUTPUT FILE                                                      00120000
+           SELECT TO001-OUTPUT ASSIGN TO OUTCUSPS                       00130000
+              ORGANIZATION IS SEQUENTIAL                                00140000
+              ACCESS MODE IS SEQUENTIAL                                 00150000
+              FILE STATUS IS WS-FILE-STATUS2.                           00160000
+       DATA DIVISION.                                                   00170000
+       FILE SECTION.                                                    00180000
+       FD TI001-INPUT.                                                  00190000
+       01 TI001-INPUT-RECORD.                                           00200000
+          05 TI001-ACC-NUM PIC X(10).                                   00210000
+          05 FILLER PIC X(01).                                          00220000
+          05 TI001-ACC-NAME PIC X(20).                                  00230000
+          05 FILLER PIC X(01).                                          00240000
+          05 TI001-ACC-TYPE PIC X(10).                                  00250000
+          05 FILLER PIC X(01).                                          00260000
+          05 TI001-CREDIT-SCORE PIC 9(1).                               00270000
+          05 FILLER PIC X(01).                                          00280000
+          05 TI001-LOAN-AMOUNT PIC 9(5).9(2).                           00290000
+          05 FILLER PIC X(01).                                          00300000
+          05 TI001-CURR-BAL PIC 9(6).9(2).                              00310000
+          05 FILLER PIC X(17).                                          00320000
+       FD TO001-OUTPUT.                                                 00330000
+       01 TO001-OUTPUT-RECORD.                                          00340000
+          05 TO001-ACC-NUM PIC X(10).                                   00350000
+          05 FILLER PIC X(01).                                          00360000
+          05 TO001-ACC-NAME PIC X(20).                                  00370000
+          05 FILLER PIC X(01).                                          00380000
+          05 TO001-ACC-TYPE PIC X(10).                                  00390000
+          05 FILLER PIC X(01).                                          00400000
+          05 TO001-CREDIT-REPORT PIC A(10).                             00410000
+          05 FILLER PIC X(01).                                          00420000
+          05 TO001-REF-NUMBER PIC X(10).                                00430000
+          05 FILLER PIC X(16).                                          00460000
+       WORKING-STORAGE SECTION.                                         00470000
+       01 WS-G-FILE-STATUS.                                             00480000
+          05 WS-FILE-STATUS1 PIC X(02).                                 00490000
+             88 WFS1-SUCCESS VALUE '00'.                                00500000
+             88 WFS1-EOF     VALUE '10'.                                00510000
+          05 WS-FILE-STATUS2 PIC X(02).                                 00520000
+             88 WFS2-SUCCESS VALUE '00'.                                00530000
+             88 WFS2-EOF     VALUE '10'.                                00540000
+       77 WS-CREDIT-REPORT PIC X(10).                                   00550000
+       77 WS-REF-NUMBER PIC X(10).                                      00551000
+       77 WS-S1 PIC 9(2).                                               00552002
+       PROCEDURE DIVISION.                                              00560000
+       0000-MAIN-PARA.                                                  00570000
+            PERFORM 1000-INITIALIZATION-PARA                            00580000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00590008
+            PERFORM 2000-PROCESS-PARA                                   00600000
+              THRU 2000-PROCESS-PARA-EXIT.                              00610008
+            PERFORM 9000-TERMINATION-PARA                               00620000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00630000
+       0000-MAIN-PARA-EXIT.                                             00640000
+             EXIT.                                                      00650000
+       1000-INITIALIZATION-PARA.                                        00660000
+      *     DISPLAY 'INTIALIZATION PARA'.                               00670000
+       1000-INITIALIZATION-PARA-EXIT.                                   00680000
+            EXIT.                                                       00690000
+       2000-PROCESS-PARA.                                               00700000
+            PERFORM 2100-FILE-OPEN-PARA                                 00710000
+              THRU 2100-FILE-OPEN-PARA-EXIT.                            00720008
+            IF WFS1-SUCCESS                                             00730000
+              PERFORM 2200-READ-PARA                                    00740000
+                THRU 2200-READ-PARA-EXIT                                00750008
+            UNTIL WFS1-EOF                                              00760000
+            END-IF.                                                     00770000
+       2000-PROCESS-PARA-EXIT.                                          00780000
+            EXIT.                                                       00790000
+       2100-FILE-OPEN-PARA.                                             00800000
+            OPEN INPUT TI001-INPUT                                      00810000
+            EVALUATE TRUE                                               00820000
+              WHEN WFS1-SUCCESS                                         00830000
+               CONTINUE                                                 00840000
+              WHEN OTHER                                                00850000
+                DISPLAY "INPUT FILE OPEN FAILED"                        00860000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00870000
+            END-EVALUATE                                                00880000
+            OPEN OUTPUT TO001-OUTPUT                                    00890000
+            EVALUATE TRUE                                               00900000
+              WHEN WFS2-SUCCESS                                         00910000
+               CONTINUE                                                 00920000
+              WHEN OTHER                                                00930000
+                DISPLAY "OUTPUT FILE OPEN FAILED"                       00940000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   00950000
+            END-EVALUATE.                                               00960000
+       2100-FILE-OPEN-PARA-EXIT.                                        00970000
+            EXIT.                                                       00980000
+       2200-READ-PARA.                                                  00990000
+            READ TI001-INPUT                                            01000000
+            EVALUATE TRUE                                               01010000
+              WHEN WFS1-SUCCESS                                         01020000
+              PERFORM 2300-VALIDATION-PARA                              01030000
+               THRU 2300-VALIDATION-PARA-EXIT                           01040000
+              WHEN WFS1-EOF                                             01050000
+              CONTINUE                                                  01060000
+              WHEN                                                      01070000
+               OTHER                                                    01080000
+                DISPLAY "INPUT  FILE READ FAILED"                       01090000
+                DISPLAY 'FILE STATUS' WS-FILE-STATUS1                   01100000
+              PERFORM 9000-TERMINATION-PARA                             01110000
+               THRU 9000-TERMINATION-PARA                               01120000
+              END-EVALUATE.                                             01130000
+       2200-READ-PARA-EXIT.                                             01140000
+            EXIT.                                                       01150000
+       2300-VALIDATION-PARA.                                            01160000
+            INITIALIZE WS-S1.                                           01160108
+            INSPECT FUNCTION REVERSE(TI001-ACC-NUM)                     01161001
+            TALLYING WS-S1 FOR LEADING SPACES.                          01162001
+            IF WS-S1  EQUAL TO 00                                       01163001
+            AND                                                         01164001
+            TI001-ACC-TYPE = 'SAVINGS' OR 'CURRENT'                     01167001
+            AND                                                         01180000
+            TI001-CREDIT-SCORE IS NUMERIC                               01210001
+             CALL 'COBCS01S' USING TI001-CREDIT-SCORE WS-CREDIT-REPORT  01220003
+                             WS-REF-NUMBER                              01230003
+            PERFORM 2500-WRITE-PARA                                     01231002
+             THRU 2500-WRITE-PARA-EXIT                                  01232003
+            END-IF.                                                     01240000
+       2300-VALIDATION-PARA-EXIT.                                       01250000
+            EXIT.                                                       01260000
+       2500-WRITE-PARA.                                                 01390000
+             MOVE TI001-ACC-NUM TO TO001-ACC-NUM                        01400000
+             MOVE TI001-ACC-NAME TO TO001-ACC-NAME                      01410000
+             MOVE TI001-ACC-TYPE TO TO001-ACC-TYPE                      01420000
+             MOVE WS-CREDIT-REPORT TO TO001-CREDIT-REPORT               01430000
+             MOVE WS-REF-NUMBER TO TO001-REF-NUMBER                     01440002
+             WRITE TO001-OUTPUT-RECORD.                                 01460000
+       2500-WRITE-PARA-EXIT.                                            01470000
+             EXIT.                                                      01480000
+       9000-TERMINATION-PARA.                                           01490000
+             PERFORM 9100-CLOSE-PARA                                    01500000
+              THRU 9100-CLOSE-PARA-EXIT.                                01510000
+             STOP RUN.                                                  01520000
+       9000-TERMINATION-PARA-EXIT.                                      01530000
+             EXIT.                                                      01540000
+       9100-CLOSE-PARA.                                                 01550000
+             CLOSE TI001-INPUT                                          01560000
+               EVALUATE TRUE                                            01570000
+                WHEN WFS1-SUCCESS                                       01580000
+                 DISPLAY 'INPUT FILE CLOSED'                            01590000
+                WHEN OTHER                                              01600000
+                 DISPLAY 'INPUT FILE NOT CLOSED'                        01610000
+                 DISPLAY WS-FILE-STATUS1                                01620000
+               END-EVALUATE.                                            01630000
+             CLOSE TO001-OUTPUT                                         01640000
+               EVALUATE TRUE                                            01650000
+                WHEN WFS2-SUCCESS                                       01660000
+                 DISPLAY 'OUTPUT FILE CLOSED'                           01670000
+                WHEN OTHER                                              01680000
+                 DISPLAY 'OUTPUT FILE NOT CLOSED'                       01690000
+                 DISPLAY WS-FILE-STATUS2                                01700000
+               END-EVALUATE.                                            01710000
+       9100-CLOSE-PARA-EXIT.                                            01720000
+             EXIT.                                                      01730000
+

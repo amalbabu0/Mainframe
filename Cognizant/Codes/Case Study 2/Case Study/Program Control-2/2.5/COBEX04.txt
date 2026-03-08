@@ -1,0 +1,42 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01    WS-A        PIC       9(2).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+            PERFORM 1000-INITIALIZE-PARA THRU
+                    1000-INITIALIZE-PARA-EXIT
+            PERFORM 2000-PROCESS-PARA THRU
+                    2000-PROCESS-PARA-EXIT
+            PERFORM 9000-TERMINATION-PARA THRU
+                    9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+            EXIT.
+       1000-INITIALIZE-PARA.
+            INITIALIZE WS-A.
+       1000-INITIALIZE-PARA-EXIT.
+            EXIT.
+       2000-PROCESS-PARA.
+            ACCEPT WS-A.
+            DISPLAY "POSSIBEL MONTHS WITH " WS-A " DAYS ARE".
+       2000-PROCESS-PARA-EXIT.
+            EXIT.
+       9000-TERMINATION-PARA.
+            EVALUATE WS-A
+              WHEN 01 THRU 27
+               DISPLAY "JAN/FEB/MAR/APR/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC"
+              WHEN  29
+               DISPLAY "JAN/MAR/ARP/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC"
+              WHEN  31
+               DISPLAY "JAN/MAR/MAY/JUL/SEP/NOV"
+              WHEN  30
+                  DISPLAY "APR/JUN/SEP/NOV"
+               WHEN  28
+                  DISPLAY "FEB"
+               WHEN OTHER
+                  DISPLAY "VALID DATES SHOULD BE 28/29/30/31 "
+               END-EVALUATE.
+               STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+               EXIT.

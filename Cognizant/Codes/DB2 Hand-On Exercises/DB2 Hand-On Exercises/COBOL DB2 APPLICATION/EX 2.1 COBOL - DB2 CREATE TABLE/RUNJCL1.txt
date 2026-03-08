@@ -1,0 +1,27 @@
+//TKOL055R JOB NOTIFY=&SYSUID,CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),
+//             REGION=0M
+//STEP000  EXEC PGM=IEFBR14
+//*FILE1    DD  DSN=TCHNXXX.LOCN.INP.FILE,
+//*             DISP=(MOD,DELETE),
+//*             SPACE=(TRK,1)
+//********************************************************************
+//*   THIS STEP RUNS THE LOAD MODULE.
+//********************************************************************
+//TRNSDBRN EXEC PGM=IKJEFT01,DYNAMNBR=20
+//STEPLIB  DD  DISP=SHR,DSN=DSNC10.SDSNLOAD
+//SYSTSPRT DD SYSOUT=*
+//SYSPRINT DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//******************************************************************
+//* CHANGE THE PROGRAM NAME,PLAN NAME AND THE LOAD LIBRARY NAME
+//******************************************************************
+//INBKPS DD  DSN=TKOL055.INPUT.BANK.PS,DISP=SHR
+//SYSTSIN  DD *
+ DSN SYSTEM(DSN1)
+ RUN  PROGRAM(DBEX01) PLAN(TKOPL055) -
+      LIB('TKOL055.DB2.LOADLIB')
+ END
+/*
+//SYSIN DD DUMMY
+/*

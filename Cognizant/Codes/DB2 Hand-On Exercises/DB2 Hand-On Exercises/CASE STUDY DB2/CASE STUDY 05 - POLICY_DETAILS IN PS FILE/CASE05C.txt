@@ -1,0 +1,403 @@
+        IDENTIFICATION DIVISION.                                        00010001
+        PROGRAM-ID. CASE05C.                                            00020001
+        ENVIRONMENT DIVISION.                                           00030001
+        INPUT-OUTPUT SECTION.                                           00040001
+        FILE-CONTROL.                                                   00050001
+      **OUTPUT FILE                                                     00060001
+             SELECT TO001-OUTPUT ASSIGN TO OUTPS01                      00070002
+             ORGANIZATION IS SEQUENTIAL                                 00080001
+             ACCESS MODE IS SEQUENTIAL                                  00090001
+             FILE STATUS IS WS-FILE-STATUS1.                            00100001
+             SELECT TO002-OUTPUT ASSIGN TO OUTPS02                      00101002
+             ORGANIZATION IS SEQUENTIAL                                 00102002
+             ACCESS MODE IS SEQUENTIAL                                  00103002
+             FILE STATUS IS WS-FILE-STATUS2.                            00104002
+             SELECT TO003-OUTPUT ASSIGN TO OUTPS03                      00105002
+             ORGANIZATION IS SEQUENTIAL                                 00106002
+             ACCESS MODE IS SEQUENTIAL                                  00107002
+             FILE STATUS IS WS-FILE-STATUS3.                            00108002
+        DATA DIVISION.                                                  00110001
+        FILE SECTION.                                                   00120001
+        FD TO001-OUTPUT.                                                00130001
+        01 TO001-OUTPUT-RECORD.                                         00140001
+            05 TO001-CUST-ID          PIC  9(9).                        00150011
+            05 FILLER                 PIC  X(1).                        00160003
+            05 TO001-POL-NO           PIC  9(9).                        00170011
+            05 FILLER                 PIC  X(1).                        00180003
+            05 TO001-CUST-NAME        PIC  X(15).                       00190003
+            05 FILLER                 PIC  X(1).                        00200003
+            05 TO001-CUST-GENDER      PIC  X(1).                        00210003
+            05 FILLER                 PIC  X(1).                        00220003
+            05 TO001-ANNUAL-INCOME    PIC  9(6).9(2).                   00221013
+            05 FILLER                 PIC  X(1).                        00222003
+            05 TO001-STATE-NAME       PIC  X(15).                       00223005
+            05 FILLER                 PIC  X(1).                        00224003
+            05 TO001-POLICY-TERM      PIC  X(2).                        00225003
+            05 FILLER                 PIC  X(1).                        00226003
+            05 TO001-POLICY-PREMIEUM  PIC  9(4).9(2).                   00227013
+            05 FILLER                 PIC  X(1).                        00228003
+            05 TO001-POL-PREM-PAID    PIC  X(1).                        00229003
+            05 FILLER                 PIC  X(1).                        00229103
+            05 TO001-BONUS            PIC  9(6).9(2).                   00229213
+            05 FILLER                 PIC  X(14).                       00229314
+        FD TO002-OUTPUT.                                                00229403
+        01 TO002-OUTPUT-RECORD.                                         00229503
+            05 TO002-CUST-ID          PIC  9(9).                        00229611
+            05 FILLER                 PIC  X(1).                        00229703
+            05 TO002-POL-NO           PIC  9(9).                        00229811
+            05 FILLER                 PIC  X(1).                        00229903
+            05 TO002-CUST-NAME        PIC  X(15).                       00230003
+            05 FILLER                 PIC  X(1).                        00230103
+            05 TO002-CUST-GENDER      PIC  X(1).                        00230203
+            05 FILLER                 PIC  X(1).                        00230303
+            05 TO002-ANNUAL-INCOME    PIC  9(6).9(2).                   00230415
+            05 FILLER                 PIC  X(1).                        00230503
+            05 TO002-STATE-NAME       PIC  X(15).                       00230605
+            05 FILLER                 PIC  X(1).                        00230703
+            05 TO002-POLICY-TERM      PIC  X(2).                        00230803
+            05 FILLER                 PIC  X(1).                        00230903
+            05 TO002-POLICY-PREMIEUM  PIC  9(4).9(2).                   00231015
+            05 FILLER                 PIC  X(1).                        00231103
+            05 TO002-POL-PREM-PAID    PIC  X(1).                        00231203
+            05 FILLER                 PIC  X(1).                        00231303
+            05 TO002-BONUS            PIC  9(6).9(2).                   00231415
+            05 FILLER                 PIC  X(14).                       00231515
+        FD TO003-OUTPUT.                                                00231603
+        01 TO003-OUTPUT-RECORD.                                         00231703
+            05 TO003-CUST-ID          PIC  9(9).                        00231811
+            05 FILLER                 PIC  X(1).                        00231903
+            05 TO003-POL-NO           PIC  9(9).                        00232011
+            05 FILLER                 PIC  X(1).                        00232103
+            05 TO003-CUST-NAME        PIC  X(15).                       00232203
+            05 FILLER                 PIC  X(1).                        00232303
+            05 TO003-CUST-GENDER      PIC  X(1).                        00232403
+            05 FILLER                 PIC  X(1).                        00232503
+            05 TO003-ANNUAL-INCOME    PIC  9(6).9(2).                   00232615
+            05 FILLER                 PIC  X(1).                        00232703
+            05 TO003-STATE-NAME       PIC  X(15).                       00232805
+            05 FILLER                 PIC  X(1).                        00232903
+            05 TO003-POLICY-TERM      PIC  X(2).                        00233003
+            05 FILLER                 PIC  X(1).                        00233103
+            05 TO003-POLICY-PREMIEUM  PIC  9(4).9(2).                   00233215
+            05 FILLER                 PIC  X(1).                        00233303
+            05 TO003-POL-PREM-PAID    PIC  X(1).                        00233403
+            05 FILLER                 PIC  X(1).                        00233503
+            05 TO003-BONUS            PIC  9(6).9(2).                   00233615
+            05 FILLER                 PIC  X(14).                       00233715
+        WORKING-STORAGE SECTION.                                        00234001
+             EXEC SQL INCLUDE SQLCA END-EXEC.                           00240001
+             EXEC SQL INCLUDE POLDTDCL END-EXEC.                        00250003
+             EXEC SQL DECLARE CS-TB-POL1 CURSOR FOR                     00250104
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00250204
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00250304
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00250404
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '05'          00250504
+             END-EXEC.                                                  00250604
+             EXEC SQL DECLARE CS-TB-POL2 CURSOR FOR                     00250704
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00250804
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00250904
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00251004
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '10'          00251104
+             END-EXEC.                                                  00251204
+             EXEC SQL DECLARE CS-TB-POL3 CURSOR FOR                     00251304
+             SELECT CUST_ID, POL_NO, CUST_NAME, CUST_GENDER,            00251404
+             CUST_ANNUAL_INCOME, CUST_STATE_NAME,                       00251504
+             POLICY_TERM, POLICY_PREMIEUM, POLICY_PREMIEUM_PAID,        00251604
+             BONUS FROM POLICY_DETAIL WHERE POLICY_TERM = '15'          00251704
+             END-EXEC.                                                  00251804
+        01 WSS-ERR-MSG.                                                 00251904
+            05 WS-ERR-MSG.                                              00252004
+              10 WS-ERR-LEN        PIC  S9(4) COMP VALUE +720.          00253004
+              10 WS-ERR-TEXT       PIC  X(72) OCCURS 10 TIMES           00254004
+                                   INDEXED BY ERROR-INDEX.              00255004
+            05 WS-ERR-LRECL        PIC  S9(9) COMP VALUE +72.           00256004
+        01 WSS-SQLCODE             PIC  S9(3) SIGN LEADING SEPARATE.    00257021
+            88 WS-EOT              VALUE  +100.                         00258021
+            88 WS-SUCCESS          VALUE  +000.                         00259021
+        01 NULL-IND                PIC  S9(4) USAGE COMP.               00259704
+        01 WS-G-FILE-STATUS.                                            00260001
+             05 WS-FILE-STATUS1  PIC    X(2).                           00270003
+                88 WFS1-SUCCESS  VALUE  '00'.                           00280001
+                88 WFS1-EOF      VALUE  '10'.                           00290001
+             05 WS-FILE-STATUS2  PIC    X(2).                           00292003
+                88 WFS2-SUCCESS  VALUE  '00'.                           00293003
+                88 WFS2-EOF      VALUE  '10'.                           00294003
+             05 WS-FILE-STATUS3  PIC    X(2).                           00295003
+                88 WFS3-SUCCESS  VALUE  '00'.                           00296003
+                88 WFS3-EOF      VALUE  '10'.                           00297003
+        PROCEDURE DIVISION.                                             00300001
+        0000-MAIN-PARA.                                                 00310001
+                 PERFORM 1000-INITIALIZATION-PARA                       00320001
+                 THRU 1000-INITIALIZATION-PARA-EXIT                     00330001
+                 PERFORM 2000-PROCESS-PARA THRU                         00340001
+                 2000-PROCESS-PARA-EXIT                                 00350001
+                 PERFORM 9000-TERMINATION-PARA THRU                     00360001
+                 9000-TERMINATION-PARA-EXIT.                            00370001
+        0000-MAIN-PARA-EXIT.                                            00380001
+                 EXIT.                                                  00390001
+        1000-INITIALIZATION-PARA.                                       00400001
+                 DISPLAY 'INITIALIZATION-PARA'.                         00410001
+        1000-INITIALIZATION-PARA-EXIT.                                  00420001
+                 EXIT.                                                  00430001
+        2000-PROCESS-PARA.                                              00440001
+                 PERFORM 2100-OPEN-PARA THRU                            00450004
+                 2100-OPEN-PARA-EXIT                                    00460004
+                 PERFORM 2200-FETCH-PARA THRU                           00470004
+                 2200-FETCH-PARA-EXIT UNTIL WS-EOT                      00482017
+                 MOVE +000 TO WSS-SQLCODE                               00482136
+                 PERFORM 2300-FETCH-PARA THRU                           00483036
+                 2300-FETCH-PARA-EXIT UNTIL WS-EOT                      00484036
+                 MOVE +000 TO WSS-SQLCODE                               00485040
+                 PERFORM 2400-FETCH-PARA THRU                           00486040
+                 2400-FETCH-PARA-EXIT UNTIL WS-EOT                      00487040
+                 PERFORM 3000-CLOSE-PARA THRU                           00490004
+                 3000-CLOSE-PARA-EXIT.                                  00500004
+        2000-PROCESS-PARA-EXIT.                                         00510001
+                 EXIT.                                                  00520001
+        2100-OPEN-PARA.                                                 00530004
+                 EXEC SQL OPEN CS-TB-POL1 END-EXEC.                     00531004
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00532004
+                 IF WS-SUCCESS                                          00533004
+                 DISPLAY 'CURSOR OPEN1 SUCCESS' WSS-SQLCODE             00534004
+                  OPEN OUTPUT TO001-OUTPUT                              00540001
+                  IF WFS1-SUCCESS                                       00550004
+                   DISPLAY 'OUTPUT FILE1 OPEN SUCCESS'                  00590004
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1                00600001
+                  ELSE                                                  00601004
+                   DISPLAY 'OUTPUT FILE1 OPEN FAILED'                   00602004
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS1                00603004
+                  END-IF                                                00610004
+                 ELSE                                                   00610204
+                   DISPLAY 'CURSOR OPEN1 UNSUCCESS' WSS-SQLCODE         00610304
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00610404
+                   WS-ERR-LRECL                                         00610504
+                   DISPLAY WS-ERR-MSG                                   00610604
+                   PERFORM 9000-TERMINATION-PARA THRU                   00610704
+                   9000-TERMINATION-PARA-EXIT                           00610804
+                   END-IF                                               00610904
+                 EXEC SQL OPEN CS-TB-POL2 END-EXEC.                     00611004
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00611104
+                 IF WS-SUCCESS                                          00611204
+                 DISPLAY 'CURSOR OPEN2 SUCCESS' WSS-SQLCODE             00611304
+                  OPEN OUTPUT TO002-OUTPUT                              00611404
+                  IF WFS2-SUCCESS                                       00611504
+                   DISPLAY 'OUTPUT FILE2 OPEN SUCCESS'                  00611604
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS2                00611704
+                  ELSE                                                  00611804
+                   DISPLAY 'OUTPUT FILE2 OPEN FAILED'                   00611904
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS2                00612004
+                  END-IF                                                00613004
+                 ELSE                                                   00614004
+                   DISPLAY 'CURSOR OPEN2 UNSUCCESS' WSS-SQLCODE         00615004
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00616004
+                   WS-ERR-LRECL                                         00617004
+                   DISPLAY WS-ERR-MSG                                   00618004
+                   PERFORM 9000-TERMINATION-PARA THRU                   00618104
+                   9000-TERMINATION-PARA-EXIT                           00618204
+                   END-IF                                               00618304
+                 EXEC SQL OPEN CS-TB-POL3 END-EXEC.                     00618404
+                 MOVE SQLCODE TO WSS-SQLCODE.                           00618504
+                 IF WS-SUCCESS                                          00618604
+                 DISPLAY 'CURSOR OPEN3 SUCCESS' WSS-SQLCODE             00618704
+                  OPEN OUTPUT TO003-OUTPUT                              00619004
+                  IF WFS3-SUCCESS                                       00619104
+                   DISPLAY 'OUTPUT FILE3 OPEN SUCCESS'                  00619204
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS3                00619304
+                  ELSE                                                  00619404
+                   DISPLAY 'OUTPUT FILE3 OPEN FAILED'                   00619504
+                   DISPLAY 'FILE STATUS' WS-FILE-STATUS3                00619604
+                  END-IF                                                00619704
+                 ELSE                                                   00619804
+                   DISPLAY 'CURSOR OPEN3 UNSUCCESS' WSS-SQLCODE         00619904
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00620004
+                   WS-ERR-LRECL                                         00620104
+                   DISPLAY WS-ERR-MSG                                   00620204
+                   PERFORM 9000-TERMINATION-PARA THRU                   00620304
+                   9000-TERMINATION-PARA-EXIT                           00620404
+                   END-IF.                                              00620504
+        2100-OPEN-PARA-EXIT.                                            00622004
+                  EXIT.                                                 00630001
+        2200-FETCH-PARA.                                                00640004
+                  EXEC SQL FETCH CS-TB-POL1 INTO :CUST-ID,              00650004
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00660007
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00670007
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00680004
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00690004
+                  END-EXEC.                                             00700004
+                  MOVE SQLCODE TO WSS-SQLCODE                           00710004
+                  EVALUATE TRUE                                         00720029
+                  WHEN WS-SUCCESS                                       00721029
+                  CONTINUE                                              00722030
+                  DISPLAY 'CURSOR1 FETCHED'                             00730104
+                  PERFORM 2500-MOVE-PARA THRU                           00731017
+                  2500-MOVE-PARA-EXIT                                   00732017
+                  WHEN WS-EOT                                           00733029
+                  CONTINUE                                              00734029
+                  WHEN OTHER                                            00735029
+                  DISPLAY 'CURSOR1 NOT FETCHED'                         00736004
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00737004
+                  CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG                00738017
+                  WS-ERR-LRECL                                          00739017
+                  DISPLAY WS-ERR-MSG                                    00739117
+                  PERFORM 9000-TERMINATION-PARA THRU                    00739217
+                  9000-TERMINATION-PARA-EXIT                            00739317
+                  END-EVALUATE.                                         00739429
+        2200-FETCH-PARA-EXIT.                                           00739717
+                   EXIT.                                                00739817
+        2300-FETCH-PARA.                                                00739917
+                  DISPLAY 'FETCH2'.                                     00740039
+                  EXEC SQL FETCH CS-TB-POL2 INTO :CUST-ID,              00740104
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00740207
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00740307
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00740404
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00740504
+                  END-EXEC.                                             00740604
+                  MOVE SQLCODE TO WSS-SQLCODE                           00740735
+                  EVALUATE TRUE                                         00740829
+                  WHEN WS-SUCCESS                                       00740935
+                  DISPLAY 'CURSOR2 FETCHED'                             00741004
+                  PERFORM 2600-MOVE-PARA THRU                           00741117
+                  2600-MOVE-PARA-EXIT                                   00741217
+                  WHEN WS-EOT                                           00741335
+                  CONTINUE                                              00741429
+                  WHEN OTHER                                            00741729
+                  DISPLAY 'CURSOR2 NOT FETCHED'                         00741804
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00741904
+                  CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG                00742023
+                  WS-ERR-LRECL                                          00742123
+                  DISPLAY WS-ERR-MSG                                    00742223
+                  PERFORM 9000-TERMINATION-PARA THRU                    00742323
+                  9000-TERMINATION-PARA-EXIT                            00742423
+                  END-EVALUATE.                                         00742529
+        2300-FETCH-PARA-EXIT.                                           00742617
+                   EXIT.                                                00742717
+        2400-FETCH-PARA.                                                00742817
+                  DISPLAY 'FETCH3'.                                     00742939
+                  EXEC SQL FETCH CS-TB-POL3 INTO :CUST-ID,              00743004
+                  :POL-NO, :CUST-NAME, :CUST-GENDER,                    00743107
+                  :CUST-ANNUAL-INCOME, :CUST-STATE-NAME,                00743207
+                  :POLICY-TERM, :POLICY-PREMIEUM,                       00743304
+                  :POLICY-PREMIEUM-PAID, :BONUS                         00743404
+                  END-EXEC.                                             00743504
+                  MOVE SQLCODE TO WSS-SQLCODE                           00743623
+                  IF WS-SUCCESS                                         00743724
+                  DISPLAY 'CURSOR3 FETCHED'                             00743804
+                  PERFORM 2700-MOVE-PARA THRU                           00743917
+                  2700-MOVE-PARA-EXIT                                   00744017
+                  ELSE                                                  00744223
+                  DISPLAY 'CURSOR3 NOT FETCHED'                         00744304
+                  DISPLAY 'ERROR STATUS' SQLCODE                        00744404
+                   CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG               00744504
+                   WS-ERR-LRECL                                         00744604
+                   DISPLAY WS-ERR-MSG                                   00744704
+                   PERFORM 9000-TERMINATION-PARA THRU                   00744804
+                   9000-TERMINATION-PARA-EXIT                           00744904
+                   END-IF.                                              00745023
+        2400-FETCH-PARA-EXIT.                                           00746017
+                  EXIT.                                                 00750001
+        3000-CLOSE-PARA.                                                00751005
+                 EXEC SQL CLOSE CS-TB-POL1 END-EXEC.                    00752005
+                 MOVE SQLCODE TO WSS-SQLCODE                            00753005
+                 IF WS-SUCCESS                                          00754016
+                 DISPLAY 'CURSOR1 CLOSED' WSS-SQLCODE                   00756016
+                 CLOSE TO001-OUTPUT                                     00757016
+                 IF WFS1-SUCCESS                                        00758016
+                 DISPLAY 'CLOSE FILE SUCCESS' WS-FILE-STATUS1           00758116
+                 ELSE                                                   00758216
+                 DISPLAY 'CLOSE FILE UNSUCCESS' WS-FILE-STATUS1         00758316
+                 END-IF                                                 00758416
+                 ELSE                                                   00758516
+                 DISPLAY 'CURSOR1 NOT CLOSED'                           00759005
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00759105
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00759205
+                 DISPLAY WS-ERR-MSG                                     00759305
+                 PERFORM 9000-TERMINATION-PARA THRU                     00759405
+                 9000-TERMINATION-PARA-EXIT                             00759505
+                 END-IF                                                 00759616
+                 EXEC SQL CLOSE CS-TB-POL2 END-EXEC.                    00759705
+                 MOVE SQLCODE TO WSS-SQLCODE                            00759805
+                 IF WS-SUCCESS                                          00759916
+                 DISPLAY 'CURSOR2 CLOSED' WSS-SQLCODE                   00760016
+                 CLOSE TO002-OUTPUT                                     00760116
+                 IF WFS2-SUCCESS                                        00760216
+                 DISPLAY 'CLOSE2 FILE SUCCESS' WS-FILE-STATUS2          00760316
+                 ELSE                                                   00760416
+                 DISPLAY 'CLOSE2 FILE UNSUCCESS' WS-FILE-STATUS2        00760516
+                 END-IF                                                 00760616
+                 ELSE                                                   00760716
+                 DISPLAY 'CURSOR2 NOT CLOSED'                           00760816
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00760916
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00761016
+                 DISPLAY WS-ERR-MSG                                     00761116
+                 PERFORM 9000-TERMINATION-PARA THRU                     00761216
+                 9000-TERMINATION-PARA-EXIT                             00761316
+                 END-IF                                                 00761416
+                 EXEC SQL CLOSE CS-TB-POL3 END-EXEC.                    00762705
+                 MOVE SQLCODE TO WSS-SQLCODE                            00762805
+                 IF WS-SUCCESS                                          00762916
+                 DISPLAY 'CURSOR3 CLOSED' WSS-SQLCODE                   00763016
+                 CLOSE TO003-OUTPUT                                     00763116
+                 IF WFS3-SUCCESS                                        00763216
+                 DISPLAY 'CLOSE3 FILE SUCCESS' WS-FILE-STATUS3          00763316
+                 ELSE                                                   00763416
+                 DISPLAY 'CLOSE3 FILE UNSUCCESS' WS-FILE-STATUS3        00763516
+                 END-IF                                                 00763616
+                 ELSE                                                   00763716
+                 DISPLAY 'CURSOR3 NOT CLOSED'                           00763816
+                 DISPLAY 'ERROR STATUS' SQLCODE                         00763916
+                 CALL 'DSNTIAR' USING SQLCA, WS-ERR-MSG WS-ERR-LRECL    00764016
+                 DISPLAY WS-ERR-MSG                                     00764116
+                 PERFORM 9000-TERMINATION-PARA THRU                     00764216
+                 9000-TERMINATION-PARA-EXIT                             00764316
+                 END-IF.                                                00764416
+        3000-CLOSE-PARA-EXIT.                                           00765205
+                 EXIT.                                                  00765305
+        2500-MOVE-PARA.                                                 00765417
+                 MOVE CUST-ID TO TO001-CUST-ID                          00765505
+                 MOVE POL-NO TO TO001-POL-NO                            00765605
+                 MOVE CUST-NAME-TEXT TO TO001-CUST-NAME                 00765705
+                 MOVE CUST-GENDER TO TO001-CUST-GENDER                  00765805
+                 MOVE CUST-ANNUAL-INCOME TO TO001-ANNUAL-INCOME         00765905
+                 MOVE CUST-STATE-NAME-TEXT TO TO001-STATE-NAME          00766005
+                 MOVE POLICY-TERM TO TO001-POLICY-TERM                  00766106
+                 MOVE POLICY-PREMIEUM TO TO001-POLICY-PREMIEUM          00766206
+                 MOVE POLICY-PREMIEUM-PAID TO TO001-POL-PREM-PAID       00766306
+                 MOVE BONUS TO TO001-BONUS                              00766406
+                 WRITE TO001-OUTPUT-RECORD.                             00766506
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00766610
+        2500-MOVE-PARA-EXIT.                                            00766717
+                 EXIT.                                                  00766806
+        2600-MOVE-PARA.                                                 00766917
+                 MOVE CUST-ID TO TO002-CUST-ID                          00767006
+                 MOVE POL-NO TO TO002-POL-NO                            00767106
+                 MOVE CUST-NAME-TEXT TO TO002-CUST-NAME                 00767206
+                 MOVE CUST-GENDER TO TO002-CUST-GENDER                  00767306
+                 MOVE CUST-ANNUAL-INCOME TO TO002-ANNUAL-INCOME         00767406
+                 MOVE CUST-STATE-NAME-TEXT TO TO002-STATE-NAME          00767506
+                 MOVE POLICY-TERM TO TO002-POLICY-TERM                  00767606
+                 MOVE POLICY-PREMIEUM TO TO002-POLICY-PREMIEUM          00767706
+                 MOVE POLICY-PREMIEUM-PAID TO TO002-POL-PREM-PAID       00767806
+                 MOVE BONUS TO TO002-BONUS                              00767906
+                 WRITE TO002-OUTPUT-RECORD.                             00768006
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00768110
+        2600-MOVE-PARA-EXIT.                                            00768217
+                 EXIT.                                                  00768306
+        2700-MOVE-PARA.                                                 00768417
+                 MOVE CUST-ID TO TO003-CUST-ID                          00768506
+                 MOVE POL-NO TO TO003-POL-NO                            00768606
+                 MOVE CUST-NAME-TEXT TO TO003-CUST-NAME                 00768706
+                 MOVE CUST-GENDER TO TO003-CUST-GENDER                  00768806
+                 MOVE CUST-ANNUAL-INCOME TO TO003-ANNUAL-INCOME         00768906
+                 MOVE CUST-STATE-NAME-TEXT TO TO003-STATE-NAME          00769006
+                 MOVE POLICY-TERM TO TO003-POLICY-TERM                  00769106
+                 MOVE POLICY-PREMIEUM TO TO003-POLICY-PREMIEUM          00769206
+                 MOVE POLICY-PREMIEUM-PAID TO TO003-POL-PREM-PAID       00769306
+                 MOVE BONUS TO TO003-BONUS                              00769406
+                 WRITE TO003-OUTPUT-RECORD.                             00769506
+                 MOVE SPACES TO DCLPOLICY-DETAIL.                       00769610
+        2700-MOVE-PARA-EXIT.                                            00769717
+                 EXIT.                                                  00769806
+        9000-TERMINATION-PARA.                                          00769901
+                 STOP RUN.                                              00770005
+        9000-TERMINATION-PARA-EXIT.                                     00780001
+                 EXIT.                                                  00790005

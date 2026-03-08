@@ -1,0 +1,15 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. ICT02CBS.                                            00020001
+       DATA DIVISION.                                                   00030000
+       LINKAGE SECTION.                                                 00040000
+       77 LK77-CC-SCORE   PIC 9(03).                                    00050000
+       77 LK77-ICT-SCORE  PIC 9(03).                                    00060000
+       77 LK77-TOTAL      PIC 9(03).                                    00070000
+       77 LK77-PERCENTAGE PIC 9(02)V9(03).                              00080003
+       PROCEDURE DIVISION USING LK77-CC-SCORE LK77-ICT-SCORE            00090002
+                                LK77-TOTAL LK77-PERCENTAGE.             00091003
+           COMPUTE LK77-TOTAL = LK77-CC-SCORE + LK77-ICT-SCORE.         00100003
+           COMPUTE LK77-PERCENTAGE = ( LK77-TOTAL / 200 ) * 100.        00110003
+           EXIT.                                                        00120003
+           GOBACK.                                                      00130004
+

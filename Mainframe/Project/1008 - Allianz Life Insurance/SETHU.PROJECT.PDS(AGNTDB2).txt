@@ -1,0 +1,14 @@
+  CREATE TABLE AGENT(                                                   00010000
+   AGENT_CODE            CHAR(05) NOT NULL PRIMARY KEY                  00020000
+  ,AGENT_NAME            CHAR(10)                                       00030000
+  ,STREET                CHAR(20)                                       00040000
+  ,CITY                  CHAR(20)                                       00050000
+  ,STATE                 CHAR(20)                                       00060000
+  ,PIN                   INTEGER                                        00070000
+  ,PHONE_NO              CHAR(12)                                       00080001
+  ,REG_NO                CHAR(17)                                       00090000
+  ,COMMISSION            INTEGER                                        00100000
+  ,EMAIL                 CHAR(30)                                       00110001
+  ) IN SHRDB4.SHRTS4;                                                   00120000
+  CREATE UNIQUE INDEX AGENT_CODE_INDEX ON AGENT(AGENT_CODE);            00130000
+

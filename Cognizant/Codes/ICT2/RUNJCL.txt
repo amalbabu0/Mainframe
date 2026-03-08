@@ -1,0 +1,8 @@
+//TECN132R JOB NOTIFY=&SYSUID                                           00010002
+//RUN EXEC PGM=CC01CB01                        --> MEMBER NAME          00040004
+//STEPLIB DD DSN=TECN132.MYLIB.COBOL.LOADLIB,DISP=SHR  --> LOADLIB NAME 00050004
+//SYSPRINT DD SYSOUT=*                                                  00060000
+//INPRDS DD DSN=TECN132.MYDATA.CC01.PS1,DISP=SHR                        00080004
+//OUTPRDS DD DSN=TECN132.MYDATA.CC01.PS2,DISP=SHR                       00090004
+//SYSIN DD DUMMY                                                        00100000
+

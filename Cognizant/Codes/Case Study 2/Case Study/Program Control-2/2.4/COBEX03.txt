@@ -1,0 +1,46 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX03.                                             00020042
+       AUTHOR.  TEKMFDEV.                                               00030000
+       DATA DIVISION.                                                   00170000
+       WORKING-STORAGE SECTION.                                         00470000
+       77 WS-I PIC 9(2).                                                00480042
+       77 WS-TABLE-NUM PIC 9(2).                                        00490042
+       77 WS-S PIC 9(3).                                                00500042
+       PROCEDURE DIVISION.                                              00550000
+       0000-MAIN-PARA.                                                  00560000
+            PERFORM 1000-INITIALIZATION-PARA                            00570000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00580038
+            PERFORM 2000-PROCESS-PARA                                   00590000
+              THRU 2000-PROCESS-PARA-EXIT.                              00600038
+            PERFORM 9000-TERMINATION-PARA                               00610000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00620000
+       0000-MAIN-PARA-EXIT.                                             00630001
+             EXIT.                                                      00640000
+       1000-INITIALIZATION-PARA.                                        00650001
+            INITIALIZE WS-I WS-S WS-TABLE-NUM.                          00660042
+       1000-INITIALIZATION-PARA-EXIT.                                   00661001
+            EXIT.                                                       00670000
+       2000-PROCESS-PARA.                                               00680001
+            PERFORM 2100-ACCEPT-PARA                                    00690037
+            THRU 2100-ACCEPT-PARA-EXIT.                                 00700042
+            PERFORM 2200-TABLES-PARA                                    00710043
+            THRU 2200-TABLES-PARA-EXIT                                  00720044
+            VARYING WS-I FROM 1 BY 1                                    00730044
+            UNTIL WS-I > 10.                                            00740044
+       2000-PROCESS-PARA-EXIT.                                          00760001
+            EXIT.                                                       00770000
+       2100-ACCEPT-PARA.                                                00780037
+            ACCEPT WS-TABLE-NUM.                                        00781042
+            DISPLAY 'INPUT TABLE NUMBER IS:' WS-TABLE-NUM.              00782042
+            DISPLAY 'NUMBER OF TIMES IS: 10'.                           00783042
+       2100-ACCEPT-PARA-EXIT.                                           00790037
+            EXIT.                                                       00800037
+       2200-TABLES-PARA.                                                00810042
+            COMPUTE WS-S = WS-TABLE-NUM * WS-I.                         00820042
+            DISPLAY WS-I '*' WS-TABLE-NUM '=' WS-S.                     00830045
+       2200-TABLES-PARA-EXIT.                                           00850042
+            EXIT.                                                       00860042
+       9000-TERMINATION-PARA.                                           01470001
+             STOP RUN.                                                  01500000
+       9000-TERMINATION-PARA-EXIT.                                      01510003
+             EXIT.                                                      01520000

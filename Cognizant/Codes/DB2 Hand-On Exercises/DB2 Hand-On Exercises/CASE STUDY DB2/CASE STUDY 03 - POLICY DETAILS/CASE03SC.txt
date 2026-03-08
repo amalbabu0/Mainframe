@@ -1,0 +1,26 @@
+CREATE TABLE CUSTM(                                                     00010023
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00020012
+POL_NO INT NOT NULL ,                                                   00030015
+CUST_NAME VARCHAR(15) NOT NULL,                                         00040012
+CUST_GENDER CHAR(1) CHECK(CUST_GENDER IN ('M','F','O')),                00050013
+CUST_ANNUAL_INCOME DECIMAL(8,2) NOT NULL) ;                             00060013
+CREATE TABLE POLICY(POL_ID_DETAIL INT NOT NULL PRIMARY KEY,             00070020
+CUST_STATE CHAR(3), POLICY_TERM CHAR(2)                                 00080020
+CHECK(POLICY_TERM IN ('05','10','15')),                                 00090020
+POLICY_PREMIEUM DECIMAL(6,2) NOT NULL,                                  00100020
+POLICY_PREMIEUM_PAID CHAR(1)                                            00110020
+CHECK(POLICY_PREMIEUM_PAID IN ('Y','N')));                              00120020
+CREATE TABLE STATE (                                                    00130013
+STATE_ID CHAR(3) NOT NULL PRIMARY KEY,                                  00140013
+STATE_NAME VARCHAR(15) NOT NULL );                                      00150013
+CREATE TABLE POLICY_DETAIL (                                            00160014
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00161014
+POL_NO INT NOT NULL,                                                    00162021
+CUST_NAME VARCHAR(15) NOT NULL,                                         00163014
+CUST_GENDER CHAR(1) NOT NULL,                                           00164014
+CUST_ANNUAL_INCOME DECIMAL(8,2) NOT NULL,                               00165022
+CUST_STATE_NAME VARCHAR(15),                                            00166023
+POLICY_TERM CHAR(2) NOT NULL,                                           00167014
+POLICY_PREMIEUM DECIMAL(6,2) NOT NULL ,                                 00168021
+POLICY_PREMIEUM_PAID CHAR(1) NOT NULL,                                  00169021
+BONUS DECIMAL(8,2) );                                                   00170014

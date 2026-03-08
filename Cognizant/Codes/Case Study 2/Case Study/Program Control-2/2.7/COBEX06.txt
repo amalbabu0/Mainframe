@@ -1,0 +1,86 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX06.                                             00020000
+       AUTHOR.  TEKMFDEV.                                               00030000
+       DATA DIVISION.                                                   00040000
+       WORKING-STORAGE SECTION.                                         00050000
+       01 WS-PAY.                                                       00060001
+          05 WS-FIXED.                                                  00070001
+             10 WS-BASIC PIC 9(5)V99.                                   00080001
+             10 WS-DA PIC 9(5)V99.                                      00090001
+          05 WS-ADDITIONAL.                                             00100001
+             10 WS-HRA PIC 9(5)V99.                                     00110001
+          05 WS-INCENTIVE PIC 9(5)V99.                                  00111001
+          05 WS-DEDUCTION.                                              00112001
+             10 WS-PF PIC 9(5)V99.                                      00113001
+             10 WS-IT PIC 9(5)V99.                                      00114001
+             10 WS-OTHER PIC 9(5)V99.                                   00115001
+        66 WS-PAYOTHER RENAMES WS-DA THRU WS-INCENTIVE.                 00116001
+        66 WS-ITPF RENAMES WS-PF THRU WS-IT.                            00117001
+        77 WS-NET-PAY PIC 9(6)V99.                                      00118002
+        77 WS-NET-PAY-EDIT PIC Z(6).99.                                 00118113
+        77 WS-BASIC-EDIT PIC Z(5).99.                                   00118213
+        77 WS-SLAB PIC 9(5)V99.                                         00119001
+           88 SLAB-A VALUES 0 THRU 100.                                 00119103
+           88 SLAB-B VALUES 101 THRU 500.                               00119203
+           88 SLAB-C VALUES 501 THRU 1000.                              00119305
+       PROCEDURE DIVISION.                                              00120000
+       0000-MAIN-PARA.                                                  00130000
+            PERFORM 1000-INITIALIZATION-PARA                            00140000
+              THRU 1000-INITIALIZATION-PARA-EXIT.                       00150000
+            PERFORM 2000-PROCESS-PARA                                   00160000
+              THRU 2000-PROCESS-PARA-EXIT.                              00170000
+            PERFORM 9000-TERMINATION-PARA                               00180000
+              THRU 9000-TERMINATION-PARA-EXIT.                          00190000
+       0000-MAIN-PARA-EXIT.                                             00200000
+             EXIT.                                                      00210000
+       1000-INITIALIZATION-PARA.                                        00220000
+             INITIALIZE WS-PAY WS-NET-PAY WS-SLAB.                      00221002
+       1000-INITIALIZATION-PARA-EXIT.                                   00240000
+            EXIT.                                                       00250000
+       2000-PROCESS-PARA.                                               00260000
+            PERFORM 2100-ACCEPT-PARA                                    00270000
+            THRU 2100-ACCEPT-PARA-EXIT.                                 00280000
+            PERFORM 2200-CALCULATE-PARA                                 00290001
+            THRU 2200-CALCULATE-PARA-EXIT.                              00300001
+            PERFORM 2300-CALCULATE-SLAB-PARA                            00310001
+            THRU 2300-CALCULATE-SLAB-PARA-EXIT.                         00320001
+       2000-PROCESS-PARA-EXIT.                                          00330000
+            EXIT.                                                       00340000
+       2100-ACCEPT-PARA.                                                00350000
+            ACCEPT WS-BASIC.                                            00360006
+            ACCEPT WS-DA.                                               00361006
+            ACCEPT WS-HRA.                                              00362006
+            ACCEPT WS-INCENTIVE.                                        00363006
+            ACCEPT WS-PF.                                               00364006
+            ACCEPT WS-IT.                                               00365006
+            ACCEPT WS-OTHER.                                            00366006
+       2100-ACCEPT-PARA-EXIT.                                           00370000
+            EXIT.                                                       00380000
+       2200-CALCULATE-PARA.                                             00390001
+            COMPUTE WS-NET-PAY = ( WS-BASIC + WS-DA + WS-HRA +          00400001
+            WS-INCENTIVE - WS-PF - WS-IT - WS-OTHER ).                  00410001
+            MOVE WS-NET-PAY TO WS-NET-PAY-EDIT.                         00420012
+            MOVE WS-BASIC TO WS-BASIC-EDIT.                             00430012
+       2200-CALCULATE-PARA-EXIT.                                        00540001
+            EXIT.                                                       00550000
+       2300-CALCULATE-SLAB-PARA.                                        00551001
+            COMPUTE WS-SLAB  = ( 0.05 * WS-IT )                         00552009
+            IF SLAB-A                                                   00553004
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553110
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00553210
+             DISPLAY 'SLAB IS      : SLAB A '.                          00553301
+            IF SLAB-B                                                   00553404
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553510
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00553610
+             DISPLAY 'SLAB IS      : SLAB B '.                          00553701
+            IF SLAB-C                                                   00553804
+             DISPLAY 'BASIC PAY IS : ' WS-BASIC-EDIT                    00553910
+             DISPLAY 'NET PAY IS   : ' WS-NET-PAY-EDIT                  00554010
+             DISPLAY 'SLAB IS      : SLAB C '.                          00554101
+       2300-CALCULATE-SLAB-PARA-EXIT.                                   00554201
+            EXIT.                                                       00555001
+       9000-TERMINATION-PARA.                                           00560000
+             STOP RUN.                                                  00570000
+       9000-TERMINATION-PARA-EXIT.                                      00580000
+             EXIT.                                                      00590000
+

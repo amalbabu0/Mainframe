@@ -1,0 +1,33 @@
+      ******************************************************************
+      * DCLGEN TABLE(CUSTYPE)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(CUSTYDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(C)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE CUSTYPE TABLE
+           ( CUST_TYPE_INF                  CHAR(1) NOT NULL,
+             CUST_TYPE_NAME                 VARCHAR(10) NOT NULL
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE CUSTYPE                            *
+      ******************************************************************
+       01  DCLCUSTYPE.
+      *    *************************************************************
+      *                       CUST_TYPE_INF
+           10 CCUST-TYPE-INF       PIC X(1).
+      *    *************************************************************
+           10 CCUST-TYPE-NAME.
+      *                       CUST_TYPE_NAME LENGTH
+              49 CCUST-TYPE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       CUST_TYPE_NAME
+              49 CCUST-TYPE-NAME-TEXT
+                 PIC X(10).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 2       *
+      ******************************************************************

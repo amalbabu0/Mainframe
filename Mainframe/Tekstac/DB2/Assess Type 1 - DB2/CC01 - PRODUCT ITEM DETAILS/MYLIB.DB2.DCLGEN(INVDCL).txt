@@ -1,0 +1,40 @@
+      ******************************************************************
+      * DCLGEN TABLE(INVOICE)                                          *
+      *        LIBRARY(TECN013.MYLIB.DB2.DCLGEN(INVDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(HV-)                                              *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE INVOICE TABLE
+           ( INVOICE_NO                     CHAR(6) NOT NULL,
+             INVOICE_ITEM                   CHAR(5),
+             INVOICE_COUNT                  INTEGER,
+             INVOICE_TOT_COST               DECIMAL(11, 2),
+             INVOICE_STATUS                 VARCHAR(15)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE INVOICE                            *
+      ******************************************************************
+       01  DCLINVOICE.
+      *                       INVOICE_NO
+           10 HV-INVOICE-NO        PIC X(6).
+      *                       INVOICE_ITEM
+           10 HV-INVOICE-ITEM      PIC X(5).
+      *                       INVOICE_COUNT
+           10 HV-INVOICE-COUNT     PIC S9(9) USAGE COMP.
+      *                       INVOICE_TOT_COST
+           10 HV-INVOICE-TOT-COST  PIC S9(9)V9(2) USAGE COMP-3.
+           10 HV-INVOICE-STATUS.
+      *                       INVOICE_STATUS LENGTH
+              49 HV-INVOICE-STATUS-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       INVOICE_STATUS
+              49 HV-INVOICE-STATUS-TEXT
+                 PIC X(15).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+

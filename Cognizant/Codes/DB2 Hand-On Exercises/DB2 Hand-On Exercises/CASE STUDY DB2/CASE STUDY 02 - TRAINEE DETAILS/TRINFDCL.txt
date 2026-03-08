@@ -1,0 +1,42 @@
+      ******************************************************************
+      * DCLGEN TABLE(TRAINEE_INF)                                      *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(TRINFDCL))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(A)                                                *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TRAINEE_INF TABLE
+           ( TRAINEE_ID                     VARCHAR(5) NOT NULL,
+             TRAINEE_NAME                   VARCHAR(20) NOT NULL,
+             TRAINEE_LOCATION_CODE          CHAR(3)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TRAINEE_INF                        *
+      ******************************************************************
+       01  DCLTRAINEE-INF.
+      *    *************************************************************
+           10 ATRAINEE-ID.
+      *                       TRAINEE_ID LENGTH
+              49 ATRAINEE-ID-LEN   PIC S9(4) USAGE COMP.
+      *                       TRAINEE_ID
+              49 ATRAINEE-ID-TEXT
+                 PIC X(5).
+      *    *************************************************************
+           10 ATRAINEE-NAME.
+      *                       TRAINEE_NAME LENGTH
+              49 ATRAINEE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       TRAINEE_NAME
+              49 ATRAINEE-NAME-TEXT
+                 PIC X(20).
+      *    *************************************************************
+      *                       TRAINEE_LOCATION_CODE
+           10 ATRAINEE-LOCATION-CODE
+              PIC X(3).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 3       *
+      ******************************************************************

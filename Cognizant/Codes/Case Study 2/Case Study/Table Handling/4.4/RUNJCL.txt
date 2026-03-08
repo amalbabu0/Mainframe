@@ -1,0 +1,23 @@
+//TCOM018Y JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TCOM018.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX04
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//SYSIN DD *
+KANNAN      
+EMP12       
+1000000    
+RAVI SHANKAR
+EMP13       
+1500000    
+TEEJA SHREE
+EMP14       
+1700000    
+GOKULRAJ  
+EMP15       
+3000000    
+SANGEETHA  
+EMP16       
+2000000    
+/*

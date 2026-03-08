@@ -1,0 +1,15 @@
+  CREATE TABLE PREMIUM(                                                 00010001
+   HOLDER_ID             CHAR(05) NOT NULL PRIMARY KEY                  00020001
+  ,HOLDER_NAME           CHAR(10)                                       00030001
+  ,POLICY_ID             CHAR(05)                                       00040001
+  ,POLICY_CODE           CHAR(10)                                       00050001
+  ,POLICY_NUMBER         CHAR(11)                                       00060001
+  ,POLICY_AMOUNT         CHAR(13)                                       00070001
+  ,PREMIUM_AMOUNT        CHAR(13)                                       00080001
+  ,PREMIUM_RECEIVED_DATE DATE                                           00090001
+  ,BALANCE_AMOUNT        INTEGER                                        00100001
+  ,NEXT_PREMIUM_DUE      DATE                                           00110001
+  ,INTEREST_PAID         CHAR(13)                                       00120001
+  ) IN SHRDB4.SHRTS4;                                                   00130001
+  CREATE UNIQUE INDEX HOLDER_ID_INDEX ON PREMIUM(HOLDER_ID);            00140001
+

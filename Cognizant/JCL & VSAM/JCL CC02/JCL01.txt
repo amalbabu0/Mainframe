@@ -1,0 +1,37 @@
+//TECN116H JOB NOTIFY=&SYSUID                                           00001000
+// JCLLIB ORDER=TECN116.JCL.CC02.PDS                                    00002000
+//STEP001  EXEC PGM=IEFBR14                                             00010000
+//DD1      DD DSN=TECN116.JCL.CC02.PS2,DISP=(MOD,DELETE),               00020000
+//         SPACE=(TRK,(1,1)),                                           00030000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00040000
+//SYSPRINT DD SYSOUT=*                                                  00050000
+//STEP002  EXEC DSCRT                                                   00060000
+//STEP003  EXEC PGM=IEBGENER                                            00070001
+//SYSUT1   DD DSN=TECN116.JCL.CC02.PS1,DISP=SHR                         00080001
+//SYSUT2   DD DSN=TECN116.JCL.CC02.PS2,DISP=SHR                         00090001
+//SYSPRINT DD SYSOUT=*                                                  00100001
+//SYSIN    DD *                                                         00110001
+  GENERATE MAXFLDS=3,MAXLITS=1                                          00120001
+  RECORD FIELD=(10,7,,1),FIELD=(1,'-',,12),FIELD=(10,29,,13)            00130001
+/*                                                                      00140001
+//STEP004  EXEC PGM=IEBCOMPR                                            00150002
+//SYSUT1   DD DSN=TECN116.JCL.CC02.PS1,DISP=SHR                         00160002
+//SYSUT2   DD DSN=TECN116.JCL.CC02.PS2,DISP=SHR                         00170002
+//SYSPRINT DD SYSOUT=*                                                  00180002
+//SYSIN    DD *                                                         00190002
+  COMPARE TYPORG=PS                                                     00200002
+/*                                                                      00210002
+// IF (STEP004.RC EQ 0) THEN                                            00220002
+//STEP005  EXEC PGM=IEFBR14                                             00230002
+//DD1      DD DSN=TECN116.JCL.CC02.PS1,DISP=(OLD,DELETE)                00240002
+//SYSPRINT DD SYSOUT=*                                                  00250002
+// ELSE                                                                 00260002
+//STEP006  EXEC PGM=IEBGENER                                            00270002
+//SYSUT1   DD *                                                         00280002
+'DATASET IS NOT DELETED'                                                00290002
+//SYSUT2   DD SYSOUT=*                                                  00300002
+//SYSPRINT DD SYSOUT=*                                                  00310002
+//SYSIN    DD *                                                         00320002
+/*                                                                      00330002
+// ENDIF                                                                00340002
+

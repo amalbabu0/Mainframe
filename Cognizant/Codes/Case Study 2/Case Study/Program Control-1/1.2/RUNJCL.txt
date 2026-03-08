@@ -1,0 +1,9 @@
+//TLAB049Y JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TLAB049.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX02
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//SYSIN DD *                                                            00110002
+075080085060056
+/*

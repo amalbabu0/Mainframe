@@ -1,0 +1,15 @@
+--SELECT * FROM APPLICANT_DB;
+  DELETE  FROM APPLICANT_DB;
+--CREATE TABLE APPLICANT_DB
+--     (
+--      APPLICANT_ID    CHAR(10) PRIMARY KEY NOT NULL
+--     ,APPLICANT_NAME  VARCHAR(32)
+--     ,DOOR_NO         CHAR(10)
+--     ,STREET          CHAR(20)
+--     ,CITY            CHAR(20)
+--     ,STATE           CHAR(20)
+--     ,PIN             INT
+--     ,PHONE_NO        CHAR(10)
+--     ) IN SHRDB4.SHRTS4;
+--CREATE UNIQUE INDEX IDX3 ON APPLICANT_DB(APPLICANT_ID)
+

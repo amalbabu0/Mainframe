@@ -1,0 +1,174 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. ICT02CBM.                                            00020000
+       ENVIRONMENT DIVISION.                                            00030000
+       INPUT-OUTPUT SECTION.                                            00040000
+       FILE-CONTROL.                                                    00050000
+                   SELECT TI001-KSDS ASSIGN TO INPKS                    00060000
+                          ORGANIZATION IS INDEXED                       00070000
+                          RECORD KEY IS TI001-STUD-ID                   00080000
+                          ACCESS IS SEQUENTIAL                          00090000
+                          FILE STATUS IS WS-FST-TI001.                  00100000
+                   SELECT TO001-PS ASSIGN TO OUTPS                      00110000
+                          ORGANIZATION IS SEQUENTIAL                    00120000
+                          ACCESS IS SEQUENTIAL                          00140000
+                          FILE STATUS IS WS-FST-TO001.                  00150000
+       DATA DIVISION.                                                   00160000
+       FILE SECTION.                                                    00170000
+       FD TI001-KSDS.                                                   00171000
+       01 TI001-KSDS-REC.                                               00172000
+           05 TI001-STUD-ID           PIC X(5).                         00173000
+           05 FILLER                  PIC X(01).                        00174000
+           05 TI001-STUD-NAME         PIC X(10).                        00175000
+           05 FILLER                  PIC X(01).                        00176000
+           05 TI001-NO-OF-ATTEMPTS    PIC X(1).                         00176100
+           05 FILLER                  PIC X(1).                         00176200
+           05 TI001-CC-SCORE          PIC X(3).                         00177000
+           05 FILLER                  PIC X(01).                        00178000
+           05 TI001-ICT-SCORE         PIC X(3).                         00179000
+           05 FILLER                  PIC X(54).                        00179100
+       FD TO001-PS.                                                     00180000
+       01 TO001-PS-REC.                                                 00190000
+           05 TO001-STUD-ID           PIC X(5).                         00200000
+           05 FILLER                  PIC X(01).                        00210000
+           05 TO001-STUD-NAME         PIC X(10).                        00220000
+           05 FILLER                  PIC X(01).                        00230000
+           05 TO001-CC-SCORE          PIC X(3).                         00240000
+           05 FILLER                  PIC X(01).                        00250000
+           05 TO001-ICT-SCORE         PIC X(3).                         00260000
+           05 FILLER                  PIC X(01).                        00270000
+           05 TO001-PERCENTAGE        PIC 9(2)V9(3).                    00280000
+           05 FILLER                  PIC X(50).                        00281000
+       WORKING-STORAGE SECTION.                                         00290000
+       01 WS-VARS.                                                      00300000
+           05 WS-FST-TI001  PIC 9(02).                                  00310000
+           05 WS-FST-TO001  PIC 9(02).                                  00320000
+           05 WS-TOTAL      PIC 9(4).                                   00321001
+           05 WS-COUNTER    PIC 9(2).                                   00322001
+           05 WS-CC-SCORE   PIC 9(03).                                  00323002
+           05 WS-ICT-SCORE  PIC 9(03).                                  00324002
+       PROCEDURE DIVISION.                                              00330000
+       0000-MAIN-PARA.                                                  00331000
+           PERFORM 1000-INIT-PARA                                       00332000
+              THRU 1000-INIT-PARA-EXIT                                  00333000
+           PERFORM 2000-PROC-PARA                                       00334000
+              THRU 2000-PROC-PARA-EXIT                                  00335000
+           PERFORM 9000-TERM-PARA                                       00336000
+              THRU 9000-TERM-PARA-EXIT                                  00337000
+           .                                                            00338000
+       1000-INIT-PARA.                                                  00339000
+           CONTINUE                                                     00339100
+           .                                                            00339200
+       1000-INIT-PARA-EXIT.                                             00339300
+           EXIT                                                         00339400
+           .                                                            00339500
+       2000-PROC-PARA.                                                  00339600
+           PERFORM 2100-OPEN-PARA                                       00339700
+              THRU 2100-OPEN-PARA-EXIT                                  00339800
+           PERFORM 2200-READ-PARA                                       00342000
+              THRU 2200-READ-PARA-EXIT                                  00343000
+             UNTIL WS-FST-TI001 = 10                                    00344000
+           PERFORM 2300-CLOSE-PARA                                      00345000
+              THRU 2300-CLOSE-PARA-EXIT                                 00346000
+           .                                                            00347000
+       2000-PROC-PARA-EXIT.                                             00348000
+           EXIT                                                         00349000
+           .                                                            00349100
+       9000-TERM-PARA.                                                  00349200
+           CONTINUE                                                     00349300
+           .                                                            00349400
+       9000-TERM-PARA-EXIT.                                             00349500
+           STOP RUN                                                     00349600
+           .                                                            00349700
+       2100-OPEN-PARA.                                                  00349800
+           OPEN I-O TI001-KSDS                                          00349900
+           EVALUATE TRUE                                                00350000
+              WHEN WS-FST-TI001 = 00                                    00351000
+                  DISPLAY 'TI001-KSDS HAS OPENED'                       00352000
+              WHEN OTHER                                                00353000
+                  DISPLAY 'OPENING OF TI001-KSDS HAS FAILED'            00354000
+                  DISPLAY 'THE FILE STATUS CODE IS: ' WS-FST-TI001      00355000
+                  PERFORM 9000-TERM-PARA                                00356000
+                     THRU 9000-TERM-PARA-EXIT                           00356105
+           END-EVALUATE                                                 00357000
+           OPEN OUTPUT TO001-PS                                         00358000
+           EVALUATE TRUE                                                00359000
+              WHEN WS-FST-TO001 = 00                                    00359100
+                  DISPLAY 'TO001-PS HAS OPENED'                         00359200
+              WHEN OTHER                                                00359300
+                  DISPLAY 'OPENING OF TO001-PS HAS FAILED'              00359400
+                  DISPLAY 'THE FILE STATUS CODE IS: ' WS-FST-TO001      00359500
+                  PERFORM 9000-TERM-PARA                                00359600
+                     THRU 9000-TERM-PARA-EXIT                           00359705
+           END-EVALUATE                                                 00359800
+           .                                                            00359900
+       2100-OPEN-PARA-EXIT.                                             00360000
+           EXIT                                                         00360100
+           .                                                            00361000
+       2300-CLOSE-PARA.                                                 00362000
+           CLOSE TI001-KSDS                                             00363002
+           CLOSE TO001-PS                                               00364000
+           .                                                            00365000
+       2300-CLOSE-PARA-EXIT.                                            00366000
+           EXIT                                                         00367000
+           .                                                            00368000
+       2200-READ-PARA.                                                  00370000
+           MOVE SPACES TO TI001-KSDS-REC                                00380000
+           READ TI001-KSDS                                              00390000
+           EVALUATE TRUE                                                00400000
+              WHEN WS-FST-TI001 = 00                                    00410000
+                  ADD 1 TO WS-COUNTER                                   00420000
+                  DISPLAY 'RECORD ' WS-COUNTER  ' SUCCESSFULLY READ'    00430000
+                  PERFORM 2210-CHECK-CALC-PARA                          00440000
+                     THRU 2210-CHECK-CALC-PARA-EXIT                     00450000
+              WHEN WS-FST-TI001 = 10                                    00460000
+                  IF WS-COUNTER = 0                                     00470000
+                     DISPLAY 'THE FILE IS EMPTY'                        00480000
+                  ELSE                                                  00490000
+                     DISPLAY 'ALL RECORDS PROCESSED'                    00500000
+                  END-IF                                                00510000
+              WHEN OTHER                                                00520000
+                  DISPLAY 'READ FAILED FOR TI001'                       00530000
+                  DISPLAY 'THE FILE STATUS CODE IS: ' WS-FST-TI001      00540000
+           END-EVALUATE                                                 00550000
+           .                                                            00560000
+       2200-READ-PARA-EXIT.                                             00561002
+           EXIT                                                         00562002
+           .                                                            00563002
+       2210-CHECK-CALC-PARA.                                            00570002
+               IF TI001-NO-OF-ATTEMPTS = "1"                            00580003
+                  MOVE TI001-CC-SCORE TO WS-CC-SCORE                    00581003
+                  MOVE TI001-ICT-SCORE TO WS-ICT-SCORE                  00582003
+                  ADD 15 TO WS-CC-SCORE                                 00590003
+                  ADD 15 TO WS-ICT-SCORE                                00600003
+                  MOVE WS-CC-SCORE TO TI001-CC-SCORE                    00601003
+                  MOVE WS-ICT-SCORE TO TI001-ICT-SCORE                  00602003
+                  MOVE SPACES TO TO001-PS-REC                           00603008
+                  REWRITE TI001-KSDS-REC                                00610000
+                  CALL 'ICT02CBS' USING WS-TOTAL WS-CC-SCORE            00620004
+                  WS-ICT-SCORE TO001-PERCENTAGE                         00630003
+                  PERFORM 2211-WRITE-PARA                               00640000
+                     THRU 2211-WRITE-PARA-EXIT                          00650000
+               ELSE                                                     00651006
+                  MOVE SPACES TO TO001-PS-REC                           00651108
+                  MOVE TI001-CC-SCORE TO WS-CC-SCORE                    00651207
+                  MOVE TI001-ICT-SCORE TO WS-ICT-SCORE                  00651307
+                  CALL 'ICT02CBS' USING WS-TOTAL WS-CC-SCORE            00651407
+                  WS-ICT-SCORE TO001-PERCENTAGE                         00651507
+                  PERFORM 2211-WRITE-PARA                               00651606
+                     THRU 2211-WRITE-PARA-EXIT                          00651706
+               END-IF                                                   00651807
+                  .                                                     00660000
+       2210-CHECK-CALC-PARA-EXIT.                                       00670002
+               EXIT                                                     00680000
+               .                                                        00690000
+       2211-WRITE-PARA.                                                 00700002
+               MOVE TI001-STUD-ID TO TO001-STUD-ID                      00710000
+               MOVE TI001-STUD-NAME TO TO001-STUD-NAME                  00720000
+               MOVE WS-CC-SCORE TO TO001-CC-SCORE                       00730002
+               MOVE WS-ICT-SCORE TO TO001-ICT-SCORE                     00740002
+               WRITE TO001-PS-REC                                       00750000
+               .                                                        00760000
+       2211-WRITE-PARA-EXIT.                                            00770002
+               EXIT                                                     00780000
+               .                                                        00790000
+

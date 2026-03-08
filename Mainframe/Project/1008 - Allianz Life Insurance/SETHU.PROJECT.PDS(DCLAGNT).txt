@@ -1,0 +1,50 @@
+      ******************************************************************
+      * DCLGEN TABLE(AGENT)                                            *
+      *        LIBRARY(TECN013.SETHU.PROJECT.PDS(DCLAGNT))             *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(HV3-)                                             *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE AGENT TABLE
+           ( AGENT_CODE                     CHAR(5) NOT NULL,
+             AGENT_NAME                     CHAR(10),
+             STREET                         CHAR(20),
+             CITY                           CHAR(20),
+             STATE                          CHAR(20),
+             PIN                            INTEGER,
+             PHONE_NO                       CHAR(12),
+             REG_NO                         CHAR(17),
+             COMMISSION                     INTEGER,
+             EMAIL                          CHAR(30)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE AGENT                              *
+      ******************************************************************
+       01  DCLAGENT.
+      *                       AGENT_CODE
+           10 HV3-AGENT-CODE       PIC X(5).
+      *                       AGENT_NAME
+           10 HV3-AGENT-NAME       PIC X(10).
+      *                       STREET
+           10 HV3-STREET           PIC X(20).
+      *                       CITY
+           10 HV3-CITY             PIC X(20).
+      *                       STATE
+           10 HV3-STATE            PIC X(20).
+      *                       PIN
+           10 HV3-PIN              PIC S9(9) USAGE COMP.
+      *                       PHONE_NO
+           10 HV3-PHONE-NO         PIC X(12).
+      *                       REG_NO
+           10 HV3-REG-NO           PIC X(17).
+      *                       COMMISSION
+           10 HV3-COMMISSION       PIC S9(9) USAGE COMP.
+      *                       EMAIL
+           10 HV3-EMAIL            PIC X(30).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *
+      ******************************************************************
+

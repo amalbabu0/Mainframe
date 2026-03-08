@@ -1,0 +1,21 @@
+//TECN013A JOB NOTIFY=&SYSUID,CLASS=A,MSGLEVEL=(1,1),MSGCLASS=H,        00010000
+//         LINES=(1,CANCEL),PRTY=15                                     00020000
+//JOBLIB   DD DISP=SHR,                                                 00030000
+//            DSN=DSN910.DB9G.SDSNEXIT                                  00040000
+//         DD DISP=SHR,                                                 00050000
+//            DSN=DSN910.SDSNLOAD                                       00060000
+//         DD DISP=SHR,                                                 00070000
+//            DSN=CEE.SCEERUN                                           00080000
+//PH02CS04 EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)                    00090000
+//OUTMEM   DD DSN=TECN013.DB2.ICT02.OUTPUT.PS1,DISP=SHR                 00100001
+//SYSTSPRT DD SYSOUT=*                                                  00110000
+//SYSPRINT DD SYSOUT=*                                                  00120000
+//SYSOUT   DD SYSOUT=*                                                  00130000
+//SYSIN    DD DUMMY                                                     00140000
+//SYSTSIN  DD *                                                         00150000
+  DSN SYSTEM(DB9G)                                                      00160000
+  RUN PROGRAM(DBICT2CB) PLAN(TECN013P) -                                00170000
+      LIB('TECN013.MYLIB.DB2.LOADLIB')                                  00180000
+  END                                                                   00190000
+/*                                                                      00200000
+

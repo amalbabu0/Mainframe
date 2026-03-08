@@ -1,0 +1,41 @@
+      ******************************************************************
+      * DCLGEN TABLE(TRAINEE)                                          *
+      *        LIBRARY(TCHN097.MYLIB.DB2.DCLGEN(TRINDCL))              *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      *        LABEL(YES)                                              *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TRAINEE TABLE
+           ( TRAINEE_ID                     VARCHAR(5) NOT NULL,
+             TRAINEE_NAME                   VARCHAR(20) NOT NULL,
+             TRAINEE_LOCATION               VARCHAR(15) NOT NULL,
+             TRAINEE_ONBOARD_STATUS         CHAR(1)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TRAINEE                            *
+      ******************************************************************
+       01  DCLTRAINEE.
+      *    *************************************************************
+           10 TRAINEE-ID.
+              49 TRAINEE-ID-LEN    PIC S9(4) USAGE COMP.
+              49 TRAINEE-ID-TEXT   PIC X(5).
+      *    *************************************************************
+           10 TRAINEE-NAME.
+              49 TRAINEE-NAME-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-NAME-TEXT
+                 PIC X(20).
+      *    *************************************************************
+           10 TRAINEE-LOCATION.
+              49 TRAINEE-LOCATION-LEN
+                 PIC S9(4) USAGE COMP.
+              49 TRAINEE-LOCATION-TEXT
+                 PIC X(15).
+      *    *************************************************************
+           10 TRAINEE-ONBOARD-STATUS
+              PIC X(1).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 4       *
+      ******************************************************************

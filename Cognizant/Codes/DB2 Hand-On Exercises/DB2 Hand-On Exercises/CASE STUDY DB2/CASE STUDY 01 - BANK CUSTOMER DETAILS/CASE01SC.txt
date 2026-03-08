@@ -1,0 +1,21 @@
+--CREATE MYBANK                                                         00001011
+CREATE TABLE MYBANK (                                                   00010010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00030010
+CUST_ACC_TYPE CHAR(2) CHECK(CUST_ACC_TYPE IN('S','C','CC')),            00040010
+CUST_NAME VARCHAR(15) NOT NULL,                                         00050010
+CUST_TYPE CHAR(1) NOT NULL,                                             00060010
+CUST_TYPE_NAME VARCHAR(10) NOT NULL,                                    00070010
+MIN_BALANCE DECIMAL(8,2) NOT NULL ) ;                                   00080010
+--CREATE CUSTACCT                                                       00081011
+CREATE TABLE CUSTACCT (                                                 00090010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00100010
+CUST_ACC_TYPE CHAR(2) CHECK(CUST_ACC_TYPE IN('S','C','CC')) );          00110010
+--CREATE CUSTDET                                                        00111011
+CREATE TABLE CUSTDET (                                                  00120010
+CUST_ID INT NOT NULL PRIMARY KEY,                                       00130010
+CUST_NAME VARCHAR(15) NOT NULL,                                         00150010
+CUST_TYPE CHAR(1) ) ;                                                   00160010
+--CREATE CUSTYPE                                                        00160111
+CREATE TABLE CUSTYPE (                                                  00161010
+CUST_TYPE_INF CHAR(1) NOT NULL PRIMARY KEY,                             00190010
+CUST_TYPE_NAME VARCHAR(10) NOT NULL);                                   00200010

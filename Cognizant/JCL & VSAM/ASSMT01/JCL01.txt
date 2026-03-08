@@ -1,0 +1,98 @@
+//TECN116H JOB NOTIFY=&SYSUID                                           00010000
+//DSCRT    PROC                                                         00020000
+//STEP001  EXEC PGM=IEFBR14                                             00030000
+//DD1      DD DSN=&DSNNAME..PS2,DISP=(MOD,DELETE),                      00040000
+//         SPACE=(TRK,(1,1)),                                           00050000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00060000
+//DD2      DD DSN=&DSNNAME..PS3,DISP=(MOD,DELETE),                      00070000
+//         SPACE=(TRK,(1,1)),                                           00080000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00090000
+//DD3      DD DSN=&DSNNAME..PS4,DISP=(MOD,DELETE),                      00100000
+//         SPACE=(TRK,(1,1)),                                           00110000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00120000
+//DD4      DD DSN=&DSNNAME..PS5,DISP=(MOD,DELETE),                      00130000
+//         SPACE=(TRK,(1,1)),                                           00140000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00150000
+//DD5      DD DSN=&DSNNAME..PS6,DISP=(MOD,DELETE),                      00160000
+//         SPACE=(TRK,(1,1)),                                           00170000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00180000
+//DD6      DD DSN=&DSNNAME..PS7,DISP=(MOD,DELETE),                      00181000
+//         SPACE=(TRK,(1,1)),                                           00182000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00183000
+//STEP002  EXEC PGM=IEFBR14                                             00190000
+//DD1      DD DSN=&DSNNAME..PS2,DISP=(NEW,CATLG),                       00200000
+//         SPACE=(TRK,(1,1)),                                           00210000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00220000
+//DD2      DD DSN=&DSNNAME..PS3,DISP=(NEW,CATLG),                       00230000
+//         SPACE=(TRK,(1,1)),                                           00240000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00250000
+//DD3      DD DSN=&DSNNAME..PS4,DISP=(NEW,CATLG),                       00260000
+//         SPACE=(TRK,(1,1)),                                           00270000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00280000
+//DD4      DD DSN=&DSNNAME..PS5,DISP=(NEW,CATLG),                       00290000
+//         SPACE=(TRK,(1,1)),                                           00300000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00310000
+//DD5      DD DSN=&DSNNAME..PS6,DISP=(NEW,CATLG),                       00320000
+//         SPACE=(TRK,(1,1)),                                           00330000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00340000
+//DD6      DD DSN=&DSNNAME..PS7,DISP=(NEW,CATLG),                       00341000
+//         SPACE=(TRK,(1,1)),                                           00342000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800,DSORG=PS)                 00343000
+//SYSPRINT DD SYSOUT=*                                                  00350000
+//DSCRT    PEND                                                         00360000
+//STEP003  EXEC DSCRT,DSNNAME=TECN116.JCL.ASSMT01.STUD                  00370000
+//STEP010  EXEC PGM=SORT                                                00380001
+//SORTIN   DD DSN=TECN116.JCL.ASSMT01.STUD.PS1,DISP=SHR                 00390001
+//SORTOUT  DD DSN=TECN116.JCL.ASSMT01.STUD.PS2,DISP=SHR                 00400001
+//SYSPRINT DD SYSOUT=*                                                  00410001
+//SYSOUT   DD SYSOUT=*                                                  00420001
+//SYSIN    DD *                                                         00430001
+  SORT FIELDS=(1,6,CH,A)                                                00440001
+  OMIT COND=(36,5,CH,EQ,C' ')                                           00450001
+  INCLUDE COND=(54,3,CH,GT,150)                                         00460001
+/*                                                                      00470001
+//STEP020  EXEC PGM=SORT                                                00480002
+//SORTIN   DD DSN=TECN116.JCL.ASSMT01.STUD.PS1,DISP=SHR                 00490002
+//SORTOF1  DD DSN=TECN116.JCL.ASSMT01.STUD.PS3,DISP=SHR                 00500002
+//SORTOF2  DD DSN=TECN116.JCL.ASSMT01.STUD.PS4,DISP=SHR                 00510002
+//SYSPRINT DD SYSOUT=*                                                  00520002
+//SYSOUT   DD SYSOUT=*                                                  00530002
+//SYSIN    DD *                                                         00540002
+  SORT FIELDS=(1,6,CH,A)                                                00550002
+  OUTFIL FILES=1,INCLUDE=(29,1,CH,EQ,C'M')                              00560002
+  OUTFIL FILES=2,INCLUDE=(29,1,CH,EQ,C'F')                              00570002
+/*                                                                      00580002
+//STEP030  EXEC PGM=SORT                                                00590003
+//SORTIN   DD DSN=TECN116.JCL.ASSMT01.STUD.PS2,DISP=SHR                 00600003
+//SORTOUT  DD DSN=TECN116.JCL.ASSMT01.STUD.PS5,DISP=SHR                 00610003
+//SYSPRINT DD SYSOUT=*                                                  00620003
+//SYSOUT   DD SYSOUT=*                                                  00630003
+//SYSIN    DD *                                                         00640003
+  SORT FIELDS=(1,6,CH,A)                                                00650003
+  OUTREC IFTHEN=(WHEN=(54,3,ZD,GT,200),OVERLAY=(58:C'A')),              00660003
+         IFTHEN=(WHEN=(54,3,ZD,GT,190,AND,54,3,ZD,LT,200),              00670003
+                 OVERLAY=(58:C'B')),                                    00680003
+         IFTHEN=(WHEN=(54,3,ZD,LT,190),OVERLAY=(58:C'C'))               00690003
+/*                                                                      00700003
+//STEP040  EXEC PGM=SORT                                                00710004
+//SORTIN   DD DSN=TECN116.JCL.ASSMT01.STUD.PS2,DISP=SHR                 00720004
+//SORTOUT  DD DSN=TECN116.JCL.ASSMT01.STUD.PS6,DISP=SHR                 00730004
+//SYSPRINT DD SYSOUT=*                                                  00740004
+//SYSOUT   DD SYSOUT=*                                                  00750004
+//SYSIN    DD *                                                         00760004
+  SORT FIELDS=COPY                                                      00770004
+  OUTFIL REMOVECC,                                                      00780004
+  HEADER1=(12:C'***STUDENT DETAILS***'),                                00790004
+  TRAILER1=(2:C'NO OF RECORDS:',COUNT=(M11,LENGTH=4))                   00800004
+/*                                                                      00810004
+//STEP050  EXEC PGM=SORT                                                00820005
+//SORTIN   DD DSN=TECN116.JCL.ASSMT01.STUD.PS2,DISP=SHR                 00821005
+//SORTOUT  DD DSN=TECN116.JCL.ASSMT01.STUD.PS7,DISP=SHR                 00822005
+//SYSPRINT DD SYSOUT=*                                                  00823005
+//SYSOUT   DD SYSOUT=*                                                  00824005
+//SYSIN    DD *                                                         00825005
+  SORT FIELDS=COPY                                                      00830005
+  OUTREC IFTHEN=(WHEN=(29,1,CH,EQ,C'M'),OVERLAY=(29:C'MALE')),          00840006
+         IFTHEN=(WHEN=(29,1,CH,EQ,C'F'),OVERLAY=(29:C'FEMALE'))         00850005
+/*                                                                      00860005
+

@@ -1,0 +1,48 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *INPUT VARIABLES.
+       77 WS-A    PIC 9(5)      VALUE 45.
+       77 WS-B    PIC 9(5)      VALUE 55.
+       77 WS-C    PIC S9(5)     VALUE -67.
+       77 WS-D    PIC 9(4)V9(2) VALUE 45.55.
+       77 WS-E    PIC 9(6)      VALUE 251356.
+       77 WS-F    PIC S9(4)     VALUE -77.
+       77 WS-G    PIC 9(4)      VALUE 77.
+       77 WS-H    PIC 9(5)V9(2) VALUE 11123.
+       77 WS-DATE PIC 9(8).
+      *OUTPUT VARIABLES.
+       77 WS-A-EDITED      PIC ZZZZZ.
+       77 WS-B-EDITED      PIC *****.
+       77 WS-C-EDITED      PIC 9(3)DB.
+       77 WS-D-EDITED      PIC ZZZZ.ZZ.
+       77 WS-E-EDITED      PIC 99,99,99.
+       77 WS-DATE-EDITED   PIC 99/99/9999.
+       77 WS-F-EDITED      PIC -9(4).
+       77 WS-G-EDITED      PIC +9(4).
+       77 WS-H-EDITED      PIC 9(5).9(2).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           MOVE 45 TO WS-A-EDITED.
+           MOVE 55 TO WS-B-EDITED.
+           MOVE -67 TO WS-C-EDITED.
+           MOVE 45.55 TO WS-D-EDITED.
+           MOVE 251356 TO WS-E-EDITED.
+           MOVE -77 TO WS-F-EDITED.
+           MOVE 77 TO WS-G-EDITED.
+           MOVE 11123 TO WS-H-EDITED.
+           ACCEPT WS-DATE FROM DATE YYYYMMDD.
+           MOVE WS-DATE(1:4) TO WS-DATE-EDITED(7:4).
+           MOVE '/' TO WS-DATE-EDITED(3:1).
+           MOVE WS-DATE(5:2) TO WS-DATE-EDITED(4:2).
+           MOVE '/' TO WS-DATE-EDITED(6:1).
+           MOVE WS-DATE(7:2) TO WS-DATE-EDITED(1:2).
+           DISPLAY "EDITED OUTPUT OF WS-A : " WS-A-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-B : " WS-B-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-C : " WS-C-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-D : " WS-D-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-E : " WS-E-EDITED.
+           DISPLAY "EDITED OUTPUT OF WS-DATE : " WS-DATE-EDITED.
+       0000-TERM-PARA.
+           STOP RUN.

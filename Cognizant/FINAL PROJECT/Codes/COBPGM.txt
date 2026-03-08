@@ -1,0 +1,506 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBPGM.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT TI001-PS ASSIGN TO DD1
+           ORGANIZATION  IS   SEQUENTIAL
+           ACCESS        IS   SEQUENTIAL
+           FILE STATUS   IS WS-FST-TI001
+           .
+           SELECT TO001-PS ASSIGN TO DD2
+           ORGANIZATION  IS   SEQUENTIAL
+           ACCESS        IS   SEQUENTIAL
+           FILE STATUS   IS WS-FST-TO001
+           .
+           SELECT TO002-KSDS ASSIGN TO DD3
+           ORGANIZATION  IS        INDEXED
+           ACCESS        IS         RANDOM
+           RECORD KEY    IS      TO002-KEY
+           FILE STATUS   IS   WS-FST-TO002
+           .
+       DATA DIVISION.
+       FILE SECTION.
+       FD TI001-PS
+           RECORDING MODE IS F
+           RECORD CONTAINS 300 CHARACTERS.
+       01 TI001-PS-REC.
+         05 TI001-APPID      PIC X(10).
+         05 F                PIC X(01).
+         05 TI001-APPNAME    PIC X(32).
+         05 F                PIC X(01).
+         05 TI001-DOORNO     PIC X(10).
+         05 F                PIC X(01).
+         05 TI001-STREET     PIC X(20).
+         05 F                PIC X(01).
+         05 TI001-CITY       PIC X(20).
+         05 F                PIC X(01).
+         05 TI001-STATE      PIC X(20).
+         05 F                PIC X(01).
+         05 TI001-PIN        PIC 9(06).
+         05 F                PIC X(01).
+         05 TI001-PHONENO    PIC 9(10).
+         05 F                PIC X(01).
+         05 TI001-LOANID     PIC 9(02).
+         05 F                PIC X(01).
+         05 TI001-LOANTYPE   PIC X(10).
+         05 F                PIC X(01).
+         05 TI001-ALAMOUNT   PIC 9(08).
+         05 F                PIC X(01).
+         05 TI001-LOANAD     PIC X(10).
+         05 F                PIC X(01).
+         05 TI001-LOANT      PIC 9(02).
+         05 F                PIC X(01).
+         05 TI001-FIR        PIC 9(02).9(01).
+         05 F                PIC X(01).
+         05 TI001-LOANI      PIC X(05).
+         05 F                PIC X(01).
+         05 TI001-RPD        PIC 9(02).
+       FD TO001-PS
+           RECORDING MODE IS F
+           RECORD CONTAINS 300 CHARACTERS.
+       01 TO001-PS-REC.
+         05 TO001-APPID      PIC X(10).
+         05 F                PIC X(01).
+         05 TO001-APPNAME    PIC X(32).
+         05 F                PIC X(01).
+         05 TO001-DOORNO     PIC X(10).
+         05 F                PIC X(01).
+         05 TO001-STREET     PIC X(20).
+         05 F                PIC X(01).
+         05 TO001-CITY       PIC X(20).
+         05 F                PIC X(01).
+         05 TO001-STATE      PIC X(20).
+         05 F                PIC X(01).
+         05 TO001-PIN        PIC 9(06).
+         05 F                PIC X(01).
+         05 TO001-PHONENO    PIC 9(10).
+         05 F                PIC X(01).
+         05 TO001-LOANID     PIC 9(02).
+         05 F                PIC X(01).
+         05 TO001-LOANTYPE   PIC X(10).
+         05 F                PIC X(01).
+         05 TO001-ALAMOUNT   PIC 9(08).
+         05 F                PIC X(01).
+         05 TO001-LOANAD     PIC X(10).
+         05 F                PIC X(01).
+         05 TO001-LOANT      PIC 9(02).
+         05 F                PIC X(01).
+         05 TO001-FIR        PIC 9(02).9(01).
+         05 F                PIC X(01).
+         05 TO001-LOANI      PIC X(05).
+         05 F                PIC X(01).
+         05 TO001-RPD        PIC 9(02).
+         05 F                PIC X(01).
+         05 TO001-REJREASON  PIC X(50).
+       FD TO002-KSDS.
+       01 TO002-KSDS-REC.
+         05 TO002-KEY        PIC X(12).
+         05 F                PIC X(01).
+         05 TO002-LOANTYPE   PIC X(10).
+         05 F                PIC X(67).
+       WORKING-STORAGE SECTION.
+       01 WS-VARS.
+         05 WS-FST-TI001          PIC 9(02).
+           88 C05-TI001-SUCCESS   VALUE 00.
+           88 C05-TI001-EOF       VALUE 10.
+         05 WS-FST-TO001          PIC 9(02).
+           88 C05-TO001-SUCCESS   VALUE 00.
+           88 C05-TO001-EOF       VALUE 10.
+         05 WS-FST-TO002          PIC 9(02).
+           88 C05-TO002-SUCCESS   VALUE 00.
+           88 C05-TO002-EOF       VALUE 10.
+         05 WS-STRING-PTR         PIC 9(02).
+         05 WS-REASON-OUT         PIC X(50).
+      *  -------------------------------------------
+         05 WS-FIR                PIC 9(02).
+         05 WS-MONTH              PIC 9(02).
+         05 WS-YEAR               PIC 9(04).
+         05 WS-TOT-REP-AMNT       PIC 9(09).
+         05 WS-MON-REP-AMNT       PIC 9(09).
+         05 WS-NEXT-REP-DUE-DATE  PIC X(10).
+         05 WS-BALANCE-AMNT       PIC 9(09).
+         05 WS-REMAINDER          PIC 9(02).
+      *  -------------------------------------------
+         05 WS-ERR-MSG.
+           10 WS-ERR-LEN  PIC S9(04) COMP VALUE 800.
+           10 WS-ERR-TEXT PIC X(80) OCCURS 10 TIMES.
+         05 WS-LRECL      PIC S9(09) COMP VALUE 80.
+           EXEC SQL
+             INCLUDE SQLCA
+           END-EXEC.
+           EXEC SQL
+             INCLUDE DCLAPDB
+           END-EXEC.
+           EXEC SQL
+             INCLUDE DCLLDB
+           END-EXEC.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INIT-PARA
+              THRU 1000-INIT-PARA-EXIT
+           PERFORM 3000-PROC-PARA
+              THRU 3000-PROC-PARA-EXIT
+           PERFORM 9000-TERM-PARA
+           .
+       1000-INIT-PARA.
+           CONTINUE
+           .
+       1000-INIT-PARA-EXIT.
+           EXIT
+           .
+       3000-PROC-PARA.
+           PERFORM 3100-OPEN-PARA
+              THRU 3100-OPEN-PARA-EXIT
+           PERFORM 3200-READ-PARA
+              THRU 3200-READ-PARA-EXIT
+             UNTIL C05-TI001-EOF
+           PERFORM 3300-CLOSE-PARA
+              THRU 3300-CLOSE-PARA-EXIT
+           .
+       3000-PROC-PARA-EXIT.
+           EXIT
+           .
+       3100-OPEN-PARA.
+           OPEN INPUT TI001-PS
+           EVALUATE TRUE
+           WHEN C05-TI001-SUCCESS
+             DISPLAY 'TI001 OPENED'
+           WHEN OTHER
+             DISPLAY 'TI001 OPEN FAILED ' WS-FST-TI001
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+      *    -------------------------------------------
+           OPEN OUTPUT TO001-PS
+           EVALUATE TRUE
+           WHEN C05-TO001-SUCCESS
+             DISPLAY 'TO001 OPENED'
+           WHEN OTHER
+             DISPLAY 'TO001 OPEN FAILED ' WS-FST-TO001
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+      *    -------------------------------------------
+           OPEN OUTPUT TO002-KSDS
+           EVALUATE TRUE
+           WHEN C05-TO002-SUCCESS
+             DISPLAY 'TO002 OPENED'
+           WHEN OTHER
+             DISPLAY 'TO002 OPEN FAILED ' WS-FST-TO002
+             PERFORM 9000-TERM-PARA
+           END-EVALUATE
+           .
+       3100-OPEN-PARA-EXIT.
+           EXIT
+           .
+       3300-CLOSE-PARA.
+           CLOSE TI001-PS TO001-PS TO002-KSDS
+           .
+       3300-CLOSE-PARA-EXIT.
+           EXIT
+           .
+       3200-READ-PARA.
+           MOVE SPACES TO TI001-PS-REC TO001-PS-REC TO002-KSDS-REC
+           READ TI001-PS
+           EVALUATE TRUE
+           WHEN C05-TI001-SUCCESS
+             PERFORM 3210-VALID-PARA
+                THRU 3210-VALID-PARA-EXIT
+           WHEN C05-TI001-EOF
+             DISPLAY 'ALL RECORDS PROCESSED'
+           WHEN OTHER
+             DISPLAY 'TI001-PS READ FAILED ' WS-FST-TI001
+           END-EVALUATE
+           .
+       3200-READ-PARA-EXIT.
+           EXIT
+           .
+       3210-VALID-PARA.
+           EVALUATE TRUE
+           WHEN TI001-APPID       IS NUMERIC              AND
+      *         ---------------------------------------------
+                TI001-PHONENO     IS NUMERIC              AND
+      *         ---------------------------------------------
+                TI001-LOANTYPE    IS EQUAL TO 'HOUSING'   AND
+      *         ---------------------------------------------
+                TI001-ALAMOUNT    IS NUMERIC              AND
+      *         ---------------------------------------------
+                TI001-LOANAD(1:4) IS NUMERIC              AND
+                TI001-LOANAD(5:1) IS EQUAL TO '-'         AND
+                TI001-LOANAD(6:2) IS NUMERIC              AND
+                TI001-LOANAD(8:1) IS EQUAL TO '-'         AND
+                TI001-LOANAD(9:2) IS NUMERIC
+             DISPLAY 'VALID RECORD'
+             PERFORM 3220-INSERT-PARA
+                THRU 3220-INSERT-PARA-EXIT
+      *    ------------------------------------------------------------
+           WHEN OTHER
+             PERFORM 3240-ERROR-MOVE-PARA
+                THRU 3240-ERROR-MOVE-PARA-EXIT
+           END-EVALUATE
+           .
+       3210-VALID-PARA-EXIT.
+           EXIT
+           .
+       3220-INSERT-PARA.
+           INITIALIZE DCLAPPLICANT-DB
+           MOVE TI001-APPID     TO HV-APPLICANT-ID
+           MOVE TI001-APPNAME   TO HV-APPLICANT-NAME-TEXT
+           MOVE LENGTH OF HV-APPLICANT-NAME-TEXT TO
+           HV-APPLICANT-NAME-LEN
+           MOVE TI001-DOORNO    TO HV-DOOR-NO
+           MOVE TI001-STREET    TO HV-STREET
+           MOVE TI001-CITY      TO HV-CITY
+           MOVE TI001-STATE     TO HV-STATE
+           MOVE TI001-PIN       TO HV-PIN
+           MOVE TI001-PHONENO   TO HV-PHONE-NO
+           EXEC SQL
+             INSERT INTO APPLICANT_DB
+                VALUES( :HV-APPLICANT-ID
+                       ,:HV-APPLICANT-NAME
+                       ,:HV-DOOR-NO
+                       ,:HV-STREET
+                       ,:HV-CITY
+                       ,:HV-STATE
+                       ,:HV-PIN
+                       ,:HV-PHONE-NO
+                      )
+           END-EXEC.
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+             DISPLAY 'INSERT SUCCESSFUL'
+           WHEN OTHER
+             DISPLAY 'SQL FAILED'
+             CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+             DISPLAY WS-ERR-MSG
+           END-EVALUATE
+      *    ------------------------------------------------
+           INITIALIZE DCLLOAN-DB
+           MOVE TI001-APPID     TO HL-APPLICANT-ID
+           MOVE TI001-LOANID    TO HL-LOAN-ID
+           MOVE TI001-LOANTYPE  TO HL-LOAN-TYPE
+           MOVE TI001-ALAMOUNT  TO HL-APPROVED-LOAN-AMOUNT
+           MOVE TI001-LOANAD    TO HL-LOAN-APPROVAL-DATE
+           MOVE TI001-LOANT     TO HL-LOAN-TENURE
+           MOVE TI001-FIR       TO HL-FIXED-INTEREST-RATE
+           MOVE TI001-LOANI     TO HL-LOAN-INDICATOR
+           MOVE TI001-RPD       TO HL-RE-PAYMENT-DAY
+      *    ------------------------------------------------------
+           MOVE TI001-FIR(1:2)  TO WS-FIR
+           COMPUTE WS-TOT-REP-AMNT = TI001-ALAMOUNT +
+                        ((TI001-ALAMOUNT * TI001-LOANT * WS-FIR) / 100)
+           MOVE WS-TOT-REP-AMNT TO HL-TOTAL-REPAYMENT-AMOUNT
+      *    ------------------------------------------------------
+           COMPUTE WS-MON-REP-AMNT = WS-TOT-REP-AMNT /
+                                     (TI001-LOANT * 12)
+           MOVE WS-MON-REP-AMNT TO HL-MONTHLY-REPAYMENT-AMOUNT
+      *    ------------------------------------------------------
+           EVALUATE TRUE
+           WHEN (TI001-LOANAD(6:2) = 01)
+             IF TI001-LOANAD(9:2) > 28
+               MOVE TI001-LOANAD(1:4) TO WS-NEXT-REP-DUE-DATE(1:4)
+               MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+               MOVE TI001-LOANAD(6:2) TO WS-MONTH
+               COMPUTE WS-MONTH = WS-MONTH + 1
+               MOVE WS-MONTH          TO WS-NEXT-REP-DUE-DATE(6:2)
+               MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+               MOVE 28                TO TI001-LOANAD(9:2)
+               MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+               MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+      *
+             ELSE
+               MOVE TI001-LOANAD(1:4) TO WS-NEXT-REP-DUE-DATE(1:4)
+               MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+               MOVE TI001-LOANAD(6:2) TO WS-MONTH
+               COMPUTE WS-MONTH = WS-MONTH + 1
+               MOVE WS-MONTH          TO WS-NEXT-REP-DUE-DATE(6:2)
+               MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+               MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+               MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+             END-IF
+           WHEN (TI001-LOANAD(6:2) = 03 OR 05 OR 07 OR 08 OR 10)
+             IF TI001-LOANAD(9:2) = 31
+               MOVE TI001-LOANAD(1:4) TO WS-NEXT-REP-DUE-DATE(1:4)
+               MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+               MOVE TI001-LOANAD(6:2) TO WS-MONTH
+               COMPUTE WS-MONTH = WS-MONTH + 1
+               MOVE WS-MONTH          TO WS-NEXT-REP-DUE-DATE(6:2)
+               MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+               MOVE 30                TO TI001-LOANAD(9:2)
+               MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+               MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+      *
+             ELSE
+               MOVE TI001-LOANAD(1:4) TO WS-NEXT-REP-DUE-DATE(1:4)
+               MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+               MOVE TI001-LOANAD(6:2) TO WS-MONTH
+               COMPUTE WS-MONTH = WS-MONTH + 1
+               MOVE WS-MONTH          TO WS-NEXT-REP-DUE-DATE(6:2)
+               MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+               MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+               MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+             END-IF
+           WHEN (TI001-LOANAD(6:2) = 02 OR 04 OR 06 OR 09 OR 11)
+               MOVE TI001-LOANAD(1:4) TO WS-NEXT-REP-DUE-DATE(1:4)
+               MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+               MOVE TI001-LOANAD(6:2) TO WS-MONTH
+               COMPUTE WS-MONTH = WS-MONTH + 1
+               MOVE WS-MONTH          TO WS-NEXT-REP-DUE-DATE(6:2)
+               MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+               MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+               MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+           WHEN (TI001-LOANAD(6:2) = 12)
+             MOVE TI001-LOANAD(1:4) TO WS-YEAR
+             COMPUTE WS-YEAR = WS-YEAR + 1
+             MOVE WS-YEAR           TO WS-NEXT-REP-DUE-DATE(1:4)
+             MOVE TI001-LOANAD(5:1) TO WS-NEXT-REP-DUE-DATE(5:1)
+             MOVE 01                TO WS-NEXT-REP-DUE-DATE(6:2)
+             MOVE TI001-LOANAD(8:1) TO WS-NEXT-REP-DUE-DATE(8:1)
+             MOVE TI001-LOANAD(9:2) TO WS-NEXT-REP-DUE-DATE(9:2)
+             MOVE WS-NEXT-REP-DUE-DATE TO HL-NEXT-REPAYMENT-DUE-DATE
+           END-EVALUATE
+      *    -----------------------------------------------------------
+           COMPUTE WS-BALANCE-AMNT = WS-TOT-REP-AMNT - WS-MON-REP-AMNT
+           MOVE WS-BALANCE-AMNT     TO HL-BALANCE-AMOUNT
+           EXEC SQL
+             INSERT INTO LOAN_DB
+                VALUES( :HL-APPLICANT-ID
+                       ,:HL-LOAN-ID
+                       ,:HL-LOAN-TYPE
+                       ,:HL-APPROVED-LOAN-AMOUNT
+                       ,:HL-LOAN-APPROVAL-DATE
+                       ,:HL-LOAN-TENURE
+                       ,:HL-FIXED-INTEREST-RATE
+                       ,:HL-LOAN-INDICATOR
+                       ,:HL-RE-PAYMENT-DAY
+                       ,:HL-TOTAL-REPAYMENT-AMOUNT
+                       ,:HL-MONTHLY-REPAYMENT-AMOUNT
+                       ,:HL-NEXT-REPAYMENT-DUE-DATE
+                       ,:HL-BALANCE-AMOUNT
+                      )
+           END-EXEC.
+           EVALUATE TRUE
+           WHEN SQLCODE = 000
+             DISPLAY 'INSERT SUCCESSFUL'
+           WHEN OTHER
+             DISPLAY 'SQL FAILED'
+             CALL 'DSNTIAR' USING SQLCA WS-ERR-MSG WS-LRECL
+             DISPLAY WS-ERR-MSG
+           END-EVALUATE
+           PERFORM 3230-KSDS-MOVE-PARA
+              THRU 3230-KSDS-MOVE-PARA-EXIT
+           .
+       3220-INSERT-PARA-EXIT.
+           EXIT
+           .
+       3230-KSDS-MOVE-PARA.
+           EVALUATE TRUE
+           WHEN TI001-LOANI = 'OPEN'
+             MOVE TI001-APPID    TO TO002-KEY(1:10)
+             MOVE TI001-LOANID   TO TO002-KEY(11:2)
+             MOVE TI001-LOANTYPE TO TO002-LOANTYPE
+           END-EVALUATE
+           WRITE TO002-KSDS-REC
+           .
+       3230-KSDS-MOVE-PARA-EXIT.
+           EXIT
+           .
+       3240-ERROR-MOVE-PARA.
+           MOVE SPACES TO WS-REASON-OUT
+           MOVE 1 TO WS-STRING-PTR
+           MOVE TI001-APPID     TO TO001-APPID
+           EVALUATE TRUE
+           WHEN TI001-APPID IS NOT NUMERIC
+             STRING "APPID" DELIMITED BY SIZE INTO WS-REASON-OUT
+               WITH POINTER WS-STRING-PTR
+             END-STRING
+           END-EVALUATE
+      *    ----------------------------------------------------------
+           MOVE TI001-APPNAME   TO TO001-APPNAME
+           MOVE TI001-DOORNO    TO TO001-DOORNO
+           MOVE TI001-STREET    TO TO001-STREET
+           MOVE TI001-CITY      TO TO001-CITY
+           MOVE TI001-STATE     TO TO001-STATE
+           MOVE TI001-PIN       TO TO001-PIN
+      *    ----------------------------------------------------------
+           MOVE TI001-PHONENO   TO TO001-PHONENO
+           EVALUATE TRUE
+           WHEN TI001-PHONENO IS NOT NUMERIC
+             IF WS-STRING-PTR = 1
+               STRING "PHONENO" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             ELSE
+               STRING ",PHONENO" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             END-IF
+           END-EVALUATE
+      *    ----------------------------------------------------------
+           MOVE TI001-LOANID    TO TO001-LOANID
+      *    ----------------------------------------------------------
+           MOVE TI001-LOANTYPE  TO TO001-LOANTYPE
+           EVALUATE TRUE
+           WHEN TI001-LOANTYPE IS NOT EQUAL TO 'HOUSING'
+             IF WS-STRING-PTR = 1
+               STRING "LOANTYPE" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             ELSE
+               STRING ",LOANTYPE" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             END-IF
+           END-EVALUATE
+      *    ----------------------------------------------------------
+           MOVE TI001-ALAMOUNT  TO TO001-ALAMOUNT
+           EVALUATE TRUE
+           WHEN TI001-ALAMOUNT  IS NOT NUMERIC
+             IF WS-STRING-PTR = 1
+               STRING "ALAMOUNT" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             ELSE
+               STRING ",ALAMOUNT" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             END-IF
+           END-EVALUATE
+      *    ----------------------------------------------------------
+           MOVE TI001-LOANAD    TO TO001-LOANAD
+           EVALUATE TRUE
+           WHEN TI001-LOANAD(1:4) IS NOT NUMERIC      OR
+                TI001-LOANAD(5:1) IS NOT EQUAL TO '-' OR
+                TI001-LOANAD(6:2) IS NOT NUMERIC      OR
+                TI001-LOANAD(8:1) IS NOT EQUAL TO '-' OR
+                TI001-LOANAD(9:2) IS NOT NUMERIC
+             IF WS-STRING-PTR = 1
+               STRING "LOANAD" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             ELSE
+               STRING ",LOANAD" DELIMITED BY SIZE INTO WS-REASON-OUT
+                 WITH POINTER WS-STRING-PTR
+               END-STRING
+             END-IF
+           END-EVALUATE
+      *    ----------------------------------------------------------
+           MOVE TI001-LOANT     TO TO001-LOANT
+           MOVE TI001-FIR       TO TO001-FIR
+           MOVE TI001-LOANI     TO TO001-LOANI
+           MOVE TI001-RPD       TO TO001-RPD
+      *    ----------------------------------------------------------
+           STRING " IS INVALID" DELIMITED BY SIZE INTO WS-REASON-OUT
+             WITH POINTER WS-STRING-PTR
+           END-STRING
+      *    ----------------------------------------------------------
+           MOVE WS-REASON-OUT   TO TO001-REJREASON
+           DISPLAY 'INVALID RECORD'
+           WRITE TO001-PS-REC
+           .
+       3240-ERROR-MOVE-PARA-EXIT.
+           EXIT
+           .
+       9000-TERM-PARA.
+           STOP RUN
+           .
+

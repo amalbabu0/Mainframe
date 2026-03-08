@@ -1,0 +1,110 @@
+DB2 --> SUBSYSTEM
+
+RDBMS SQL
+
+DDL --> Schema Objects -->  table,view,Trigger,locks,Index
+        CREATE,DROP,ALTER,TRUNCATE,RENAME
+
+DML --> RECORD LEVEL
+        INSERT,DELETE,UPDATE
+
+DQL --> SELECT
+
+TCL --> COMMIT,ROLLBACK
+
+DCL --> GRANT,REVOKE
+
+
+DATABASE --> TABLESPACES --> LDS
+
+Collection Volumes + BP --> Table Sp 
+(Buffer Pool is a small packets of predefined temporary memory that the database uses as buffers or for processing data)
+
+SHRDB4
+SHRTS4
+
+How to interact with db2?
+
+1. SPUFI (SQL processing using File Input)
+2. QMF (Query Mangement Facility)
+3. EMBEDDED SQL (Cobol)
+
+COLUMN --> 1. NAME (_)
+           2. DATA TYPE (CHAR,VARCHAR,INT,NUMERIC,DECIMAL(9,2),DATE('YYYY-MM-DD'),TIME(HH-MM-SS),TIMESTAMP)
+           3. CONSTRAINS (1. NOTNULL,NULL
+                          2. UNIQUE
+                          3. CHECK
+                          4. PRIMARY KEY
+                          5. REFERENTIAL)
+
+CREATE TABLE TB_EMP
+      (
+        ID CHAR(04) NOT NULL PRIMARY KEY	
+       ,NAME VARCHAR(10)
+       ,LOCATION VARCHAR(15)
+       ,SALARY DECIMAL(7,2)
+       ,DOJ DATE
+       ,GENDER CHAR(01) CHECK(GENDER IN ('M','F','O'))
+       ,PHONE CHAR(10) NOT NULL UNIQUE
+      ) IN SHRDB4.SHRTS4
+
+Note: For every unique column and primary key and unique indices must be created seperately.
+      Only after creating unique indices the table definition is complete and is accessible.
+
+13/3/24
+
+CREATE TABLE EMP
+      (
+       DEPT-ID CHAR(03) REFERENCES DEPT(DID)                ON DELETE CASCADE
+                        ON DELETE  SET NULL                           RESTRICT
+      );                                                              SET NULL
+
+
+Normalization is a process of all possible attributes that completely describes an object on which the table is about to be created. This attributes are
+categorized and created as more than one table and later these tables are connected. To make this process in a standard way Dr. Ef Codd formulated normal
+forms. Normal forms are cummulative.
+
+Foreign Key (Ensures referential integrity between tables):
+-----------------------------------------------------------
+
+1. A column in a table can be declared as a foreign key if it is made to refer a column in another table. 
+2. A foreign key column refers only to the primary key of another table. 
+3. A table that has a foreign key is called a Child Table and the table to which it refers is called parent table.
+4. Foreign key column can have duplicate values.
+5. A foreign column will not allow a value into it if it is not present in the parent table.
+6. All the values in the foreign key column are in the parent table.
+7. All the values in the parent table need not to be in the child table.
+8. The data type of the primary key and the foreign key column must be same but their names can be different.
+
+Note:  This constraint is automatically enforce or activated at two events.
+-----  1. While inserting in the child table.
+       2. While delete is tried on the parent table.
+
+ON DELETE clause must be specified while defining the foreign key with any one of the below 3 options.
+1. CASCADE ---> It allows the deletion to happen in the PT and simultaneously deletes all the depending records in the CT.
+2. SET NULL ---> It allows the deletion to happen in the PT and sets FK column to 'NULL' for the depending records.
+3. RESTRICT ---> If the system finds atleast one depending record in the child table, it rejects the deletion to happen from the PT.
+
+14/3/24
+
+ALIAS - Column Aliases
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

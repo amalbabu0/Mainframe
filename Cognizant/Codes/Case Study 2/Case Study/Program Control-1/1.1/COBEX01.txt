@@ -1,0 +1,37 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       AUTHOR. MFDEVELOPER.
+       DATE-WRITTEN. 01/01/2021.
+       DATE-COMPILED. 01/01/2021.
+      *INPUT VARIABLES FOR TRAIN DETAILS
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-TRAIN-DETAILS.
+          05 WS-TRAIN-NUMBER        PIC 9(6).
+          05 WS-TRAIN-NAME          PIC X(20).
+          05 WS-TRAIN-TYPE          PIC X(2).
+          05 WS-DEPARTURE-STATION   PIC A(20).
+          05 WS-DEPARTURE-TIME      PIC X(5).
+          05 WS-ARRIVAL-STATION     PIC A(20).
+          05 WS-ARRIVAL-TIME        PIC X(5).
+          05 WS-FARE                PIC 9(4).
+       PROCEDURE DIVISION.
+       PARA.
+            INITIALIZE WS-TRAIN-DETAILS.
+           MOVE 106510                TO WS-TRAIN-NUMBER.
+           MOVE "KANYAKUMARI EXPRESS" TO WS-TRAIN-NAME.
+           MOVE "SF"                  TO WS-TRAIN-TYPE
+           MOVE "KANYAKUMARI"         TO WS-DEPARTURE-STATION.
+           MOVE "10:00"               TO WS-DEPARTURE-TIME.
+           MOVE "NEW DELHI"           TO WS-ARRIVAL-STATION.
+           MOVE "20:00"               TO WS-ARRIVAL-TIME.
+           MOVE 500 TO WS-FARE.
+           DISPLAY "TRAIN NUMBER   :" , WS-TRAIN-NUMBER.
+           DISPLAY "TRAIN NAME     :" , WS-TRAIN-NAME.
+           DISPLAY "TRAIN-TYPE     :" , WS-TRAIN-TYPE.
+           DISPLAY "DEPARTURE STN  :" , WS-DEPARTURE-STATION.
+           DISPLAY "DEPARTURE TIME :" , WS-DEPARTURE-TIME.
+           DISPLAY "ARRIVAL-STN    :" , WS-ARRIVAL-STATION.
+           DISPLAY "ARRIVAL-TIME   :" , WS-ARRIVAL-TIME.
+           DISPLAY "TRAIN FARE     :" , WS-FARE.
+           STOP RUN.

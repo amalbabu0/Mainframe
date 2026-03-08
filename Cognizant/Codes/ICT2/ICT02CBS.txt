@@ -1,0 +1,13 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. ICT02CBS.                                            00020001
+       DATA DIVISION.                                                   00030000
+       LINKAGE SECTION.                                                 00040000
+       77 LK-TOTAL   PIC 9(4).                                          00050000
+       77 LK-CC      PIC 9(3).                                          00060000
+       77 LK-ICT     PIC 9(3).                                          00070000
+       77 LK-PER     PIC 9(2)V9(3).                                     00080000
+       PROCEDURE DIVISION USING LK-TOTAL LK-CC LK-ICT LK-PER.           00090003
+           COMPUTE LK-TOTAL = LK-CC + LK-ICT.                           00100000
+           COMPUTE LK-PER = ( LK-TOTAL / 200 ) * 100.                   00110000
+           GOBACK.                                                      00120000
+

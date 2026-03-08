@@ -1,0 +1,30 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=IEFBR14                                             00011002
+//DD1      DD DSN=TECN013.L1J.SHARE.PS2,DISP=(MOD,DELETE,DELETE),       00012002
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00013003
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800,DSORG=PS)              00013103
+//STEP002  EXEC PGM=IEFBR14                                             00013203
+//DD2      DD DSN=TECN013.L1J.SHARE.PS2,DISP=(NEW,CATLG,DELETE),        00014002
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00015003
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800,DSORG=PS)              00015103
+//STEP002  EXEC PGM=SORT                                                00020002
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSOUT   DD SYSOUT=*                                                  00040000
+//SORTIN   DD DSN=TECN013.L1J.SHARE.PS1,DISP=SHR                        00050002
+//SORTOUT  DD DSN=TECN013.L1J.SHARE.PS2,DISP=SHR                        00060002
+//SYSIN    DD *                                                         00070001
+  SORT FIELDS=(1,5,CH,A,10,3,ZD,A),EQUALS                               00091006
+  INCLUDE COND=(1,5,CH,NE,C'     ')                                     00092004
+  SUM FIELDS=NONE                                                       00100005
+/*                                                                      00110002
+//STEP003  EXEC PGM=SORT                                                00120006
+//SYSPRINT DD SYSOUT=*                                                  00130006
+//SYSOUT   DD SYSOUT=*                                                  00140006
+//SORTIN   DD DSN=TECN013.L1J.SHARE.PS2,DISP=SHR                        00150006
+//SORTOUT  DD DSN=TECN013.L1J.SHARE.PS2,DISP=SHR                        00160006
+//SYSIN    DD *                                                         00170006
+  SORT FIELDS=(1,5,CH,A),EQUALS                                         00180006
+  SUM FIELDS=NONE                                                       00200006
+  OUTFIL STARTREC=2,ENDREC=9                                            00201006
+/*                                                                      00210006
+

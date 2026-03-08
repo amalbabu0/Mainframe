@@ -1,0 +1,47 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-I PIC 9(3).
+       01 WS-J PIC 9(3).
+       01 WS-R PIC 9(3).
+       01 WS-K PIC 9(3).
+       01 WS-NUM PIC 9(3).
+       01 WS-CNT PIC 9(3).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-I WS-R WS-CNT WS-J WS-K WS-NUM.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           ACCEPT WS-NUM.
+           PERFORM 2100-PARA VARYING WS-I FROM 2 BY 1 UNTIL
+           WS-I >= WS-NUM.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       2100-PARA.
+           COMPUTE WS-CNT = 0
+           PERFORM 2150-PARA VARYING WS-J FROM 2 BY 1 UNTIL
+           WS-J > (WS-I / 2)
+           IF WS-CNT = 0
+              DISPLAY WS-I
+           END-IF.
+       2150-PARA.
+           DIVIDE WS-I BY WS-J GIVING WS-K REMAINDER WS-R.
+           IF WS-R = 0
+           COMPUTE WS-CNT = WS-CNT + 1
+           END-IF.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+

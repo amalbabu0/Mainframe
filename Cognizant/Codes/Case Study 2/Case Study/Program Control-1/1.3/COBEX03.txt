@@ -1,0 +1,33 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. COBEX03.                                            00020000
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WS-TRAIN-DETAILS.                                            00041001
+            05 WS-TRAIN-NO           PIC 9(06).                         00042001
+            05 WS-TRAIN-NAME         PIC X(20).                         00043001
+            05 WS-TRAIN-TYPE         PIC X(02).                         00044001
+            05 WS-DEPARTURE-STN      PIC A(20).                         00045001
+            05 WS-DEPARTURE-TIME     PIC X(05).                         00046001
+            05 WS-ARRIVAL-STN        PIC A(20).                         00047001
+            05 WS-ARRIVAL-TIME       PIC X(05).                         00048001
+            05 WS-FARE               PIC 9(04).                         00049001
+            05 WS-DEP-TIME           PIC 9(02).                         00050001
+            05 WS-ARR-TIME           PIC 9(02).                         00060001
+            05 WS-JOURN-TIME         PIC 9(02).                         00070001
+            05 WS-TRAIN-FARE-SENIOR  PIC 9(03).                         00080001
+        PROCEDURE DIVISION.                                             00090001
+        000-MAIN-PARA.                                                  00100001
+            MOVE '10:00' TO WS-DEPARTURE-TIME.                          00100112
+            MOVE '20:00' TO WS-ARRIVAL-TIME.                            00100212
+            MOVE WS-DEPARTURE-TIME(1:2) TO WS-DEP-TIME.                 00100412
+            MOVE WS-ARRIVAL-TIME(1:2) TO WS-ARR-TIME.                   00100512
+            MOVE 500 TO WS-FARE.                                   
+      *                                                                 00101012
+            COMPUTE WS-JOURN-TIME = WS-ARR-TIME - WS-DEP-TIME.          00130012
+            DISPLAY "JOURNEY DURATION FROM KANYAKUMARI TO NEWDELHI "    00140012
+      -     "IS : " WS-JOURN-TIME ":00 HRS".                            00150013
+            COMPUTE WS-TRAIN-FARE-SENIOR = WS-FARE - ( WS-FARE/100 * 5 )00160012
+      *  
+            DISPLAY "FARE FOR SENIOR CITIZEN IN TRAIN (KANYAKUMARI "    00170012
+      -     "EXPRESS) IS : " WS-TRAIN-FARE-SENIOR.                      00180013
+            STOP RUN.                                                   00190012

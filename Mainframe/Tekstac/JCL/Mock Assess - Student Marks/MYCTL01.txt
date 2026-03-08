@@ -1,0 +1,10 @@
+  DEFINE CLUSTER( -                                                     00011003
+  NAME(TECN013.JCL.ASSMT01.STUD.KSDS) -                                 00020001
+  TRACK(10,10) -                                                        00030001
+  VOLUME(ZAPRD4) -                                                      00040001
+  RECORDSIZE(80,80) -                                                   00050001
+  CONTROLINTERVALSIZE(512) -                                            00060002
+  KEYS(6,0) -                                                           00070001
+  FREESPACE(10,10) -                                                    00080001
+  INDEXED)                                                              00090001
+

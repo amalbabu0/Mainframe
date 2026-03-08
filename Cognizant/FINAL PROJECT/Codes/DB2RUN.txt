@@ -1,0 +1,25 @@
+//TECN116R JOB ,,NOTIFY=&SYSUID,CLASS=A,MSGLEVEL=(1,1),MSGCLASS=H,      00010004
+//         LINES=(1,CANCEL),PRTY=15                                     00020000
+//JOBLIB   DD  DISP=SHR,                                                00030000
+//            DSN=DSN910.DB9G.SDSNEXIT                                  00040005
+//         DD DISP=SHR,                                                 00050000
+//            DSN=DSN910.SDSNLOAD                                       00060004
+//         DD DISP=SHR,                                                 00070000
+//            DSN=CEE.SCEERUN                                           00080000
+//PH02CS04 EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)                    00100000
+//SYSTSPRT DD SYSOUT=*                                                  00110000
+//SYSPRINT DD SYSOUT=*                                                  00120000
+//SYSOUT   DD SYSOUT=*                                                  00130000
+//DD1      DD DSN=TECN116.FP.APPLICNT.DETAILS.PS,DISP=SHR               00131034
+//*DD1      DD DSN=TECN116.FP.REPORT.PS,DISP=SHR                        00131134
+//DD2      DD DSN=TECN116.FP.APPLICNT.LOAN.DETAILS.ERRFILE.PS,          00132034
+//            DISP=SHR                                                  00133034
+//*           LIKE=TECN116.FP.APPLICNT.DETAILS.PS                       00133131
+//DD3      DD DSN=TECN116.FP.MASTER.LOAN.KSDS,DISP=SHR                  00134034
+//SYSIN    DD DUMMY                                                     00140000
+//SYSTSIN  DD *                                                         00150000
+  DSN SYSTEM(DB9G)                                                      00160003
+  RUN PROGRAM(COBPGM) PLAN(TECN116P) LIB('TECN116.FP.DB2.COBOL.LOADLIB')00170034
+  END                                                                   00180000
+/*                                                                      00190000
+

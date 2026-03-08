@@ -1,0 +1,96 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX04.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+               SELECT TI001-INPUT ASSIGN TO INCUSPS
+               ORGANIZATION IS SEQUENTIAL
+               ACCESS MODE  IS SEQUENTIAL
+               FILE STATUS WS-FILE-STATUS1.
+       DATA DIVISION.
+       FILE SECTION.
+       FD TI001-INPUT.
+       01 TI001-INPUT-RECORD.
+           02 TI001-ACC-NUMBER         PIC X(10).
+           02 F                        PIC X.
+           02 TI001-ACC-HOLDER-NAME    PIC X(20).
+           02 F                        PIC X.
+           02 TI001-ACC-TYPE           PIC X(10).
+           02                          PIC X(38).
+       WORKING-STORAGE SECTION.
+       77 WS-FILE-STATUS1     PIC 9(2).
+       77 WS-ACC-NUMBER       PIC X(10).
+       77 WS-ACC-HOLDER-NAME  PIC X(20).
+       77 WS-ACC-TYPE         PIC X(10).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-FILE-STATUS1 WS-ACC-NUMBER WS-ACC-HOLDER-NAME
+                      WS-ACC-TYPE.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 2100-OPEN-PARA THRU
+                   2100-OPEN-PARA-EXIT
+           PERFORM 2200-READ-PARA THRU
+                   2200-READ-PARA-EXIT UNTIL WS-FILE-STATUS1 = 10
+           PERFORM 2400-CLOSE-PARA THRU
+                   2400-CLOSE-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       2100-OPEN-PARA.
+           OPEN INPUT TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 00
+                CONTINUE
+              WHEN OTHER
+                DISPLAY "OPEN FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2100-OPEN-PARA-EXIT.
+           EXIT.
+       2200-READ-PARA.
+           READ TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 00
+                   MOVE TI001-ACC-NUMBER TO WS-ACC-NUMBER
+                   MOVE TI001-ACC-HOLDER-NAME TO WS-ACC-HOLDER-NAME
+                   MOVE TI001-ACC-TYPE TO WS-ACC-TYPE
+                   PERFORM 2300-CALL-PARA THRU
+                           2300-CALL-PARA-EXIT
+              WHEN WS-FILE-STATUS1 = 10
+                   CONTINUE
+              WHEN OTHER
+                   DISPLAY "READ FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2200-READ-PARA-EXIT.
+           EXIT.
+       2300-CALL-PARA.
+           CALL 'COBEX04S' USING WS-ACC-NUMBER WS-ACC-HOLDER-NAME
+                                 WS-ACC-TYPE.
+       2300-CALL-PARA-EXIT.
+           EXIT.
+       2400-CLOSE-PARA.
+           CLOSE TI001-INPUT.
+           EVALUATE TRUE
+              WHEN WS-FILE-STATUS1 = 0
+                CONTINUE
+              WHEN OTHER
+                DISPLAY "FILE CLOSE FAILED" WS-FILE-STATUS1
+              STOP RUN
+           END-EVALUATE.
+       2400-CLOSE-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.

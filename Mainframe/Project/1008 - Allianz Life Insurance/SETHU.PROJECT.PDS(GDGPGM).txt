@@ -1,0 +1,27 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010001
+//STEP001  EXEC PGM=IDCAMS                                              00020001
+//SYSPRINT DD SYSOUT=*                                                  00030001
+//SYSIN    DD *                                                         00040001
+  DELETE TECN013.SETHU.PROJECT.INP.PS.GDG.*                             00041004
+  DELETE TECN013.SETHU.PROJECT.INP.PS.GDG                               00041104
+  DELETE TECN013.SETHU.PROJECT.OUT.PS.GDG.*                             00042004
+  DELETE TECN013.SETHU.PROJECT.OUT.PS.GDG                               00042104
+  DELETE TECN013.SETHU.PROJECT.OUT.ERR.GDG.*                            00043004
+  DELETE TECN013.SETHU.PROJECT.OUT.ERR.GDG                              00044004
+  DEFINE GDG(                             -                             00050003
+  NAME(TECN013.SETHU.PROJECT.INP.PS.GDG)  -                             00061003
+  LIMIT(7)                                -                             00070003
+  SCRATCH                                 -                             00080003
+  NOEMPTY)                                                              00090001
+  DEFINE GDG(                             -                             00100003
+  NAME(TECN013.SETHU.PROJECT.OUT.PS.GDG)  -                             00111003
+  LIMIT(7)                                -                             00120003
+  SCRATCH                                 -                             00130003
+  NOEMPTY)                                                              00140001
+  DEFINE GDG(                             -                             00150003
+  NAME(TECN013.SETHU.PROJECT.OUT.ERR.GDG) -                             00161003
+  LIMIT(7)                                -                             00170003
+  SCRATCH                                 -                             00180003
+  NOEMPTY)                                                              00190001
+/*                                                                      00200001
+

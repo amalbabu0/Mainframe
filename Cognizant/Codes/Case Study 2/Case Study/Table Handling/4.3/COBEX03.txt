@@ -1,0 +1,30 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-EMP-TABLE.
+            02 WS-EMP-DETAILS OCCURS 5 TIMES INDEXED BY WS-INDEX.
+               05 WS-EMPNAME   PIC X(20).
+               05 WS-EMPNO     PIC X(05).
+               05 WS-EMPSAL    PIC 9(5).9(2).
+       01 WS-EMP-NAME           PIC X(20).
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 0000-ACC-PARA VARYING WS-INDEX FROM 1 BY 1
+                         UNTIL WS-INDEX > 5.
+                   PERFORM 0000-SEARCH-PARA.
+                   STOP RUN.
+       0000-ACC-PARA.
+           ACCEPT WS-EMPNAME(WS-INDEX).
+           ACCEPT WS-EMPNO(WS-INDEX).
+           ACCEPT WS-EMPSAL(WS-INDEX).
+       0000-SEARCH-PARA.
+           ACCEPT WS-EMP-NAME.
+            SET WS-INDEX TO 1.
+           SEARCH WS-EMP-DETAILS AT END DISPLAY "RECORD NOT FOUND"
+                    WHEN WS-EMP-NAME = WS-EMPNAME(WS-INDEX)
+                         DISPLAY WS-EMPNAME(WS-INDEX)
+                         DISPLAY WS-EMPNO(WS-INDEX)
+                         DISPLAY WS-EMPSAL(WS-INDEX)
+            END-SEARCH.
+

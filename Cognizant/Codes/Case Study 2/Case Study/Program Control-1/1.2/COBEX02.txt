@@ -1,0 +1,32 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. COBEX02.                                             00020000
+       DATA DIVISION.                                                   00030000
+       WORKING-STORAGE SECTION.                                         00040000
+       01 WS-CLASS-01.                                                  00050000
+           05 WS-MARK-01    PIC 9(03) VALUE 0.                          00060000
+           05 WS-MARK-02    PIC 9(03) VALUE 0.                          00070000
+           05 WS-MARK-03    PIC 9(03) VALUE 0.                          00080000
+           05 WS-MARK-04    PIC 9(03) VALUE 0.                          00090000
+           05 WS-MARK-05    PIC 9(03) VALUE 0.                          00100000
+       01 WS-CLASS-02.                                                  00110000
+           05 WS-MARK-01    PIC 9(03) VALUE 0.                          00120000
+           05 WS-MARK-02    PIC 9(03) VALUE 0.                          00130000
+           05 WS-MARK-03    PIC 9(03) VALUE 0.                          00140000
+           05 WS-MARK-04    PIC 9(03) VALUE 0.                          00150000
+           05 WS-MARK-05    PIC 9(03) VALUE 0.                          00160000
+       77  WS-SUB-DIFF      PIC 9(03).                                  00170000
+       PROCEDURE DIVISION.                                              00180000
+       000-ADD-PARA.                                                    00190000
+            ACCEPT WS-CLASS-01.                                         00200000
+            MOVE 080060075050095 TO WS-CLASS-02.                        00210000
+            ADD CORRESPONDING WS-CLASS-01 TO WS-CLASS-02                00220000
+            ON SIZE ERROR                                               00221001
+            DISPLAY 'OVERFLOW OCCURED'.                                 00222000
+            DISPLAY 'CONTENT OF WS-CLASS-02:' WS-CLASS-02.              00230000
+            DISPLAY 'CONTENT OF WS-MARK-03:' WS-MARK-03 OF WS-CLASS-02. 00240000
+       000-SUB-PARA.                                                    00250000
+            MOVE 080060075050095 TO WS-CLASS-02.                        00250109
+            SUBTRACT WS-MARK-03 OF WS-CLASS-02                          00251008
+            FROM WS-MARK-03 OF WS-CLASS-01 GIVING WS-SUB-DIFF.          00252007
+            DISPLAY 'MARK-03 DIFFERENCE BETWEEN CLASSES:' WS-SUB-DIFF.  00260000
+            STOP RUN.                                                   00270000

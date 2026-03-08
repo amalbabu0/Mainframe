@@ -1,0 +1,43 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-MARKS.
+           02 WS-MARK-TABLE OCCURS 5 TIMES.
+              03 WS-MARK         PIC 9(3).
+              03 WS-CGPA         PIC 99.9.
+              03 WS-CAL          PIC 99V9.
+       77 WS-I                   PIC 9.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           INITIALIZE WS-I.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CGPA-PARA THRU
+                   3000-CGPA-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CGPA-PARA.
+           PERFORM VARYING WS-I FROM 1 BY 1 UNTIL WS-I > 5
+              ACCEPT WS-MARK(WS-I)
+              COMPUTE WS-CAL(WS-I) = WS-MARK(WS-I) / 9.5
+              MOVE WS-CAL(WS-I) TO WS-CGPA(WS-I)
+              DISPLAY "CGPA OF MARK " WS-MARK(WS-I) ":" WS-CGPA(WS-I)
+           END-PERFORM.
+       3000-CGPA-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           STOP RUN.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.
+

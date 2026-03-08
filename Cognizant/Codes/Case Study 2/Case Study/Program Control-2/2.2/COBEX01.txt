@@ -1,0 +1,81 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. COBEX01.                                            00020000
+        DATA DIVISION.                                                  00030000
+      * INPUT VARIABLES FOR EMPLOYEE DETAILS                            00031001
+        WORKING-STORAGE SECTION.                                        00040000
+        01 WS-EMPLOYEE-DETAILS.                                         00050000
+           05 WS-EMPLOYEE-NAME          PIC   A(20).                    00060000
+           05 WS-EMPLOYEE-AGE           PIC   9(02).                    00070000
+           05 WS-EMPLOYEE-SALARY        PIC   9(07)V9(02).              00080003
+           05 WS-EMPLOYEE-DESIGNATION   PIC   A(10).                    00090000
+           05 WS-EMPLOYEE-DEPT-ID       PIC   X(05).                    00100000
+        01 WS-EMPLOYEE-UPDATED-SALARY   PIC  S9(07)V9(02).              00101019
+        01 WS-EMPLOYEE-UPD-SAL          PIC  ZZ9(05).9(02).             00102020
+        PROCEDURE DIVISION.                                             00110000
+        0000-MAIN-PARA.                                                 00120000
+              PERFORM 1000-INITIALIZE-PARA THRU                         00130000
+                 1000-INITIALIZE-PARA-EXIT.                             00140000
+              PERFORM EMPLOYEE-DETAILS-PARA.                            00150001
+              PERFORM CHECK-EMPLOYEE-DETAILS-PARA.                      00160000
+              PERFORM CHECK-EMPLOYEE-AGE-PARA.                          00161001
+              PERFORM CHECK-EMPLOYEE-SALARY-PARA.                       00162001
+              PERFORM CHECK-EMPLOYEE-DESIGN-PARA.                       00163003
+              PERFORM CHECK-EMPLOYEE-DEPTID-PARA.                       00164001
+              PERFORM TAX-DEDUCTION-PARA.                               00165001
+              STOP RUN.                                                 00170001
+        0000-MAIN-PARA-EXIT.                                            00180000
+        1000-INITIALIZE-PARA.                                           00190001
+               INITIALIZE WS-EMPLOYEE-NAME, WS-EMPLOYEE-AGE,            00200000
+               WS-EMPLOYEE-SALARY, WS-EMPLOYEE-DESIGNATION,             00210000
+               WS-EMPLOYEE-DEPT-ID.                                     00220000
+        1000-INITIALIZE-PARA-EXIT.                                      00230000
+        EMPLOYEE-DETAILS-PARA.                                          00240000
+               ACCEPT WS-EMPLOYEE-NAME.                                 00250000
+               ACCEPT WS-EMPLOYEE-AGE.                                  00260000
+               ACCEPT WS-EMPLOYEE-SALARY.                               00270000
+               ACCEPT WS-EMPLOYEE-DESIGNATION.                          00280004
+               ACCEPT WS-EMPLOYEE-DEPT-ID.                              00290000
+        CHECK-EMPLOYEE-DETAILS-PARA.                                    00310000
+               IF WS-EMPLOYEE-NAME IS ALPHABETIC THEN                   00320000
+               DISPLAY 'EMPLOYEE-NAME IS : ' WS-EMPLOYEE-NAME           00330000
+               ELSE                                                     00340000
+               DISPLAY 'EMPLOYEE-NAME IS INVALID'                       00350000
+               END-IF.                                                  00360000
+         CHECK-EMPLOYEE-AGE-PARA.                                       00370000
+               IF WS-EMPLOYEE-AGE IS NUMERIC THEN                       00380000
+               DISPLAY 'EMPLOYEE-AGE IS : ' WS-EMPLOYEE-AGE             00390000
+               ELSE                                                     00400000
+               DISPLAY 'EMPLOYEE-AGE IS INVALID'                        00410000
+               END-IF.                                                  00420000
+         CHECK-EMPLOYEE-SALARY-PARA.                                    00430000
+               IF WS-EMPLOYEE-SALARY IS NUMERIC THEN                    00440007
+               MOVE WS-EMPLOYEE-SALARY TO WS-EMPLOYEE-UPD-SAL           00441022
+               DISPLAY 'EMPLOYEE-SALARY IS : ' WS-EMPLOYEE-UPD-SAL      00450022
+               ELSE                                                     00460000
+               DISPLAY 'EMPLOYEE-SALARY IS INVALID'                     00460221
+               END-IF.                                                  00480000
+         CHECK-EMPLOYEE-DESIGN-PARA.                                    00490002
+               IF WS-EMPLOYEE-DESIGNATION IS ALPHABETIC THEN            00500000
+               DISPLAY 'EMPLOYEE-DESIGNATION IS : '                     00510000
+               WS-EMPLOYEE-DESIGNATION                                  00520000
+               ELSE                                                     00530000
+               DISPLAY 'EMPLOYEE-DESIGNATION IS INVALID'                00540000
+               END-IF.                                                  00550000
+          CHECK-EMPLOYEE-DEPTID-PARA.                                   00560000
+               IF WS-EMPLOYEE-DEPT-ID IS ALPHABETIC                     00570002
+               OR WS-EMPLOYEE-DEPT-ID IS NUMERIC THEN                   00571002
+               DISPLAY 'EMPLOYEE-DEPT-ID IS INVALID'                    00580015
+               ELSE                                                     00590000
+               DISPLAY 'EMPLOYEE-DEPTID IS : ' WS-EMPLOYEE-DEPT-ID      00600015
+               END-IF.                                                  00610000
+          TAX-DEDUCTION-PARA.                                           00620000
+               COMPUTE WS-EMPLOYEE-UPDATED-SALARY = WS-EMPLOYEE-SALARY  00630009
+               - 35000.                                                 00640009
+               MOVE WS-EMPLOYEE-UPDATED-SALARY TO WS-EMPLOYEE-UPD-SAL.  00641017
+               IF WS-EMPLOYEE-UPDATED-SALARY IS POSITIVE OR             00650000
+               WS-EMPLOYEE-UPDATED-SALARY IS ZERO THEN                  00660000
+               DISPLAY 'TAX DEDUCTED FOR THE NEXT MONTH IS 0'           00670000
+               ELSE IF WS-EMPLOYEE-UPDATED-SALARY IS NEGATIVE THEN      00680000
+               DISPLAY 'TAX DEDUCTED FOR THE NEXT MONTH IS : '          00690000
+               WS-EMPLOYEE-UPD-SAL                                      00700017
+               END-IF.                                                  00710000

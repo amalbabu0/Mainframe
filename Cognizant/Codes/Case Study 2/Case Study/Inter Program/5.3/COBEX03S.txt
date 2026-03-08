@@ -1,0 +1,47 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBEX03S.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       77 LK-EMP-SALARY-BASIC        PIC 9(6)V9(2).
+       77 LK-DA                      PIC 9(6)V9(2).
+       77 LK-HRA                     PIC 9(6)V9(2).
+       77 LK-MA                      PIC 9(6)V9(2).
+       77 LK-TOTAL-SALARY            PIC 9(7)V9(2).
+       77 LK-EMP-SALARY-BASIC-EDITED PIC ZZZZZZ.ZZ.
+       77 LK-TOTAL-SALARY-EDITED     PIC ZZZZZZZ.ZZ.
+       PROCEDURE DIVISION USING LK-EMP-SALARY-BASIC LK-DA LK-HRA
+                                LK-MA LK-TOTAL-SALARY
+                                LK-EMP-SALARY-BASIC-EDITED
+                                LK-TOTAL-SALARY-EDITED.
+       0000-MAIN-PARA.
+           PERFORM 1000-INITIALIZE-PARA THRU
+                   1000-INITIALIZE-PARA-EXIT
+           PERFORM 2000-PROCESS-PARA THRU
+                   2000-PROCESS-PARA-EXIT
+           PERFORM 9000-TERMINATION-PARA THRU
+                   9000-TERMINATION-PARA-EXIT.
+       0000-MAIN-PARA-EXIT.
+           EXIT.
+       1000-INITIALIZE-PARA.
+           EXIT.
+       1000-INITIALIZE-PARA-EXIT.
+           EXIT.
+       2000-PROCESS-PARA.
+           PERFORM 3000-CAL-PARA THRU
+                   3000-CAL-PARA-EXIT.
+       2000-PROCESS-PARA-EXIT.
+           EXIT.
+       3000-CAL-PARA.
+           COMPUTE LK-DA = (( LK-EMP-SALARY-BASIC * 10 ) / 100 ).
+           COMPUTE LK-HRA = (( LK-EMP-SALARY-BASIC * 15 ) / 100 ).
+           COMPUTE LK-MA = (( LK-EMP-SALARY-BASIC * 5 ) / 100 ).
+           COMPUTE LK-TOTAL-SALARY =  LK-EMP-SALARY-BASIC +
+                   LK-DA + LK-HRA + LK-MA.
+           MOVE LK-EMP-SALARY-BASIC TO LK-EMP-SALARY-BASIC-EDITED.
+           MOVE LK-TOTAL-SALARY TO LK-TOTAL-SALARY-EDITED.
+       3000-CAL-PARA-EXIT.
+           EXIT.
+       9000-TERMINATION-PARA.
+           GOBACK.
+       9000-TERMINATION-PARA-EXIT.
+           EXIT.

@@ -1,0 +1,45 @@
+      ******************************************************************
+      * DCLGEN TABLE(PRODUCT_ITEM)                                     *
+      *        LIBRARY(TECN013.MYLIB.DB2.DCLGEN(PRDDCL))               *
+      *        ACTION(REPLACE)                                         *
+      *        LANGUAGE(COBOL)                                         *
+      *        NAMES(HV-)                                              *
+      *        QUOTE                                                   *
+      *        COLSUFFIX(YES)                                          *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE PRODUCT_ITEM TABLE
+           ( ITEM_CODE                      CHAR(5) NOT NULL,
+             ITEM_COUNT                     INTEGER NOT NULL,
+             ITEM_STATUS                    VARCHAR(3),
+             ITEM_TYPE                      VARCHAR(15),
+             ITEM_PRICE                     DECIMAL(8, 2)
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE PRODUCT_ITEM                       *
+      ******************************************************************
+       01  DCLPRODUCT-ITEM.
+      *                       ITEM_CODE
+           10 HV-ITEM-CODE         PIC X(5).
+      *                       ITEM_COUNT
+           10 HV-ITEM-COUNT        PIC S9(9) USAGE COMP.
+           10 HV-ITEM-STATUS.
+      *                       ITEM_STATUS LENGTH
+              49 HV-ITEM-STATUS-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       ITEM_STATUS
+              49 HV-ITEM-STATUS-TEXT
+                 PIC X(3).
+           10 HV-ITEM-TYPE.
+      *                       ITEM_TYPE LENGTH
+              49 HV-ITEM-TYPE-LEN
+                 PIC S9(4) USAGE COMP.
+      *                       ITEM_TYPE
+              49 HV-ITEM-TYPE-TEXT
+                 PIC X(15).
+      *                       ITEM_PRICE
+           10 HV-ITEM-PRICE        PIC S9(6)V9(2) USAGE COMP-3.
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 5       *
+      ******************************************************************
+

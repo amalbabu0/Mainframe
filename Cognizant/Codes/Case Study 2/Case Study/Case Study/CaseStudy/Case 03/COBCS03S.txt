@@ -1,0 +1,19 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. COBCS03S.                                           00020000
+        AUTHOR. ANIL.                                                   00030000
+        DATA DIVISION.                                                  00040000
+        WORKING-STORAGE SECTION.                                        00040103
+        01 WS-YEAR                PIC   9(4).                           00040203
+        LINKAGE SECTION.                                                00041001
+        77 LS-POLICY-TERM         PIC   9(2).                           00042001
+        77 LS-POLICY-START-YEAR   PIC   9(4).                           00043001
+        77 LS-POLICY-AGE          PIC   9(2).                           00044014
+        PROCEDURE DIVISION USING LS-POLICY-TERM                         00060001
+                         LS-POLICY-START-YEAR LS-POLICY-AGE.            00070014
+        0000-MAIN-PARA.                                                 00080002
+              MOVE 2021 TO WS-YEAR.                                     00081002
+              COMPUTE LS-POLICY-AGE = WS-YEAR - LS-POLICY-START-YEAR.   00100014
+              GOBACK.                                                   00120002
+        0000-MAIN-PARA-EXIT.                                            00130002
+              EXIT.                                                     00140002
+

@@ -1,0 +1,13 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=SORT                                                00020000
+//SORTIN   DD DSN=TECN013.SETHU.PROJECT.INP.PS,DISP=SHR                 00030001
+//PS1      DD DSN=TECN013.SETHU.PROJECT.INP.PS1,DISP=MOD                00040001
+//PS2      DD DSN=TECN013.SETHU.PROJECT.INP.PS2,DISP=MOD                00050001
+//SYSPRINT DD SYSOUT=*                                                  00060001
+//SYSOUT   DD SYSOUT=*                                                  00070001
+//SYSIN    DD *                                                         00080001
+  SORT FIELDS=(1,5,CH,A,16,5,CH,A,41,10,ZD,A)                           00090001
+  OUTFIL FNAMES=PS1,INCLUDE=(41,10,ZD,LE,8000)                          00100002
+  OUTFIL FNAMES=PS2,INCLUDE=(41,10,ZD,GT,8000)                          00110002
+/*                                                                      00120001
+

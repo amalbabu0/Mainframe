@@ -1,0 +1,26 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP01   EXEC PGM=IDCAMS                                              00020000
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSIN    DD *                                                         00040000
+  DELETE TECN013.MYDATA.ICT01.KSDS                                      00050000
+/*                                                                      00070000
+//STEP02   EXEC PGM=IDCAMS                                              00080000
+//SYSPRINT DD SYSOUT=*                                                  00090000
+//SYSIN    DD *                                                         00100000
+  DEFINE CLUSTER(                   -                                   00110000
+  NAME(TECN013.MYDATA.ICT01.KSDS)   -                                   00120000
+  TRACKS(10,10)                     -                                   00130000
+  VOLUME(ZAPRD4)                    -                                   00140000
+  RECORDSIZE(80,80)                 -                                   00150000
+  KEYS(5,0)                         -                                   00160000
+  CISZ(512)                         -                                   00170000
+  FREESPACE(10,10)                  -                                   00180000
+  INDEXED)                                                              00190000
+/*                                                                      00200000
+//STEP03   EXEC PGM=IDCAMS                                              00210000
+//SYSPRINT DD SYSOUT=*                                                  00220000
+//SYSIN    DD *                                                         00230000
+  REPRO INDATASET(TECN013.MYDATA.ICT01.PS3)  -                          00240000
+        OUTDATASET(TECN013.MYDATA.ICT01.KSDS)                           00250000
+/*                                                                      00260000
+

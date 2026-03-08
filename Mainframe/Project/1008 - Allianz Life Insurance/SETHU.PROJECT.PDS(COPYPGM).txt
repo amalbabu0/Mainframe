@@ -1,0 +1,26 @@
+//TECN013A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=IEBGENER                                            00020003
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSIN    DD DUMMY                                                     00031003
+//SYSUT1   DD DSN=TECN013.SETHU.PROJECT.INP.PS,DISP=SHR                 00040003
+//SYSUT2   DD DSN=TECN013.SETHU.PROJECT.INP.PS.GDG(+1),                 00050003
+//            DISP=(NEW,CATLG,DELETE),                                  00060000
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00070004
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                       00080003
+//STEP002  EXEC PGM=IEBGENER                                            00081003
+//SYSPRINT DD SYSOUT=*                                                  00082003
+//SYSIN    DD DUMMY                                                     00082103
+//SYSUT1   DD DSN=TECN013.SETHU.PROJECT.OUT.PS,DISP=SHR                 00083003
+//SYSUT2   DD DSN=TECN013.SETHU.PROJECT.OUT.PS.GDG(+1),                 00084003
+//            DISP=(NEW,CATLG,DELETE),                                  00085003
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00086004
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=800)                       00087003
+//STEP003  EXEC PGM=IEBGENER                                            00088003
+//SYSPRINT DD SYSOUT=*                                                  00089003
+//SYSIN    DD DUMMY                                                     00089103
+//SYSUT1   DD DSN=TECN013.SETHU.PROJECT.OUT.ERR,DISP=SHR                00089203
+//SYSUT2   DD DSN=TECN013.SETHU.PROJECT.OUT.ERR.GDG(+1),                00089303
+//            DISP=(NEW,CATLG,DELETE),                                  00089403
+//            VOLUME=SER=ZAPRD4,SPACE=(TRK,(10,10)),                    00089504
+//            DCB=(RECFM=FB,LRECL=100,BLKSIZE=1000)                     00089604
+

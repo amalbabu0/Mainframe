@@ -1,0 +1,389 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. DBICT2CB.                                            00020000
+       AUTHOR. TECN013A.                                                00021000
+       ENVIRONMENT DIVISION.                                            00030000
+       INPUT-OUTPUT SECTION.                                            00040000
+       FILE-CONTROL.                                                    00050000
+           SELECT TO001-PS ASSIGN       TO OUTMEM                       00060000
+                           ACCESS       IS SEQUENTIAL                   00070000
+                           ORGANIZATION IS SEQUENTIAL                   00080000
+                           FILE STATUS  IS WS05-FST-TO001.              00090000
+       DATA DIVISION.                                                   00100000
+       FILE SECTION.                                                    00110000
+       FD TO001-PS.                                                     00120000
+       01 TO001-PS-REC.                                                 00130000
+           05 TO001-BOOK-ID           PIC  X(05).                       00140000
+           05 FILLER                  PIC  X(01).                       00141000
+           05 TO001-MEMBER-ID         PIC  X(06).                       00150000
+           05 FILLER                  PIC  X(01).                       00151000
+           05 TO001-MEMBER-NAME       PIC  X(15).                       00160000
+           05 FILLER                  PIC  X(01).                       00161000
+           05 TO001-PHONE-NO          PIC  X(06).                       00170000
+           05 FILLER                  PIC  X(01).                       00171000
+           05 TO001-CITY              PIC  X(15).                       00180000
+           05 FILLER                  PIC  X(01).                       00181000
+           05 TO001-DATE-ISSUE        PIC  X(10).                       00190000
+           05 FILLER                  PIC  X(01).                       00191000
+           05 TO001-DATE-TO-BE-RETURN PIC  X(10).                       00200000
+           05 FILLER                  PIC  X(01).                       00201000
+           05 TO001-DATE-RETURNED     PIC  X(10).                       00210000
+           05 FILLER                  PIC  X(01).                       00211000
+           05 TO001-FINE-AMT          PIC  9(03).                       00220000
+           05 FILLER                  PIC  X(12).                       00230000
+       WORKING-STORAGE SECTION.                                         00240000
+       01 WS01-VARS.                                                    00250000
+           05 WS05-FST-TO001          PIC  9(02).                       00260000
+           05 WS05-REC-COUNT          PIC  9(02).                       00261000
+           05 WS05-DATE-EXPIRE.                                         00262007
+               10 WS10-DATE-EXPIRE-Y  PIC  9(04).                       00262107
+               10 WS10-DATE-EXPIRE-O  PIC  X(06).                       00262207
+           05 WS05-DATE-TO-BE-RETURN  PIC  9(08).                       00263000
+           05 WS05-DATE-RETURNED      PIC  9(08).                       00264000
+           05 WS05-LENDING-PERIOD     PIC S9(04) SIGN LEADING SEPARATE. 00265003
+           05 WS05-FINE-AMT           PIC  9(03).                       00266000
+           05 WS05-SQLCODE            PIC S9(04) SIGN LEADING SEPARATE. 00270000
+           05 WS05-NULL-IND-D-REG1    PIC S9(04) COMP.                  00271000
+           05 WS05-NULL-IND-D-REG2    PIC S9(04) COMP.                  00272000
+           05 WS05-NULL-IND-D-EXP     PIC S9(04) COMP.                  00273007
+           05 WS05-ERR-LRECL          PIC S9(09) COMP VALUE 80.         00280000
+           05 WS05-ERR-MSG.                                             00290000
+               10 WS10-ERR-TXT        PIC S9(04) COMP VALUE 800.        00300000
+               10 WS10-ERR-LEN        PIC  X(80) OCCURS 10 TIMES.       00310000
+           EXEC SQL                                                     00311000
+               INCLUDE SQLCA                                            00312000
+           END-EXEC.                                                    00313000
+           EXEC SQL                                                     00314000
+               INCLUDE MEMDCL                                           00315000
+           END-EXEC.                                                    00316000
+           EXEC SQL                                                     00317000
+               INCLUDE BOOKDCL                                          00318000
+           END-EXEC.                                                    00319000
+           EXEC SQL                                                     00320000
+               DECLARE CUR1 CURSOR                                      00330001
+               FOR                                                      00340000
+               SELECT                                                   00350000
+                    MEMBER_ID                                           00360000
+                   ,MEMBER_NAME                                         00370000
+                   ,PHONE_NO                                            00380000
+                   ,CITY                                                00390000
+                   ,DATE_REGISTER                                       00400000
+                   ,DATE_EXPIRE                                         00410000
+               FROM                                                     00420000
+                   MEM_DET                                              00430000
+               ORDER BY MEMBER_ID                                       00440000
+           END-EXEC.                                                    00450000
+           EXEC SQL                                                     00460000
+               DECLARE CUR2 CURSOR                                      00470001
+               FOR                                                      00480000
+               SELECT                                                   00490000
+                    B.BOOK_ID                                           00500000
+                   ,B.MEMBER_ID                                         00501000
+                   ,M.MEMBER_NAME                                       00502000
+                   ,M.PHONE_NO                                          00503000
+                   ,M.CITY                                              00504000
+                   ,B.DATE_ISSUE                                        00505000
+                   ,M.DATE_REGISTER                                     00506000
+                   ,B.DATE_TO_BE_RETURN                                 00507000
+                   ,B.DATE_RETURNED                                     00508000
+               FROM                                                     00509000
+                   BOOK_DET B                                           00509100
+               JOIN                                                     00510000
+                   MEM_DET M                                            00520000
+               ON                                                       00521000
+                   B.MEMBER_ID = M.MEMBER_ID                            00522000
+               ORDER BY B.MEMBER_ID                                     00530000
+           END-EXEC.                                                    00540000
+       PROCEDURE DIVISION.                                              00550000
+       0000-MAIN-PARA.                                                  00560000
+           PERFORM 1000-INIT-PARA                                       00570000
+           PERFORM 3000-PROC-PARA                                       00580000
+              THRU 3000-PROC-PARA-EXIT                                  00590000
+           PERFORM 9000-TERM-PARA                                       00600000
+           .                                                            00610000
+       1000-INIT-PARA.                                                  00620000
+           MOVE ZEROS TO WS05-SQLCODE                                   00621006
+           CONTINUE                                                     00630000
+           .                                                            00640000
+       3000-PROC-PARA.                                                  00650000
+           PERFORM 3100-OPEN-A-PARA                                     00660013
+              THRU 3100-OPEN-A-PARA-EXIT                                00670012
+           PERFORM 3200-FETCH-A-PARA                                    00680012
+              THRU 3200-FETCH-A-PARA-EXIT                               00690012
+             UNTIL SQLCODE = +100                                       00691012
+           PERFORM 3300-CLOSE-A-PARA                                    00700012
+              THRU 3300-CLOSE-A-PARA-EXIT                               00710012
+           PERFORM 3100-OPEN-B-PARA                                     00711013
+              THRU 3100-OPEN-B-PARA-EXIT                                00712012
+           PERFORM 3200-FETCH-B-PARA                                    00713012
+              THRU 3200-FETCH-B-PARA-EXIT                               00714012
+             UNTIL SQLCODE = +100                                       00715012
+           PERFORM 3300-CLOSE-B-PARA                                    00716012
+              THRU 3300-CLOSE-B-PARA-EXIT                               00717012
+           .                                                            00720000
+       3000-PROC-PARA-EXIT.                                             00730000
+           EXIT                                                         00740000
+           .                                                            00750000
+       3100-OPEN-A-PARA.                                                00750112
+           EXEC SQL                                                     00751012
+               OPEN CUR1                                                00752012
+           END-EXEC.                                                    00753012
+           EVALUATE TRUE                                                00754012
+           WHEN SQLCODE = 0                                             00755012
+              DISPLAY 'CUR1 WAS OPENED'                                 00756012
+           WHEN OTHER                                                   00757012
+              DISPLAY 'CUR1 WAS NOT OPENED'                             00758012
+              PERFORM SQL-ERROR-PARA                                    00759012
+                 THRU SQL-ERROR-PARA-EXIT                               00759112
+              PERFORM 9000-TERM-PARA                                    00759212
+           END-EVALUATE                                                 00759312
+           .                                                            00759412
+       3100-OPEN-A-PARA-EXIT.                                           00759512
+           EXIT                                                         00759612
+           .                                                            00759712
+       3100-OPEN-B-PARA.                                                00760012
+           OPEN OUTPUT TO001-PS                                         00770000
+           EVALUATE TRUE                                                00780000
+           WHEN WS05-FST-TO001 = 00                                     00790000
+               DISPLAY 'TO001 WAS OPENED'                               00800000
+           WHEN OTHER                                                   00810000
+               DISPLAY 'TO001 WAS NOT OPENED'                           00820000
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  00830000
+               PERFORM 9000-TERM-PARA                                   00840000
+           END-EVALUATE                                                 00850000
+           EXEC SQL                                                     00971003
+               OPEN CUR2                                                00972003
+           END-EXEC.                                                    00973003
+           EVALUATE TRUE                                                00974003
+           WHEN SQLCODE = 0                                             00975003
+              DISPLAY 'CUR2 WAS OPENED'                                 00976003
+           WHEN OTHER                                                   00977003
+              DISPLAY 'CUR2 WAS NOT OPENED'                             00978003
+              PERFORM SQL-ERROR-PARA                                    00979003
+                 THRU SQL-ERROR-PARA-EXIT                               00979103
+              PERFORM 9000-TERM-PARA                                    00979203
+           END-EVALUATE                                                 00979303
+           .                                                            00980000
+       3100-OPEN-B-PARA-EXIT.                                           00990012
+           EXIT                                                         01000000
+           .                                                            01010000
+       3200-FETCH-A-PARA.                                               01020012
+           ADD 1 TO WS05-REC-COUNT                                      01021000
+           INITIALIZE DCLMEM-DET DCLBOOK-DET                            01022002
+           EXEC SQL                                                     01030000
+               FETCH CUR1                                               01040000
+               INTO                                                     01050000
+                    :HV-MEMBER-ID                                       01060000
+                   ,:HV-MEMBER-NAME                                     01070000
+                   ,:HV-PHONE-NO                                        01080000
+                   ,:HV-CITY                                            01090000
+                   ,:HV-DATE-REGISTER :WS05-NULL-IND-D-REG1             01100000
+                   ,:HV-DATE-EXPIRE :WS05-NULL-IND-D-EXP                01110007
+           END-EXEC.                                                    01120000
+           EVALUATE TRUE                                                01130000
+           WHEN SQLCODE = 0                                             01140000
+               DISPLAY 'CUR1 RECORD ' WS05-REC-COUNT ' WAS FETCHED'     01150000
+               PERFORM 3210-NULL-HAND-A-PARA                            01160000
+                  THRU 3210-NULL-HAND-A-PARA-EXIT                       01170000
+           WHEN SQLCODE = +100                                          01180000
+               DISPLAY 'ALL CUR1 RECORDS WERE FETCHED'                  01190000
+           WHEN OTHER                                                   01200000
+               DISPLAY 'CUR1 RECORD ' WS05-REC-COUNT ' WAS NOT FETCHED' 01210000
+               PERFORM SQL-ERROR-PARA                                   01220000
+                  THRU SQL-ERROR-PARA-EXIT                              01230000
+           END-EVALUATE                                                 01240000
+           .                                                            01240112
+       3200-FETCH-A-PARA-EXIT.                                          01240212
+           EXIT                                                         01240312
+           .                                                            01240412
+       3200-FETCH-B-PARA.                                               01240512
+           MOVE ZEROS TO WS05-REC-COUNT                                 01240612
+            ADD 1     TO WS05-REC-COUNT                                 01240712
+           INITIALIZE DCLMEM-DET DCLBOOK-DET                            01240800
+           EXEC SQL                                                     01241000
+               FETCH CUR2                                               01242000
+               INTO                                                     01243000
+                    :HV2-BOOK-ID                                        01244000
+                   ,:HV2-MEMBER-ID                                      01245000
+                   ,:HV-MEMBER-NAME                                     01246000
+                   ,:HV-PHONE-NO                                        01247000
+                   ,:HV-CITY                                            01248000
+                   ,:HV2-DATE-ISSUE                                     01249000
+                   ,:HV-DATE-REGISTER :WS05-NULL-IND-D-REG2             01249100
+                   ,:HV2-DATE-TO-BE-RETURN                              01249200
+                   ,:HV2-DATE-RETURNED                                  01249300
+           END-EXEC.                                                    01249400
+           EVALUATE TRUE                                                01249500
+           WHEN SQLCODE = 0                                             01249600
+               DISPLAY 'CUR2 RECORD ' WS05-REC-COUNT ' WAS FETCHED'     01249700
+               PERFORM 3210-NULL-HAND-B-PARA                            01249800
+                  THRU 3210-NULL-HAND-B-PARA-EXIT                       01249900
+           WHEN SQLCODE = +100                                          01250000
+               DISPLAY 'ALL CUR2 RECORDS WERE FETCHED'                  01250100
+           WHEN OTHER                                                   01250200
+               DISPLAY 'CUR2 RECORD ' WS05-REC-COUNT ' WAS NOT FETCHED' 01250300
+               PERFORM SQL-ERROR-PARA                                   01250400
+                  THRU SQL-ERROR-PARA-EXIT                              01250500
+           END-EVALUATE                                                 01250600
+           .                                                            01250702
+       3200-FETCH-B-PARA-EXIT.                                          01260013
+           EXIT                                                         01270000
+           .                                                            01280000
+       3210-NULL-HAND-A-PARA.                                           01290000
+           EVALUATE TRUE                                                01300000
+           WHEN WS05-NULL-IND-D-REG1 = 0                                01310000
+               PERFORM 3211-CALC-A-PARA                                 01320000
+                  THRU 3211-CALC-A-PARA-EXIT                            01330000
+               PERFORM 3212-UPDATE-PARA                                 01340000
+                  THRU 3212-UPDATE-PARA-EXIT                            01350000
+           WHEN OTHER                                                   01360000
+               MOVE SPACES TO HV-DATE-REGISTER                          01370002
+           END-EVALUATE                                                 01380000
+           .                                                            01390000
+       3210-NULL-HAND-A-PARA-EXIT.                                      01400000
+           EXIT                                                         01410000
+           .                                                            01420000
+       3210-NULL-HAND-B-PARA.                                           01500100
+           EVALUATE TRUE                                                01500200
+           WHEN WS05-NULL-IND-D-REG2 = 0                                01500300
+               PERFORM 3211-CALC-B-PARA                                 01500400
+                  THRU 3211-CALC-B-PARA-EXIT                            01500500
+               PERFORM 3213-WRITE-PARA                                  01500600
+                  THRU 3213-WRITE-PARA-EXIT                             01500700
+           WHEN OTHER                                                   01500800
+               MOVE SPACES TO HV-DATE-REGISTER                          01500902
+           END-EVALUATE                                                 01501000
+           .                                                            01501100
+       3210-NULL-HAND-B-PARA-EXIT.                                      01501200
+           EXIT                                                         01501300
+           .                                                            01501400
+       3211-CALC-A-PARA.                                                01501500
+           MOVE HV-DATE-REGISTER(1:4) TO WS10-DATE-EXPIRE-Y             01501708
+           MOVE HV-DATE-REGISTER(5:6) TO WS10-DATE-EXPIRE-O             01501810
+            ADD 2 TO WS10-DATE-EXPIRE-Y                                 01501907
+           MOVE WS10-DATE-EXPIRE-Y    TO HV-DATE-EXPIRE(1:4)            01502008
+           MOVE WS10-DATE-EXPIRE-O    TO HV-DATE-EXPIRE(5:6)            01502109
+                                                                        01502210
+           .                                                            01502300
+       3211-CALC-A-PARA-EXIT.                                           01502400
+           EXIT                                                         01502500
+           .                                                            01502600
+       3211-CALC-B-PARA.                                                01511000
+           MOVE HV2-DATE-TO-BE-RETURN(1:4) TO                           01520002
+                    WS05-DATE-TO-BE-RETURN(1:4)                         01521002
+           MOVE HV2-DATE-TO-BE-RETURN(6:2) TO                           01530002
+                    WS05-DATE-TO-BE-RETURN(5:2)                         01530102
+           MOVE HV2-DATE-TO-BE-RETURN(9:2) TO                           01531002
+                    WS05-DATE-TO-BE-RETURN(7:2)                         01531102
+           MOVE HV2-DATE-RETURNED(1:4)     TO WS05-DATE-RETURNED(1:4)   01531202
+           MOVE HV2-DATE-RETURNED(6:2)     TO WS05-DATE-RETURNED(5:2)   01531302
+           MOVE HV2-DATE-RETURNED(9:2)     TO WS05-DATE-RETURNED(7:2)   01531402
+           COMPUTE WS05-LENDING-PERIOD                                  01532000
+                   = WS05-DATE-RETURNED - WS05-DATE-TO-BE-RETURN        01533000
+           EVALUATE TRUE                                                01540000
+           WHEN WS05-LENDING-PERIOD <= 0                                01550000
+               MOVE 0   TO WS05-FINE-AMT                                01560000
+           WHEN WS05-LENDING-PERIOD > 0   AND WS05-LENDING-PERIOD <= +1001570000
+               MOVE 50  TO WS05-FINE-AMT                                01580000
+           WHEN WS05-LENDING-PERIOD > +10 AND WS05-LENDING-PERIOD <= +3001590000
+               MOVE 100 TO WS05-FINE-AMT                                01600000
+           WHEN WS05-LENDING-PERIOD > +30 AND WS05-LENDING-PERIOD <= +6001610000
+               MOVE 200 TO WS05-FINE-AMT                                01620000
+           WHEN WS05-LENDING-PERIOD > +60                               01630000
+               MOVE 500 TO WS05-FINE-AMT                                01640000
+           END-EVALUATE                                                 01650000
+           .                                                            01660000
+       3211-CALC-B-PARA-EXIT.                                           01670000
+           EXIT                                                         01680000
+           .                                                            01690000
+       3212-UPDATE-PARA.                                                01691000
+           EXEC SQL                                                     01692000
+               UPDATE MEM_DET                                           01693000
+                   SET DATE_EXPIRE = :HV-DATE-EXPIRE                    01694000
+               WHERE                                                    01695000
+                   MEMBER_ID = :HV-MEMBER-ID                            01696000
+           END-EXEC.                                                    01697000
+           EVALUATE TRUE                                                01698000
+           WHEN SQLCODE = 0                                             01699000
+               DISPLAY 'CUR1 RECORD ' WS05-REC-COUNT ' WAS UPDATED'     01699111
+           WHEN OTHER                                                   01699200
+               DISPLAY 'CUR1 RECORD ' WS05-REC-COUNT ' WAS NOT UPDATED' 01699311
+               PERFORM SQL-ERROR-PARA                                   01699400
+                  THRU SQL-ERROR-PARA-EXIT                              01699500
+           END-EVALUATE                                                 01699600
+           .                                                            01699700
+       3212-UPDATE-PARA-EXIT.                                           01699800
+           EXIT                                                         01699900
+           .                                                            01700000
+       3213-WRITE-PARA.                                                 01701000
+           MOVE SPACES TO TO001-PS-REC.                                 01780000
+           MOVE HV2-BOOK-ID           TO TO001-BOOK-ID                  01790000
+           MOVE HV2-MEMBER-ID         TO TO001-MEMBER-ID                01800000
+           MOVE HV-MEMBER-NAME-TEXT   TO TO001-MEMBER-NAME              01810000
+           MOVE HV-PHONE-NO           TO TO001-PHONE-NO                 01820000
+           MOVE HV-CITY-TEXT          TO TO001-CITY                     01830000
+           MOVE HV2-DATE-ISSUE        TO TO001-DATE-ISSUE               01840000
+           MOVE HV2-DATE-TO-BE-RETURN TO TO001-DATE-TO-BE-RETURN        01860000
+           MOVE HV2-DATE-RETURNED     TO TO001-DATE-RETURNED            01870000
+           MOVE WS05-FINE-AMT         TO TO001-FINE-AMT                 01880000
+           WRITE TO001-PS-REC                                           01890000
+           EVALUATE TRUE                                                01900000
+           WHEN WS05-FST-TO001 = 00                                     01910000
+               DISPLAY 'CUR2 RECORD ' WS05-REC-COUNT ' WAS WRITTEN'     01920000
+           WHEN OTHER                                                   01930000
+               DISPLAY 'CUR2 RECORD ' WS05-REC-COUNT ' WAS NOT WRITTEN' 01940000
+               DISPLAY 'FILE STATUS : ' WS05-FST-TO001                  01950000
+               PERFORM 9000-TERM-PARA                                   01960000
+           END-EVALUATE                                                 01970000
+           .                                                            01980000
+       3213-WRITE-PARA-EXIT.                                            01990002
+           EXIT                                                         02000000
+           .                                                            02010000
+       3300-CLOSE-A-PARA.                                               02020012
+           EXEC SQL                                                     02030000
+               CLOSE CUR1                                               02040000
+           END-EXEC.                                                    02050000
+           EVALUATE TRUE                                                02060000
+           WHEN SQLCODE = 0                                             02070000
+               DISPLAY 'CUR1 WAS CLOSED'                                02080000
+           WHEN OTHER                                                   02090000
+               DISPLAY 'CUR1 WAS NOT CLOSED'                            02100000
+               PERFORM SQL-ERROR-PARA                                   02110000
+                  THRU SQL-ERROR-PARA-EXIT                              02120000
+               PERFORM 9000-TERM-PARA                                   02121000
+           END-EVALUATE                                                 02130000
+           .                                                            02130112
+       3300-CLOSE-A-PARA-EXIT.                                          02130212
+           EXIT                                                         02130312
+           .                                                            02130412
+       3300-CLOSE-B-PARA.                                               02130512
+           EXEC SQL                                                     02131000
+               CLOSE CUR2                                               02132000
+           END-EXEC.                                                    02133000
+           EVALUATE TRUE                                                02134000
+           WHEN SQLCODE = 0                                             02135000
+               DISPLAY 'CUR2 WAS CLOSED'                                02136000
+           WHEN OTHER                                                   02137000
+               DISPLAY 'CUR2 WAS NOT CLOSED'                            02138000
+               PERFORM SQL-ERROR-PARA                                   02139000
+                  THRU SQL-ERROR-PARA-EXIT                              02139100
+               PERFORM 9000-TERM-PARA                                   02139200
+           END-EVALUATE                                                 02139300
+           CLOSE TO001-PS                                               02150000
+           DISPLAY 'TO001 WAS CLOSED'                                   02160000
+           .                                                            02170000
+       3300-CLOSE-B-PARA-EXIT.                                          02180012
+           EXIT                                                         02190000
+           .                                                            02200000
+       SQL-ERROR-PARA.                                                  02210000
+           MOVE SQLCODE TO WS05-SQLCODE                                 02220000
+           CALL 'DSNTIAR' USING SQLCA WS05-ERR-MSG WS05-ERR-LRECL       02230000
+           DISPLAY 'SQLCODE : ' WS05-SQLCODE                            02240000
+           DISPLAY 'SQL ERR : ' WS05-ERR-MSG                            02250000
+           .                                                            02260000
+       SQL-ERROR-PARA-EXIT.                                             02270000
+           EXIT                                                         02280000
+           .                                                            02290000
+       9000-TERM-PARA.                                                  02300000
+           STOP RUN                                                     02310000
+           .                                                            02320000
+

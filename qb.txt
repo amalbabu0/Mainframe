@@ -1,0 +1,259 @@
+1. Types of disposition
+2. Cataloged procedure
+3. Temporary dataset
+4. GDG generation referring
+5. Open mode Extend
+6. Types of access modes
+7. What is linkage section
+8. What is VSAM
+Steplib & Joblib
+Search & search all
+Call
+Comp,Comp-3
+Space abends
+File status 
+SOC7
+VSAM dataset
+CA and CI
+Difference between fixed length and variable length.
+Ksds
+Vsam
+GDG 
+Types of access mode and difference between all.
+Diff between continue and Goto stmt.
+Copybook.
+Linkage section.
+What is procedure and Catalog procedure.
+Redefine.
+Level number 88.
+-- What is comp.
+-- Difference between comp1 and comp2.
+-- What is comp3.
+-- What is KSDS.
+-- What is GDG.
+-- What is AIX.
+-- What is Binary format.
+-- How to pass an input from JCL to COBOL.
+-- How to check if a file is Empty or not. And what type of utilities we can use.
+-- What is linkage section.
+-- Where we define Level numbers.
+-- Use of 66 and 88 Level number.
+-- What are string statements.
+-- What are the type of Performs.
+-- Which mode we Use for  Rewrite the Records.
+-- Explain Unstring.
+-- What is CI.
+-- Data Division.
+-- Difference between Continue and Next Sentence.
+-- What is Linkage Section.
+-- What is JOB.
+-- What is Cond and Types.
+-- What is Procedure.
+-- What is Sort Utility.
+-- What is IDcams.
+-- What is Before Testing and After Testing.
+-- What is Copy Book.
+-- What is V.
+-- What is Evaluate.
+-- What are the Type of Acces.
+-- What is Scope Terminator.
+-- What is Dynamic Access.
+-- Define Pic 9(2)V9(2).
+Explain about mini project?
+What is Vsam?
+Cluster creation?
+Types of datasets in vsam?explain brief about those...
+What is index ?
+How can you convert value from packed decimal to zodiac decimal ?
+Copy from ps to cluster?
+Remove duplicates from ps file?
+Arrange the dataset in a ascending order based on data field?
+How can you read cluster file dataset in a COBOL code ?
+What we will declare in data division based on above question ?
+How many divisions are there in cobol?
+What is the use of file section ? 
+Linkage sections? 
+What changes we have to change in subprogram and mainprogram in linkage sections?
+What are the different data types?
+Can we move the variables from numberic to alphanumeric ?
+You have 2 variables one is x(100) and x(200). Can we move x(200) into x(100)?
+What are level numbers ?
+What is 77 level number ? 
+What is 66 level number ? 
+Example for 88 level ? 
+What is IDCAMS?
+What is GDG ?
+What is the limit for the creation of GDG's?
+What will happen if u create 256 gdg's?
+What is scrath and No scrath?
+What is JCL?
+What  we will use in disp parameters  ?
+U have empid,firstname,lastname,designation and salary... I want to sort emp id in desc order and I only want empid and designation... how can u do that? (I used inrec)
+How can u declare files in JCL and cobol
+You have ' I am Anitha' I want only anitha to be printed... How can u print only anitha with arrays?
+What are the ways to pass input data to cobol.
+What do u understand about vsam ?
+What is abbend codes and how did u got abbend code SOC7 and how did u solved it ?
+Self intro 
+1.What is modernization 
+2.what is 7Rs in that and explain any 2of them
+3.Disadvantages of modernization 
+4.What is lpar version that we are currently working on
+5. What is SDSF
+6. WHAT IS SPOOL
+7. WHAT IS SPOOL EXPANSION 
+8. WHAT IS VSAM
+9. difference between ESDS and KSDS
+10. Difference between ESDS and RRDS and can we use index and AIX to them 
+11.What is AIX 
+12. To which VSAM files AIX is possible 
+13. About file status 
+14. End of  file 
+15. About search and search all 
+16. What is environment division about environment division 
+17. What is output and extend mode  Where we will use these 
+18. What is array 
+19. What is array length 
+20. What is rename clause 
+21. What is 88 level number 
+22. Write a program in COBOL to find out the number of characters in a name using accept method
+Logic 
+
+Accept ws-name
+Inspect ws-name tallying ws-count for characters
+1.what are the data types in cobol
+2.what are the sections in the data division. 
+3.How do you declare the variables in the working storage section
+4.What are the jcl statements
+5.types of vsam 
+6.gdg
+7.which clauses used in the working storage section
+8.can we change the record length.
+9.what the space parameter means in the dd statement
+Difference between ps and esds
+Mini project
+Count the words present in a sentence 
+Perform and goback
+Utilities 
+Iebgener and iefbr14
+Copybook
+Subprogram
+What us the use of procedure division?
+Perform statements and different types with paragraph 
+About disp parameter
+All level numbers
+Validation if it is numeric or not
+Why do we linkage section
+TSO commands and examples
+Positional parameter
+Positional parameter vs keywordparameter
+Two types of exec 
+What is the purpose of sort utility
+What is tge utility we use for defining vsam files
+Components of vsam
+How do you access records in esds
+What is the difference blw ps and pds
+How do you allocate a pds
+What is sysin dummy
+What is vsam
+what is meta data 
+What is the content of control interval 
+Rdf and aidf
+What is retp command 
+What is screen name 
+What is superc 
+Purpose of superc 
+What is default option of defining gdg
+What are all the parameters that pass while creating a gdg 
+What is the utility to create a gdg 
+Limit parameter
+Scratch and no scratch 
+What is catalog and uncatalog in dispostion 
+Explain file status 
+When you are  inserting a duplicate record in ksds what is file status that comes
+What is abend?
+What is linkage section 
+Where will we use linkage section 
+What is go back 
+What is goto 
+What is comp
+What is comp1 comp2 comp3
+Formula for comp3
+What is class and msg class
+Msg level 
+What are the parameters in DCB 
+Explain about ESDS
+Data types in cobol
+Comp3 variable
+What is file status 
+How do we delete duplicates 
+Select statement in file control 
+How to handle files in cobol
+File status that you encounter till now 
+Explain kSDS
+How to get the count of your name
+1.structrure of the JCL like 
+    Job cards, steps, dd            statements 
+2. Search and search all
+3. VSAM data sets 
+4. Repro
+5. Project based questions 
+6. COBOL scenario of sub program
+1.About Mainframe 
+2.About Jcl 
+3.difference btw positional and keyword parameters
+4.about disposition 
+5.different record formats
+6.Write COBRUN in cobol to transfer data from ps1 to ps2 with different Lrecl and recfm
+7.what is vsam & different vsam ds
+8.cobol program structure 
+9.about input-output section 
+10.subprogram
+11.static and dynamic call of subprogram 
+12.about joins and program on it
+13.Search and search all
+14.utilities in jcl
+15.explain minioroject
+16.syntax related to minioroject sort card
+17.define ksds cluster in controlcard
+18.Call by reference and call by content
+Notify parameter 
+Time parameter 
+Restart parameter 
+Typrun parameter 
+Different abends 
+Different utilities 
+Catalog and uncatalog, which do you prefer 
+How to remove duplicates using sort utility
+Cobol divisions
+TECHNICAL TOPICS till now
+UTILITIES IN JCL
+KSDS file,AIX
+Copying VSAM files
+DCB PARAMETERS
+GDG LIMIT
+ways of calling submodule
+STATIC AND DYNAMIC which one is faster
+MINI PROJECT based questions and technical concepts in project
+How to vadilate records in COBOL 
+How to pass values to SUBPROGRAM 
+How to read the file in loop 
+EOF return code 
+File not found code
+How will we refer the file in COBOL and in JCL how it's linked
+What happen if the DDname in COBOL diff to DDname given in JCL compilation fails?
+Applications you developed in mainframe.
+Questions  on min project 
+What compiler you use
+What is the version of cobol 
+About iefbr14 utility 
+Why it is called dummy
+About condition names
+About rename and write code 
+Can a renamed item be renamed again 
+What is modernization 
+Importance of it
+Iefhasm utility
+What are 7rs explain
+Spool
+Jes

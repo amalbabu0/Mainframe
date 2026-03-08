@@ -1,0 +1,10 @@
+//TCOM018Y JOB NOTIFY=&SYSUID,CLASS=A,                                  00010001
+//             MSGCLASS=X,MSGLEVEL=(1,1)                                00020000
+//JOBLIB   DD DSN=TCOM018.MYLIB.LOADLIB,DISP=SHR                        00030001
+//TRNS001U EXEC PGM=COBEX03
+//SYSOUT   DD SYSOUT=*                                                  00090000
+//SYSPRINT DD SYSOUT=*                                                  00100000
+//INCUSPS DD DSN=TCOM018.MYDATA.COB05.PS1C,DISP=SHR 
+//OUTKSDS DD DSN=TCOM018.MYDATA.OUTPUT.KSDS,DISP=OLD
+//SYSIN DD DUMMY                                                        00110002
+

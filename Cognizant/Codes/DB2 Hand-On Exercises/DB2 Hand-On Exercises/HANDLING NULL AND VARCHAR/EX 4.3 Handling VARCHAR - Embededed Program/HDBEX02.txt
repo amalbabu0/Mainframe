@@ -1,0 +1,77 @@
+        IDENTIFICATION DIVISION.                                        00010000
+        PROGRAM-ID. HDBEX02.                                            00020000
+        DATA DIVISION.                                                  00030000
+        WORKING-STORAGE SECTION.                                        00040000
+            EXEC SQL INCLUDE SQLCA END-EXEC.                            00050000
+            EXEC SQL INCLUDE MODDCL END-EXEC.                           00060000
+        PROCEDURE DIVISION.                                             00070000
+        0000-MAIN-PARA.                                                 00080000
+                PERFORM 1000-INITIALIZATION-PARA THRU                   00090000
+                1000-INITIALIZATION-PARA-EXIT                           00100000
+                PERFORM 2000-PROCESS-PARA THRU                          00110000
+                2000-PROCESS-PARA-EXIT                                  00120000
+                PERFORM 9000-TERMINATION-PARA THRU                      00130000
+                9000-TERMINATION-PARA-EXIT.                             00140000
+        0000-MAIN-PARA-EXIT.                                            00150000
+                 EXIT.                                                  00160000
+        1000-INITIALIZATION-PARA.                                       00170000
+        1000-INITIALIZATION-PARA-EXIT.                                  00180000
+                 EXIT.                                                  00190000
+        2000-PROCESS-PARA.                                              00200000
+                PERFORM 2300-INSERT-PARA THRU                           00210000
+                2300-INSERT-PARA-EXIT.                                  00220000
+        2000-PROCESS-PARA-EXIT.                                         00240000
+                 EXIT.                                                  00250000
+        2300-INSERT-PARA.                                               00260000
+                MOVE 1006 TO ASSET-ID.                                  00270000
+                MOVE 7 TO ASSET-NAME-LEN.                               00280000
+                MOVE 'NAS HDD' TO ASSET-NAME-TEXT.                      00290000
+                MOVE 7 TO BRAND-NAME-LEN.                               00300000
+                MOVE 'SEAGATE' TO BRAND-NAME-TEXT.                      00310000
+                MOVE 6 TO MODEL-NUMBER-LEN.                             00320000
+                MOVE 'SG1005' TO MODEL-NUMBER-TEXT.                     00330001
+                MOVE 8 TO MANUFACTURER-ID.                               0034000
+                MOVE 12 TO CATEGORY-ID.                                 00350001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00360001
+                (:ASSET-ID, :ASSET-NAME,                                00370001
+                :BRAND-NAME, :MODEL-NUMBER,                             00380001
+                :MANUFACTURER-ID, :CATEGORY-ID)                          0039000
+                END-EXEC.                                               00400001
+                DISPLAY 'VALUE INSERTED'                                00410001
+                DISPLAY SQLCODE.                                        00420001
+                MOVE 1007 TO ASSET-ID.                                  00430001
+                MOVE 6 TO ASSET-NAME-LEN.                               00440001
+                MOVE 'ROUTER' TO ASSET-NAME-TEXT.                       00450001
+                MOVE 4 TO BRAND-NAME-LEN.                               00460001
+                MOVE 'ASUS' TO BRAND-NAME-TEXT.                         00470001
+                MOVE 6 TO MODEL-NUMBER-LEN.                             00480001
+                MOVE 'AS1567' TO MODEL-NUMBER-TEXT.                     00490001
+                MOVE 9 TO MANUFACTURER-ID.                              00500001
+                MOVE 16 TO CATEGORY-ID.                                 00510001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00520001
+                (:ASSET-ID, :ASSET-NAME,                                00530001
+                :BRAND-NAME, :MODEL-NUMBER,                             00540001
+                :MANUFACTURER-ID, :CATEGORY-ID)                         00550001
+                END-EXEC.                                               00560001
+                DISPLAY 'VALUE INSERTED'                                00570001
+                DISPLAY SQLCODE.                                        00580001
+                MOVE 1008 TO ASSET-ID.                                  00590001
+                MOVE 9 TO ASSET-NAME-LEN.                               00600001
+                MOVE 'PEN DRIVE' TO ASSET-NAME-TEXT.                    00610001
+                MOVE 6 TO BRAND-NAME-LEN.                               00620001
+                MOVE 'LV2378' TO MODEL-NUMBER-TEXT.                     00630001
+                MOVE 3 TO MANUFACTURER-ID.                               0064000
+                MOVE 17 TO CATEGORY-ID.                                 00650001
+                EXEC SQL INSERT INTO MODEL_INF VALUES                   00660001
+                (:ASSET-ID, :ASSET-NAME,                                00670001
+                :BRAND-NAME, :MODEL-NUMBER,                             00680001
+                :MANUFACTURER-ID, :CATEGORY-ID)                          0069000
+                END-EXEC.                                               00700001
+                DISPLAY 'VALUE INSERTED'                                00710001
+                DISPLAY SQLCODE.                                        00720001
+        2300-INSERT-PARA-EXIT.                                          00730001
+                EXIT.                                                   00740001
+        9000-TERMINATION-PARA.                                          00750001
+                 STOP RUN.                                              00760001
+        9000-TERMINATION-PARA-EXIT.                                     00770001
+                 EXIT.                                                  00780001
